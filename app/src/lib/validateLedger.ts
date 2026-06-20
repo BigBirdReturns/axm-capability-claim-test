@@ -1,12 +1,9 @@
-import type {
-  Claim,
-  EvidenceClass,
-  Ledger,
-  ObjectType,
-  SeamState,
-  Source,
-} from "../types/audit";
-import { OBJECT_ROUTES } from "../data/objectRoutes";
+import { z } from "zod";
+import type { Ledger } from "../types/audit";
+
+// Zod is the house schema-validation idiom (mirrors schemas/*.json). The ledger
+// is the mating surface, so validation is strict about the load-bearing shape
+// and lenient — but normalized — about the optional analysis annotations.
 
 export interface ValidationResult {
   ok: boolean;
@@ -14,37 +11,127 @@ export interface ValidationResult {
   ledger?: Ledger;
 }
 
-const EVIDENCE_CLASSES: EvidenceClass[] = [
+const objectType = z.enum([
+  "product_company",
+  "capital_allocator",
+  "integrator_platform",
+  "ranking_validator_media",
+  "government_program_vehicle",
+  "claim_only",
+]);
+
+const evidenceClass = z.enum([
   "confirmed",
   "reported",
   "derived",
   "judgment",
   "open",
-];
+]);
 
-const SEAM_STATES: SeamState[] = [
+const seamState = z.enum([
   "triggered",
   "not_triggered",
   "unclear",
   "not_applicable",
-];
+]);
 
-function isObject(v: unknown): v is Record<string, unknown> {
-  return typeof v === "object" && v !== null && !Array.isArray(v);
+const contaminationKey = z.enum([
+  "cap_table_circularity",
+  "validator_circularity",
+  "broker_origination",
+  "lineage_substitution",
+  "independent_demand_inverse",
+  "cross_holding_density",
+]);
+
+const contaminationBucket = z.enum([
+  "clean",
+  "mixed",
+  "circular",
+  "insufficient_data",
+]);
+
+const verdictState = z.enum([
+  "A_capability_with_proof",
+  "B_ahead_of_proof",
+  "C_costume_or_proof_substitution",
+  "unclassifiable",
+  "not_applicable",
+]);
+
+const SourceSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  url: z.string().optional(),
+  publisher: z.string().optional(),
+  date: z.string().optional(),
+  note: z.string().optional(),
+});
+
+const ClaimSchema = z.object({
+  id: z.string().optional(),
+  field: z.string(),
+  statement: z.string(),
+  evidenceClass,
+  confidence: z.number().optional(),
+  sourceIds: z.array(z.string()).default([]),
+  notes: z.string().optional(),
+});
+
+const SeamAnnotationSchema = z.object({
+  id: z.string(),
+  question: z.string().optional(),
+  state: seamState,
+  reason: z.string().optional(),
+  sourceIds: z.array(z.string()).default([]),
+});
+
+const ContaminationComponentSchema = z.object({
+  key: contaminationKey,
+  present: z.boolean().default(false),
+  reason: z.string().optional(),
+  sourceIds: z.array(z.string()).default([]),
+  internalScore: z.number().optional(),
+});
+
+const ContaminationAnnotationSchema = z.object({
+  bucket: contaminationBucket.optional(),
+  components: z.array(ContaminationComponentSchema).optional(),
+});
+
+const VerdictAnnotationSchema = z.object({
+  state: verdictState.optional(),
+  loop: z.enum(["open", "closed"]).optional(),
+  rationale: z.string().optional(),
+  largestGap: z.string().optional(),
+  tenseOfProof: z.string().optional(),
+  whatWouldClearIt: z.string().optional(),
+  rootsBeliefSupplier: z.string().optional(),
+  rootsValueRetainer: z.string().optional(),
+  nextPulls: z.array(z.string()).default([]),
+});
+
+const LedgerSchema = z.object({
+  schemaVersion: z.literal(1),
+  objectType,
+  targetName: z.string().min(1, "targetName is required."),
+  context: z.string().optional(),
+  sources: z.array(SourceSchema),
+  claims: z.array(ClaimSchema),
+  seams: z.array(SeamAnnotationSchema).optional(),
+  contamination: ContaminationAnnotationSchema.optional(),
+  verdictNotes: VerdictAnnotationSchema.optional(),
+});
+
+// Flatten a ZodError into the flat string[] the UI and tests already expect.
+function formatIssues(error: z.ZodError): string[] {
+  return error.issues.map((issue) => {
+    const path = issue.path.join(".");
+    return path ? `${path}: ${issue.message}` : issue.message;
+  });
 }
 
-function asStringArray(v: unknown): string[] {
-  if (!Array.isArray(v)) return [];
-  return v.filter((x): x is string => typeof x === "string");
-}
-
-// Parse + normalize an untrusted ledger payload (pasted JSON or example file)
-// into the canonical Ledger shape. The schema is the mating surface, so this
-// is deliberately strict about the load-bearing fields and lenient about
-// optional analysis annotations.
 export function validateLedger(input: unknown): ValidationResult {
-  const errors: string[] = [];
-
   let raw: unknown = input;
   if (typeof input === "string") {
     try {
@@ -54,162 +141,48 @@ export function validateLedger(input: unknown): ValidationResult {
     }
   }
 
-  if (!isObject(raw)) {
-    return { ok: false, errors: ["Ledger must be a JSON object."] };
+  const parsed = LedgerSchema.safeParse(raw);
+  if (!parsed.success) {
+    return { ok: false, errors: formatIssues(parsed.error) };
   }
 
-  const objectType = raw.objectType;
-  if (typeof objectType !== "string" || !(objectType in OBJECT_ROUTES)) {
-    errors.push(
-      `objectType must be one of: ${Object.keys(OBJECT_ROUTES).join(", ")}.`,
-    );
-  }
+  const data = parsed.data;
 
-  const targetName = raw.targetName;
-  if (typeof targetName !== "string" || targetName.trim() === "") {
-    errors.push("targetName is required.");
-  }
-
-  // Sources -----------------------------------------------------------------
-  const sources: Source[] = [];
-  const sourceIds = new Set<string>();
-  if (!Array.isArray(raw.sources)) {
-    errors.push("sources must be an array.");
-  } else {
-    raw.sources.forEach((s, i) => {
-      if (!isObject(s)) {
-        errors.push(`sources[${i}] must be an object.`);
-        return;
+  // Cross-reference check: every cited source id must exist. (Not expressible
+  // in the object schema alone, so it runs here and reports loudly.)
+  const sourceIds = new Set(data.sources.map((s) => s.id));
+  const errors: string[] = [];
+  data.claims.forEach((c, i) => {
+    c.sourceIds.forEach((sid) => {
+      if (!sourceIds.has(sid)) {
+        errors.push(`claims.${i} references unknown source "${sid}".`);
       }
-      if (typeof s.id !== "string") {
-        errors.push(`sources[${i}].id is required.`);
-        return;
-      }
-      if (typeof s.title !== "string") {
-        errors.push(`sources[${i}].title is required.`);
-        return;
-      }
-      sourceIds.add(s.id);
-      sources.push({
-        id: s.id,
-        title: s.title,
-        url: typeof s.url === "string" ? s.url : undefined,
-        publisher: typeof s.publisher === "string" ? s.publisher : undefined,
-        date: typeof s.date === "string" ? s.date : undefined,
-        note: typeof s.note === "string" ? s.note : undefined,
-      });
     });
-  }
-
-  // Claims ------------------------------------------------------------------
-  const claims: Claim[] = [];
-  if (!Array.isArray(raw.claims)) {
-    errors.push("claims must be an array.");
-  } else {
-    raw.claims.forEach((c, i) => {
-      if (!isObject(c)) {
-        errors.push(`claims[${i}] must be an object.`);
-        return;
-      }
-      if (typeof c.field !== "string") {
-        errors.push(`claims[${i}].field is required.`);
-        return;
-      }
-      if (typeof c.statement !== "string") {
-        errors.push(`claims[${i}].statement is required.`);
-        return;
-      }
-      const ec = c.evidenceClass;
-      if (typeof ec !== "string" || !EVIDENCE_CLASSES.includes(ec as EvidenceClass)) {
-        errors.push(
-          `claims[${i}].evidenceClass must be one of: ${EVIDENCE_CLASSES.join(", ")}.`,
-        );
-        return;
-      }
-      const cIds = asStringArray(c.sourceIds);
-      cIds.forEach((sid) => {
-        if (!sourceIds.has(sid)) {
-          errors.push(`claims[${i}] references unknown source "${sid}".`);
-        }
-      });
-      claims.push({
-        id: typeof c.id === "string" ? c.id : `claim_${i}`,
-        field: c.field,
-        statement: c.statement,
-        evidenceClass: ec as EvidenceClass,
-        confidence: typeof c.confidence === "number" ? c.confidence : undefined,
-        sourceIds: cIds,
-        notes: typeof c.notes === "string" ? c.notes : undefined,
-      });
-    });
-  }
-
+  });
   if (errors.length > 0) {
     return { ok: false, errors };
   }
 
+  // Normalize into the canonical Ledger (assign stable claim ids by index).
   const ledger: Ledger = {
     schemaVersion: 1,
-    objectType: objectType as ObjectType,
-    targetName: targetName as string,
-    claims,
-    sources,
-    context: typeof raw.context === "string" ? raw.context : undefined,
+    objectType: data.objectType,
+    targetName: data.targetName,
+    context: data.context,
+    sources: data.sources,
+    claims: data.claims.map((c, i) => ({
+      id: c.id ?? `claim_${i}`,
+      field: c.field,
+      statement: c.statement,
+      evidenceClass: c.evidenceClass,
+      confidence: c.confidence,
+      sourceIds: c.sourceIds,
+      notes: c.notes,
+    })),
+    seams: data.seams,
+    contamination: data.contamination,
+    verdictNotes: data.verdictNotes,
   };
-
-  // Optional analysis annotations (normalized, never fatal) -----------------
-  if (Array.isArray(raw.seams)) {
-    ledger.seams = raw.seams
-      .filter(isObject)
-      .filter((s) => typeof s.id === "string" && SEAM_STATES.includes(s.state as SeamState))
-      .map((s) => ({
-        id: s.id as string,
-        question: typeof s.question === "string" ? s.question : undefined,
-        state: s.state as SeamState,
-        reason: typeof s.reason === "string" ? s.reason : undefined,
-        sourceIds: asStringArray(s.sourceIds),
-      }));
-  }
-
-  if (isObject(raw.contamination)) {
-    const comp = Array.isArray(raw.contamination.components)
-      ? raw.contamination.components
-          .filter(isObject)
-          .map((c) => ({
-            key: c.key as never,
-            present: c.present === true,
-            reason: typeof c.reason === "string" ? c.reason : undefined,
-            sourceIds: asStringArray(c.sourceIds),
-            internalScore:
-              typeof c.internalScore === "number" ? c.internalScore : undefined,
-          }))
-      : undefined;
-    ledger.contamination = {
-      bucket:
-        typeof raw.contamination.bucket === "string"
-          ? (raw.contamination.bucket as never)
-          : undefined,
-      components: comp,
-    };
-  }
-
-  if (isObject(raw.verdictNotes)) {
-    const v = raw.verdictNotes;
-    ledger.verdictNotes = {
-      state: typeof v.state === "string" ? (v.state as never) : undefined,
-      loop: v.loop === "open" || v.loop === "closed" ? v.loop : undefined,
-      rationale: typeof v.rationale === "string" ? v.rationale : undefined,
-      largestGap: typeof v.largestGap === "string" ? v.largestGap : undefined,
-      tenseOfProof: typeof v.tenseOfProof === "string" ? v.tenseOfProof : undefined,
-      whatWouldClearIt:
-        typeof v.whatWouldClearIt === "string" ? v.whatWouldClearIt : undefined,
-      rootsBeliefSupplier:
-        typeof v.rootsBeliefSupplier === "string" ? v.rootsBeliefSupplier : undefined,
-      rootsValueRetainer:
-        typeof v.rootsValueRetainer === "string" ? v.rootsValueRetainer : undefined,
-      nextPulls: asStringArray(v.nextPulls),
-    };
-  }
 
   return { ok: true, errors: [], ledger };
 }

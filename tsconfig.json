@@ -13,10 +13,11 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["app/src", "vite.config.ts", "examples/**/*.json"]
+  "include": ["app/src", "tests", "vite.config.ts", "vitest.config.ts", "examples/**/*.json"]
 }

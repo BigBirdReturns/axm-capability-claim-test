@@ -113,7 +113,13 @@ npm install
 npm run dev        # local workbench
 npm run build      # static build into dist/
 npm run typecheck  # strict TypeScript
+npm test           # vitest suite (gates + the four examples as regression locks)
+npm run check      # typecheck + tests — the CI gate
 ```
+
+Ledger validation uses [zod](https://zod.dev) (`app/src/lib/validateLedger.ts`),
+mirroring `schemas/*.json`. The CI gate runs `npm run check` before every Pages
+deploy, so a broken build never ships.
 
 Deploys to GitHub Pages via [`.github/workflows/pages.yml`](.github/workflows/pages.yml)
 on push to `main`. The Vite `base` defaults to `/axm-capability-claim-test/`;
