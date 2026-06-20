@@ -127,7 +127,7 @@ export function renderReportMarkdown(report: Report): string {
     (report.pullList ?? []).forEach((p, i) => L.push(`${i + 1}. ${p}`));
     L.push("");
     L.push(`---`);
-    L.push(`_Internal method: Gun-or-Vehicle Test. The page does not know the truth. It enforces the method._`);
+    L.push(`_The page does not know the truth. It enforces the method._`);
     return L.join("\n");
   }
 
@@ -168,7 +168,7 @@ export function renderReportMarkdown(report: Report): string {
   }
   L.push("");
   L.push(`---`);
-  L.push(`_Internal method: Gun-or-Vehicle Test. Output is a structural assessment, not an allegation of wrongdoing._`);
+  L.push(`_Output is a structural assessment, not an allegation of wrongdoing._`);
   return L.join("\n");
 }
 

@@ -27,4 +27,4 @@
 7. Pull the public record for Halcyon Edge Compute (illustrative): ownership posture — sources, dates, and evidence class.
 
 ---
-_Structural assessment, not an allegation of wrongdoing. Internal method: Gun-or-Vehicle Test._
+_Structural assessment, not an allegation of wrongdoing._

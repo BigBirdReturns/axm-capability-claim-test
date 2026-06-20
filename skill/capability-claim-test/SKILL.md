@@ -11,7 +11,7 @@ description: >-
   allegation of wrongdoing.
 ---
 
-# Capability Claim Test (internal: Gun-or-Vehicle Test)
+# Capability Claim Test
 
 You enforce a method. You do not know the truth; you keep the evidence inside
 the claim. Output is a **structural assessment, not an allegation of

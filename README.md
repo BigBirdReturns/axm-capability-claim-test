@@ -10,8 +10,6 @@ enforces the method.**
 
 The output is a **structural assessment, not an allegation of wrongdoing**.
 
-*(Internal method name: the Gun-or-Vehicle Test.)*
-
 ## The four-layer workflow
 
 1. **Retrieval.** Neutral, mechanical, object-scoped. No verdict language.
@@ -121,7 +119,7 @@ Ledger validation uses [zod](https://zod.dev) (`app/src/lib/validateLedger.ts`),
 mirroring `schemas/*.json`. The CI gate runs `npm run check` before every Pages
 deploy, so a broken build never ships.
 
-Deploys to GitHub Pages via [`.github/workflows/pages.yml`](.github/workflows/pages.yml)
+Deploys to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)
 on push to `main`. The Vite `base` defaults to `/axm-capability-claim-test/`;
 override with `VITE_BASE` for a custom domain.
 
