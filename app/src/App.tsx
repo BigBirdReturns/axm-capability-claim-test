@@ -155,6 +155,7 @@ export default function App() {
           evidence classification and its falsification line, or it is not
           finished.
         </p>
+        <p className="muted small">build {__BUILD_SHA__}</p>
       </footer>
     </div>
   );

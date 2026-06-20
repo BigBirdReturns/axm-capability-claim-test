@@ -1,8 +1,18 @@
-name: Deploy to GitHub Pages
+# Pages deploy for the Capability Claim Test.
+#
+# Actions-based GitHub Pages deployment. The built workbench is published
+# directly to Pages as an artifact and is never committed to the repo (dist/ is
+# gitignored), so there is no committed-bundle merge-conflict class.
+#
+# REQUIRES (one-time, owner action): Settings -> Pages -> Build and deployment
+# -> Source = "GitHub Actions". Until that is set, this workflow runs but Pages
+# will not serve from it.
+
+name: deploy
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "claude/tender-rubin-n26gr6"]
   workflow_dispatch:
 
 permissions:
@@ -10,9 +20,9 @@ permissions:
   pages: write
   id-token: write
 
-# Allow one concurrent deployment, cancel in-progress runs.
+# Never run two Pages deploys at once; let the latest win.
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
 
 jobs:
@@ -21,6 +31,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history so the Vite build can stamp the short commit SHA.
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -31,16 +44,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Typecheck
-        run: npm run typecheck
+      - name: Check (typecheck + tests)
+        run: npm run check
 
       - name: Build
         run: npm run build
 
-      - name: Setup Pages
+      - name: Configure Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist

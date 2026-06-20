@@ -40,7 +40,7 @@ export function sanitizeLoadedRequest(input: string): {
 
   // Extract a probable target name after "behind", "around", or "of".
   const m = trimmed.match(/\b(?:behind|around|of|for)\s+(.+?)[.?!]?$/i);
-  const target = m ? m[1].trim() : null;
+  const target = m?.[1]?.trim() ?? null;
 
   const neutral = target
     ? `Build a sourced ledger of investors, board roles, validators, rankings, co-investors, and affiliations for ${target}.`
