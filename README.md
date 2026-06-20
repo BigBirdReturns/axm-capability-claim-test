@@ -10,6 +10,40 @@ enforces the method.**
 
 The output is a **structural assessment, not an allegation of wrongdoing**.
 
+## How to use it (in 60 seconds)
+
+Open the live page: **https://bigbirdreturns.github.io/axm-capability-claim-test/**
+
+You'll see five buttons. Start by clicking an **example** — that's the fastest way
+to understand what the tool does:
+
+- **Load Example: Cleared Capability** → a company with real proof. The tool
+  *acquits* it: verdict **A**, contamination **clean**.
+- **Load Example: Circular / Unproven** → a company whose legitimacy is
+  manufactured by its own backers. The tool *classifies* it: verdict **C**,
+  contamination **circular** — each reason sourced.
+- **Load Example: Insufficient Ledger** → too little is sourced, so the tool
+  *refuses to verdict* and hands back a **pull-list** of what to go find.
+- **Load Example: Capital Allocator…** → shows the tool routing a fund through
+  *attribution* questions, not product-company ones.
+
+To run your own audit, click **Start New Audit**, then:
+
+1. Pick the **object type** (company, fund, ranking, program…). This fixes the
+   route — you can't push a fund through the company instrument.
+2. Fill the **load-bearing fields** with claims, each tagged with a source and an
+   evidence class (`confirmed` / `reported` / `derived` / `judgment` / `open`).
+   A field only "counts" when it cites a source and isn't `open`.
+3. The **sourcing gate** unlocks the verdict once **three** fields are sourced.
+   Below that you get the pull-list instead — by design.
+4. Read the **contamination bucket** (clean / mixed / circular) with its sourced
+   reasons, and the **verdict** with its "what would clear it" line.
+5. **Export** `report.md`, `report.json`, or `source-ledger.csv` — all generated
+   locally in your browser.
+
+Prefer to drive it from a chatbot instead of the web form? See
+**[Call it from your own AI](#call-it-from-your-own-ai)** below (MCP server or skill).
+
 ## The four-layer workflow
 
 1. **Retrieval.** Neutral, mechanical, object-scoped. No verdict language.
