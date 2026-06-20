@@ -2,7 +2,7 @@
 
 > Structural assessment, not an allegation of wrongdoing.
 
-**Generated:** 2026-06-20T01:45:45.827Z
+**Generated:** 2026-06-20T09:31:56.105Z
 
 ## Object gate
 - **Object type:** Product company (`product_company`)
@@ -79,4 +79,4 @@
   - Full cap-table with outside-capital share
 
 ---
-_Internal method: Gun-or-Vehicle Test. Output is a structural assessment, not an allegation of wrongdoing._
+_Output is a structural assessment, not an allegation of wrongdoing._

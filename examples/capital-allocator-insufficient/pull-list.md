@@ -29,4 +29,4 @@
 8. Pull the public record for Northwind Syndicate (illustrative): attributable wins — sources, dates, and evidence class.
 
 ---
-_Structural assessment, not an allegation of wrongdoing. Internal method: Gun-or-Vehicle Test._
+_Structural assessment, not an allegation of wrongdoing._

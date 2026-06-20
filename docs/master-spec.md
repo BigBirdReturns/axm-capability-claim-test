@@ -4,10 +4,9 @@
 
 > Bring your own sources. Bring your own model. The method enforces the ledger.
 
-The internal name is the **Gun-or-Vehicle Test**. The public name is the
-**Capability Claim Test**, which travels across defense, healthcare AI,
-sovereign AI, procurement, and capital allocators without reading as
-weapons-instructional.
+The name is the **Capability Claim Test**, which travels across defense,
+healthcare AI, sovereign AI, procurement, and capital allocators without
+reading as weapons-instructional.
 
 ## What it is
 
@@ -73,7 +72,6 @@ claim, and to prove it can **acquit, classify, or refuse to verdict**. See
 
 ---
 
-*Internal name: Gun-or-Vehicle Test. Public name: Capability Claim Test. Output
-is a structural assessment, not an allegation of wrongdoing. Every verdict
-carries its evidence classification and its falsification line, or it is not
-finished.*
+*Capability Claim Test. Output is a structural assessment, not an allegation of
+wrongdoing. Every verdict carries its evidence classification and its
+falsification line, or it is not finished.*

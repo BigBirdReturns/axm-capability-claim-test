@@ -128,21 +128,19 @@ export default function App() {
 
           <SourcingGatePanel result={report.sourcingGate} />
 
-          {report.sourcingGate.passed ? (
+          {/* Verdict + contamination mount only when the sourcing gate passes;
+              below threshold they never render. ReportPreview handles both the
+              blocked (pull-list) and passed states, so it renders once here. */}
+          {report.sourcingGate.passed && (
             <>
               <VerdictPanel report={report} />
               {report.contamination && (
-                <ContaminationPanel
-                  result={report.contamination}
-                  ledger={ledger}
-                />
+                <ContaminationPanel result={report.contamination} ledger={ledger} />
               )}
             </>
-          ) : (
-            <ReportPreview report={report} />
           )}
 
-          {report.sourcingGate.passed && <ReportPreview report={report} />}
+          <ReportPreview report={report} />
 
           <ExportPanel report={report} />
         </main>
@@ -150,10 +148,9 @@ export default function App() {
 
       <footer className="foot">
         <p className="muted small">
-          Internal method: Gun-or-Vehicle Test. Output is a structural
-          assessment, not an allegation of wrongdoing. Every verdict carries its
-          evidence classification and its falsification line, or it is not
-          finished.
+          Output is a structural assessment, not an allegation of wrongdoing.
+          Every verdict carries its evidence classification and its
+          falsification line, or it is not finished.
         </p>
         <p className="muted small">build {__BUILD_SHA__}</p>
       </footer>
