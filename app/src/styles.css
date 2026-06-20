@@ -1,0 +1,278 @@
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel-2: #1e222b;
+  --ink: #e7e9ee;
+  --muted: #9aa3b2;
+  --line: #2a2f3a;
+  --accent: #6ea8fe;
+  --pass: #46c267;
+  --block: #e0a92e;
+  --bad: #e0563f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+.app {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
+}
+
+.masthead h1 {
+  margin: 0;
+  font-size: 28px;
+}
+.tagline {
+  font-weight: 600;
+  margin: 4px 0;
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 13px;
+}
+
+.launch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 20px 0;
+}
+
+button {
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 9px 14px;
+  cursor: pointer;
+  font-size: 14px;
+}
+button:hover {
+  border-color: var(--accent);
+}
+button.primary,
+.modes button.active {
+  background: var(--accent);
+  color: #0b0e13;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+button.ghost {
+  background: transparent;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 14px 0;
+}
+.panel h2 {
+  margin-top: 0;
+}
+
+.intro ol {
+  padding-left: 20px;
+}
+
+.modes {
+  display: flex;
+  gap: 8px;
+  margin: 14px 0 0;
+}
+
+.kv {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+.kv dt {
+  color: var(--muted);
+}
+.kv dd {
+  margin: 0;
+}
+
+code {
+  background: var(--panel-2);
+  padding: 1px 6px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+.status {
+  font-weight: 700;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.status.pass {
+  color: var(--pass);
+}
+.status.block {
+  color: var(--block);
+}
+
+.grid {
+  width: 100%;
+  border-collapse: collapse;
+}
+.grid th,
+.grid td {
+  text-align: left;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+}
+.row-missing {
+  color: var(--block);
+}
+
+.field {
+  display: block;
+  margin: 10px 0;
+}
+.field span {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  background: var(--panel-2);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+}
+textarea.prompt {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  white-space: pre;
+}
+
+.source-row,
+.claim-row {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0;
+  align-items: center;
+}
+.source-row {
+  grid-template-columns: 40px 1fr 1fr;
+}
+.claim-row {
+  grid-template-columns: 160px 1fr 130px 160px;
+}
+.claim-label {
+  color: var(--muted);
+}
+
+.sanitized {
+  background: var(--panel-2);
+  border-left: 3px solid var(--accent);
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-top: 8px;
+}
+
+.bucket {
+  font-weight: 700;
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 6px;
+}
+.bucket-clean {
+  color: var(--pass);
+}
+.bucket-mixed {
+  color: var(--block);
+}
+.bucket-circular {
+  color: var(--bad);
+}
+.bucket-insufficient_data {
+  color: var(--muted);
+}
+
+.components,
+.seams {
+  list-style: none;
+  padding: 0;
+}
+.comp,
+.seam {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 8px 0;
+}
+.comp.present {
+  border-color: var(--bad);
+}
+.tag {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.seam-state {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.state-triggered {
+  color: var(--bad);
+}
+.state-not_triggered {
+  color: var(--pass);
+}
+.state-unclear {
+  color: var(--block);
+}
+.state-not_applicable {
+  color: var(--muted);
+}
+.seam-q {
+  font-weight: 600;
+  margin: 4px 0;
+}
+
+.block-notice {
+  border: 1px solid var(--block);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.errors {
+  color: var(--bad);
+}
+
+.foot {
+  margin-top: 32px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}

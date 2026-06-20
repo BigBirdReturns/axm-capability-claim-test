@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/contamination.schema.json",
+  "title": "Contamination",
+  "description": "A bucket with source-backed component reasons. Never a bare number in public output.",
+  "type": "object",
+  "properties": {
+    "bucket": {
+      "type": "string",
+      "enum": ["clean", "mixed", "circular", "insufficient_data"]
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["key", "present"],
+        "properties": {
+          "key": {
+            "type": "string",
+            "enum": [
+              "cap_table_circularity",
+              "validator_circularity",
+              "broker_origination",
+              "lineage_substitution",
+              "independent_demand_inverse",
+              "cross_holding_density"
+            ]
+          },
+          "present": { "type": "boolean" },
+          "reason": {
+            "type": "string",
+            "description": "Source-backed reason. Required for a component to count."
+          },
+          "sourceIds": { "type": "array", "items": { "type": "string" } },
+          "internalScore": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100,
+            "description": "Optional internal-only score. Never rendered publicly."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

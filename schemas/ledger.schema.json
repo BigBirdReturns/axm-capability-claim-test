@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/ledger.schema.json",
+  "title": "Ledger",
+  "description": "The mating surface. Manual entry, LLM output, and adapters all fill this shape. Analysis annotations (seams, contamination, verdictNotes) are optional; the app computes neutral defaults when absent.",
+  "type": "object",
+  "required": ["schemaVersion", "objectType", "targetName", "sources", "claims"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "objectType": {
+      "type": "string",
+      "enum": [
+        "product_company",
+        "capital_allocator",
+        "integrator_platform",
+        "ranking_validator_media",
+        "government_program_vehicle",
+        "claim_only"
+      ]
+    },
+    "targetName": { "type": "string" },
+    "context": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "items": { "$ref": "source.schema.json" }
+    },
+    "claims": {
+      "type": "array",
+      "items": { "$ref": "claim.schema.json" }
+    },
+    "seams": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "state"],
+        "properties": {
+          "id": { "type": "string" },
+          "question": { "type": "string" },
+          "state": {
+            "type": "string",
+            "enum": ["triggered", "not_triggered", "unclear", "not_applicable"]
+          },
+          "reason": { "type": "string" },
+          "sourceIds": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "contamination": { "$ref": "contamination.schema.json" },
+    "verdictNotes": { "$ref": "verdict.schema.json" }
+  }
+}

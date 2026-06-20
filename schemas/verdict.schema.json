@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/verdict.schema.json",
+  "title": "Verdict",
+  "description": "Returned only when the sourcing gate passes. Every verdict carries its falsification line.",
+  "type": "object",
+  "required": ["state", "loop", "whatWouldClearIt"],
+  "properties": {
+    "state": {
+      "type": "string",
+      "enum": [
+        "A_capability_with_proof",
+        "B_ahead_of_proof",
+        "C_costume_or_proof_substitution",
+        "unclassifiable",
+        "not_applicable"
+      ]
+    },
+    "loop": { "type": "string", "enum": ["open", "closed"] },
+    "rationale": { "type": "string" },
+    "largestGap": { "type": "string", "description": "Quantified where possible." },
+    "tenseOfProof": { "type": "string" },
+    "whatWouldClearIt": {
+      "type": "string",
+      "description": "Mandatory falsification line, stated even when you suspect it cannot be produced."
+    },
+    "rootsBeliefSupplier": { "type": "string" },
+    "rootsValueRetainer": { "type": "string" },
+    "nextPulls": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

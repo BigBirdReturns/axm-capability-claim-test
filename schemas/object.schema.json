@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/object.schema.json",
+  "title": "Object",
+  "description": "Object gate input. Wrong object, wrong test.",
+  "type": "object",
+  "required": ["objectType"],
+  "properties": {
+    "objectType": {
+      "type": "string",
+      "enum": [
+        "product_company",
+        "capital_allocator",
+        "integrator_platform",
+        "ranking_validator_media",
+        "government_program_vehicle",
+        "claim_only"
+      ]
+    },
+    "route": {
+      "type": "string",
+      "enum": [
+        "operating_proof_contamination",
+        "attribution_proof_contamination",
+        "removal_test_operating_control_contamination",
+        "independence_proof_contamination",
+        "removal_test_ownership",
+        "claim_test"
+      ]
+    }
+  }
+}

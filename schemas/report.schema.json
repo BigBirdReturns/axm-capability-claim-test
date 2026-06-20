@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/report.schema.json",
+  "title": "Report",
+  "description": "Output of the method. When the sourcing gate fails, only objectGate, sourcingGate, knownEvidence, and pullList are present; seams, contamination, and verdict are withheld.",
+  "type": "object",
+  "required": ["generatedAt", "target", "objectGate", "sourcingGate", "knownEvidence", "ledger"],
+  "properties": {
+    "generatedAt": { "type": "string" },
+    "target": { "type": "string" },
+    "objectGate": {
+      "type": "object",
+      "required": ["objectType", "route"],
+      "properties": {
+        "objectType": { "type": "string" },
+        "objectLabel": { "type": "string" },
+        "route": { "type": "string" },
+        "routeLabel": { "type": "string" },
+        "whatYouAreTesting": { "type": "string" }
+      }
+    },
+    "sourcingGate": {
+      "type": "object",
+      "required": ["required", "sourcedCount", "passed"],
+      "properties": {
+        "required": { "type": "integer" },
+        "sourcedCount": { "type": "integer" },
+        "passed": { "type": "boolean" },
+        "fields": { "type": "array" },
+        "missing": { "type": "array" }
+      }
+    },
+    "knownEvidence": { "type": "array" },
+    "pullList": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Present only when the sourcing gate fails."
+    },
+    "seams": { "type": "array", "description": "Present only when the gate passes." },
+    "contamination": { "$ref": "contamination.schema.json" },
+    "verdict": { "$ref": "verdict.schema.json" },
+    "ledger": { "$ref": "ledger.schema.json" }
+  }
+}

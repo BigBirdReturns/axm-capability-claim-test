@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "objectType": "capital_allocator",
+  "targetName": "Northwind Syndicate (illustrative)",
+  "context": "Synthetic example. A capital allocator routed through the attribution instrument — NOT the product instrument. Fewer than three sourced attribution fields blocks the verdict and returns a neutral pull-list.",
+  "sources": [
+    { "id": "s1", "title": "Fund formation filing", "publisher": "Federal exempt-offering filing", "url": "https://example.org/northwind-formd", "date": "2024-09-15" }
+  ],
+  "claims": [
+    { "id": "c1", "field": "fund_size", "statement": "Fund size disclosed in an exempt-offering filing.", "evidenceClass": "confirmed", "confidence": 0.9, "sourceIds": ["s1"] },
+    { "id": "c2", "field": "lead_investor_status", "statement": "Claims lead-investor status on several wins; not independently sourced.", "evidenceClass": "open", "confidence": 0.3, "sourceIds": [] },
+    { "id": "c3", "field": "board_role", "statement": "Board roles asserted on portfolio company pages; not yet cross-sourced.", "evidenceClass": "open", "confidence": 0.3, "sourceIds": [] },
+    { "id": "c4", "field": "entry_timing", "statement": "Entry round and timing not yet sourced against the cap table.", "evidenceClass": "open", "confidence": 0.2, "sourceIds": [] },
+    { "id": "c5", "field": "attributable_wins", "statement": "Wins claimed on the firm page; platform vs personal vs in-the-room attribution unresolved.", "evidenceClass": "open", "confidence": 0.2, "sourceIds": [] }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "objectType": "product_company",
+  "targetName": "Meridian Survey Robotics (illustrative)",
+  "context": "Synthetic example. Demonstrates that the instrument can ACQUIT: a product company with operating proof and arms-length validation reads A / Clean.",
+  "sources": [
+    { "id": "s1", "title": "DoD competed award announcement", "publisher": "Defense contract daily digest", "url": "https://example.org/award-meridian", "date": "2025-03-11" },
+    { "id": "s2", "title": "Independent test range performance report", "publisher": "National test range", "url": "https://example.org/meridian-test", "date": "2025-05-02" },
+    { "id": "s3", "title": "Operator after-action interview", "publisher": "Field engineering journal", "url": "https://example.org/meridian-operator", "date": "2025-06-18" },
+    { "id": "s4", "title": "Series B financing filing", "publisher": "State securities registry", "url": "https://example.org/meridian-seriesb", "date": "2024-11-20" },
+    { "id": "s5", "title": "Production-line audit summary", "publisher": "Manufacturing standards board", "url": "https://example.org/meridian-prod", "date": "2025-04-09" }
+  ],
+  "claims": [
+    { "id": "c1", "field": "competed_awards", "statement": "Won a competed program of record against three named bidders.", "evidenceClass": "confirmed", "confidence": 0.9, "sourceIds": ["s1"] },
+    { "id": "c2", "field": "performance_baseline", "statement": "Independently measured 32% over the stated baseline at a national test range.", "evidenceClass": "confirmed", "confidence": 0.85, "sourceIds": ["s2"] },
+    { "id": "c3", "field": "named_customer", "statement": "Named operational customer reports repeated competitive use.", "evidenceClass": "reported", "confidence": 0.8, "sourceIds": ["s3"] },
+    { "id": "c4", "field": "independent_verification", "statement": "Third-party test range verified results.", "evidenceClass": "confirmed", "confidence": 0.85, "sourceIds": ["s2"] },
+    { "id": "c5", "field": "capital_raised", "statement": "Series B of $40M disclosed in registry filing.", "evidenceClass": "confirmed", "confidence": 0.95, "sourceIds": ["s4"] },
+    { "id": "c6", "field": "production_status", "statement": "Production line passed an external manufacturing audit.", "evidenceClass": "reported", "confidence": 0.75, "sourceIds": ["s5"] }
+  ],
+  "seams": [
+    { "id": "capital_to_contract_gap", "state": "not_triggered", "reason": "Competed awards scale with the raise.", "sourceIds": ["s1", "s4"] },
+    { "id": "tense_of_proof", "state": "not_triggered", "reason": "Named, dated, competed award in hand.", "sourceIds": ["s1"] },
+    { "id": "metric_substitution", "state": "not_triggered", "reason": "Leads with measured performance against a baseline.", "sourceIds": ["s2"] },
+    { "id": "independent_customer", "state": "not_triggered", "reason": "Competed program of record plus a returning operator.", "sourceIds": ["s1", "s3"] },
+    { "id": "removal_test_capability", "state": "not_triggered", "reason": "A working system with verified results survives removal of the narrative.", "sourceIds": ["s2", "s3"] },
+    { "id": "ownership_of_seams", "state": "not_applicable", "reason": "Customer owns workflows and records; no private operating-layer lock.", "sourceIds": ["s1"] }
+  ],
+  "contamination": {
+    "bucket": "clean",
+    "components": [
+      { "key": "independent_demand_inverse", "present": false, "reason": "Competed external contract value is healthy against cumulative capital.", "sourceIds": ["s1", "s4"] },
+      { "key": "validator_circularity", "present": false, "reason": "Validation came from an independent national test range, not a funded ranking.", "sourceIds": ["s2"] }
+    ]
+  },
+  "verdictNotes": {
+    "state": "A_capability_with_proof",
+    "loop": "closed",
+    "rationale": "Competed program of record, independently verified performance, and a named returning operator. Ignore the hype where present and read the contracts: they hold.",
+    "largestGap": "Production scale-up beyond the audited pilot line is not yet proven.",
+    "tenseOfProof": "Past — awards and tests are dated and in hand.",
+    "whatWouldClearIt": "Already substantially cleared; a second competed award at scale would close the remaining loop.",
+    "rootsBeliefSupplier": "Independent test range and operational customer.",
+    "rootsValueRetainer": "Customer retains workflows, records, and reproducibility.",
+    "nextPulls": ["Second competed award docket", "12-month sustainment metrics", "Production capacity audit at full rate"]
+  }
+}

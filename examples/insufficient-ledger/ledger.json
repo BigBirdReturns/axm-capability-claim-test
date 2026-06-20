@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "objectType": "product_company",
+  "targetName": "Halcyon Edge Compute (illustrative)",
+  "context": "Synthetic example. Demonstrates that the instrument can REFUSE TO VERDICT: fewer than three sourced load-bearing fields blocks the verdict panel and returns only object type, route, known evidence, missing fields, and a neutral pull-list.",
+  "sources": [
+    { "id": "s1", "title": "Seed announcement blog post", "publisher": "Company blog", "url": "https://example.org/halcyon-seed", "date": "2025-04-01" }
+  ],
+  "claims": [
+    { "id": "c1", "field": "capital_raised", "statement": "Seed round announced; amount disclosed in company blog post.", "evidenceClass": "reported", "confidence": 0.7, "sourceIds": ["s1"] },
+    { "id": "c2", "field": "valuation", "statement": "No sourced valuation.", "evidenceClass": "open", "confidence": 0.2, "sourceIds": [] },
+    { "id": "c3", "field": "competed_awards", "statement": "No competed awards located in the public record yet.", "evidenceClass": "open", "confidence": 0.1, "sourceIds": [] },
+    { "id": "c4", "field": "named_customer", "statement": "Customer named in marketing but not independently sourced.", "evidenceClass": "open", "confidence": 0.3, "sourceIds": [] },
+    { "id": "c5", "field": "performance_baseline", "statement": "No performance baseline disclosed.", "evidenceClass": "open", "confidence": 0.1, "sourceIds": [] }
+  ]
+}
