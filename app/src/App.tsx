@@ -3,6 +3,7 @@ import type { Ledger } from "./types/audit";
 import { EXAMPLES } from "./data/exampleLedgers";
 import { buildReport } from "./lib/renderReport";
 import { ObjectGate } from "./components/ObjectGate";
+import { HelpPanel } from "./components/HelpPanel";
 import { SourceLedgerForm } from "./components/SourceLedgerForm";
 import { SourcingGatePanel } from "./components/SourcingGatePanel";
 import { NeutralPromptPanel } from "./components/NeutralPromptPanel";
@@ -27,6 +28,9 @@ type Mode = "manual" | "llm" | "import";
 export default function App() {
   const [ledger, setLedger] = useState<Ledger | null>(null);
   const [mode, setMode] = useState<Mode>("manual");
+  // Help opens by default so a first-time user is never stranded; the "?"
+  // toggle keeps it reachable mid-audit.
+  const [showHelp, setShowHelp] = useState(true);
 
   const report = useMemo(() => (ledger ? buildReport(ledger) : null), [ledger]);
 
@@ -38,7 +42,17 @@ export default function App() {
   return (
     <div className="app">
       <header className="masthead">
-        <h1>Capability Claim Test</h1>
+        <div className="masthead-row">
+          <h1>Capability Claim Test</h1>
+          <button
+            type="button"
+            className="help-toggle"
+            aria-label="How to use this"
+            onClick={() => setShowHelp((v) => !v)}
+          >
+            {showHelp ? "Hide help" : "? How to use"}
+          </button>
+        </div>
         <p className="tagline">
           Bring your own sources. Bring your own model. The method enforces the
           ledger.
@@ -48,6 +62,8 @@ export default function App() {
           It enforces the method.
         </p>
       </header>
+
+      {showHelp && <HelpPanel onClose={() => setShowHelp(false)} />}
 
       <section className="launch">
         <button type="button" className="primary" onClick={startNew}>
@@ -70,27 +86,17 @@ export default function App() {
 
       {!ledger && (
         <section className="panel intro">
-          <h2>Four-layer workflow</h2>
-          <ol>
-            <li>
-              <strong>Retrieval.</strong> Neutral, mechanical, object-scoped.
-            </li>
-            <li>
-              <strong>Ledger.</strong> Claim / source / evidence class /
-              confidence.
-            </li>
-            <li>
-              <strong>Analysis.</strong> Object gate, sourcing gate,
-              contamination bucket, verdict.
-            </li>
-            <li>
-              <strong>Publication.</strong> Remove unsupported intent, preserve
-              sourced structure.
-            </li>
-          </ol>
+          <h2>New here? Start with an example.</h2>
+          <p>
+            Click <strong>Load Example: Circular / Unproven</strong> above to see
+            the whole tool in one shot — a verdict, a contamination bucket, and
+            sourced reasons. Then try <strong>Start New Audit</strong> to run your
+            own.
+          </p>
           <p className="muted">
-            Load an example to see the instrument acquit, classify, or refuse to
-            verdict.
+            The walkthrough up top (<strong>? How to use</strong>) explains every
+            step. The tool can acquit, classify, or refuse to verdict — the
+            examples show each.
           </p>
         </section>
       )}
