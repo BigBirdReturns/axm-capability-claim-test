@@ -181,7 +181,8 @@ export type VerdictState =
   | "A_capability_with_proof"
   | "B_ahead_of_proof"
   | "C_costume_or_proof_substitution"
-  | "unclassifiable"
+  | "unclassifiable" // method ran; genuinely ambiguous
+  | "not_supplied" // analysis layer not filled in; no verdict exists yet
   | "not_applicable";
 
 export type Loop = "open" | "closed";

@@ -5,6 +5,7 @@ const VERDICT_LABELS: Record<Verdict["state"], string> = {
   B_ahead_of_proof: "B — ahead of proof",
   C_costume_or_proof_substitution: "C — costume / proof substitution",
   unclassifiable: "Unclassifiable",
+  not_supplied: "Analysis not supplied",
   not_applicable: "Not applicable",
 };
 
