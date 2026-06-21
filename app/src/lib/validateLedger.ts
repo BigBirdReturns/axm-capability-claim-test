@@ -56,6 +56,7 @@ const verdictState = z.enum([
   "B_ahead_of_proof",
   "C_costume_or_proof_substitution",
   "unclassifiable",
+  "not_supplied",
   "not_applicable",
 ]);
 

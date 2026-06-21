@@ -22,35 +22,43 @@ export function runContaminationBucket(ledger: Ledger): ContaminationResult {
     const reason = fromLedger?.reason?.trim() ?? "";
     const sourceIds = fromLedger?.sourceIds ?? [];
     // A component only counts when it is present AND has a source-backed reason.
+    // An author-supplied internalScore is honored ONLY when source-backed — an
+    // unsourced component scores 0 and cannot move the bucket. This is the
+    // bare-assertion guard the doctrine requires.
     const sourceBacked = present && reason.length > 0 && sourceIds.length > 0;
     return {
       key: def.key,
       label: def.label,
       reason: reason || "No sourced finding on this component.",
       sourceIds,
-      internalScore:
-        fromLedger?.internalScore ?? (sourceBacked ? 100 : present ? 50 : 0),
+      internalScore: sourceBacked ? (fromLedger?.internalScore ?? 100) : 0,
       present: sourceBacked,
     };
   });
 
-  // If the ledger supplied an explicit bucket, honor it (the analysis layer
-  // already read the cell). Otherwise derive from source-backed components.
+  // Only source-backed components are ever considered. present === sourceBacked.
+  const sourceBackedComponents = components.filter((c) => c.present);
+
   let bucket: ContaminationBucket;
   if (annotation?.bucket) {
-    bucket = annotation.bucket;
-  } else {
-    const considered = components.filter(
-      (c) => c.present || (c.internalScore ?? 0) > 0,
-    );
-    if (considered.length === 0) {
+    // An explicit bucket may be honored, but a bucket that ASSERTS contamination
+    // (mixed/circular) still requires at least one source-backed component —
+    // otherwise it is a bare number wearing a bucket's clothes. Downgrade to
+    // insufficient_data rather than print an unsourced assertion.
+    const assertsContamination =
+      annotation.bucket === "mixed" || annotation.bucket === "circular";
+    if (assertsContamination && sourceBackedComponents.length === 0) {
       bucket = "insufficient_data";
     } else {
-      const avg =
-        considered.reduce((sum, c) => sum + (c.internalScore ?? 0), 0) /
-        considered.length;
-      bucket = avg >= 75 ? "circular" : avg >= 25 ? "mixed" : "clean";
+      bucket = annotation.bucket;
     }
+  } else if (sourceBackedComponents.length === 0) {
+    bucket = "insufficient_data";
+  } else {
+    const avg =
+      sourceBackedComponents.reduce((sum, c) => sum + (c.internalScore ?? 0), 0) /
+      sourceBackedComponents.length;
+    bucket = avg >= 75 ? "circular" : avg >= 25 ? "mixed" : "clean";
   }
 
   return { bucket, components };

@@ -14,6 +14,7 @@ const VERDICT_LABELS: Record<Verdict["state"], string> = {
   B_ahead_of_proof: "B — ahead of proof",
   C_costume_or_proof_substitution: "C — costume / proof substitution",
   unclassifiable: "Unclassifiable",
+  not_supplied: "Analysis not supplied",
   not_applicable: "Not applicable",
 };
 
@@ -55,8 +56,12 @@ export function buildReport(ledger: Ledger): Report {
 
 function buildVerdict(ledger: Ledger): Verdict {
   const v = ledger.verdictNotes;
+  // No verdictNotes at all => the analysis layer was never run (not_supplied).
+  // verdictNotes present but no state => the author engaged but left it open
+  // (unclassifiable). These are different facts and get different tokens.
+  const state: Verdict["state"] = v ? (v.state ?? "unclassifiable") : "not_supplied";
   return {
-    state: v?.state ?? "unclassifiable",
+    state,
     loop: v?.loop ?? "open",
     rationale:
       v?.rationale ??
