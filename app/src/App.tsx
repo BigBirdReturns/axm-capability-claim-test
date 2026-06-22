@@ -386,7 +386,8 @@ function LedgerStage({ ledger, report, setLedger, flash }: WBProps) {
             <div className="micro" style={{ marginBottom: 3 }}>Load-bearing fields</div>
             <div style={{ fontSize: 14, color: "var(--ink-2)" }}>
               A field counts only when it cites a source <em style={{ color: "var(--muted)", fontStyle: "normal" }}>and</em> isn't{" "}
-              <code style={{ fontFamily: "var(--mono)", color: "var(--block)" }}>open</code>.
+              <code style={{ fontFamily: "var(--mono)", color: "var(--block)" }}>open</code> or{" "}
+              <code style={{ fontFamily: "var(--mono)", color: "var(--block)" }}>judgment</code>.
             </div>
           </div>
           <div className="lh-meta"><b>{report.sourcingGate.sourcedCount}</b> sourced</div>

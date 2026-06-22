@@ -37,7 +37,7 @@ describe("sourcing gate", () => {
     sourceIds: ["s1"],
   });
 
-  it("counts a field sourced only when cited and not open", () => {
+  it("counts a field sourced only when cited and externally evidenced", () => {
     const r = runSourcingGate(
       ledger({
         sources: [{ id: "s1", title: "src" }],
@@ -61,6 +61,35 @@ describe("sourcing gate", () => {
     );
     expect(r.sourcedCount).toBe(3);
     expect(r.passed).toBe(true);
+  });
+
+  it("counts confirmed, reported, and derived claims as external sourced evidence", () => {
+    const r = runSourcingGate(
+      ledger({
+        sources: [{ id: "s1", title: "src" }],
+        claims: [
+          { ...sourced("capital_raised"), evidenceClass: "confirmed" },
+          { ...sourced("valuation"), evidenceClass: "reported" },
+          { ...sourced("named_customer"), evidenceClass: "derived" },
+        ],
+      }),
+    );
+    expect(r.sourcedCount).toBe(3);
+    expect(r.passed).toBe(true);
+  });
+
+  it("does not let judgment-class claims unlock the verdict", () => {
+    const r = runSourcingGate(
+      ledger({
+        sources: [{ id: "s1", title: "src" }],
+        claims: ["capital_raised", "valuation", "named_customer"].map((field) => ({
+          ...sourced(field),
+          evidenceClass: "judgment" as const,
+        })),
+      }),
+    );
+    expect(r.sourcedCount).toBe(0);
+    expect(r.passed).toBe(false);
   });
 
   it("uses allocator fields for an allocator, not product fields", () => {

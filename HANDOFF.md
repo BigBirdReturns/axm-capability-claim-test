@@ -45,9 +45,11 @@ three sourced fields → read contamination bucket + verdict → export md/json/
 1. **Object gate** (`runObjectGate`) — routes by object type *before* any seams
    render. A capital allocator cannot be pushed through the product instrument.
 2. **Sourcing gate** (`runSourcingGate`) — the stop rule. A claim is "sourced"
-   iff it cites ≥1 source AND its evidence class is not `open`. Below **three**
-   sourced load-bearing fields, the verdict is blocked and a neutral pull-list
-   is returned instead.
+   iff it cites ≥1 source AND its evidence class is external (`confirmed`,
+   `reported`, or `derived`). `judgment` remains in the ledger as analyst
+   interpretation, but it does **not** unlock the verdict. Below **three** sourced
+   load-bearing fields, the verdict is blocked and a neutral pull-list is
+   returned instead.
 3. **Seams** (`runSeams`) — formal states `triggered` / `not_triggered` /
    `unclear` / `not_applicable`. `not_applicable` is **never** counted as weak
    signal.
@@ -128,6 +130,8 @@ cream/brick-red look). Specifically:
 - **zod** for all schema validation; the ledger schema is the mating surface.
 - **vitest** + `npm run check` as the CI gate. New logic ships with tests.
 - Double quotes; dense "why not what" comments.
+- `judgment` evidence is analysis, not external proof; keep it visible, but do
+  not count it toward the sourcing threshold.
 - Contamination is **always** a bucket with sourced reasons — never a bare score.
 - The gates are **sequenced and structural**, not warning banners. Keep the
   object gate before seams and the sourcing gate before the verdict.

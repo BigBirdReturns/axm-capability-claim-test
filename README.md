@@ -36,13 +36,19 @@ To run your own, click **Start a blank audit**, then:
 2. In the **ledger** stage, type a claim per **load-bearing field** and toggle its
    **evidence class** (`confirmed` / `reported` / `derived` / `judgment` / `open`)
    and **cite a source**. Watch the gate meter in the rail respond live. A field
-   only counts when it cites a source and isn't `open`.
+   only counts when it cites a source and uses an external evidence class
+   (`confirmed`, `reported`, or `derived`). `judgment` is preserved, but does not
+   unlock the verdict.
 3. The **sourcing gate** unlocks the verdict once **three** fields are sourced.
    Below that you get the pull-list instead — by design.
 4. Read the **contamination bucket** (clean / mixed / circular) with its sourced
    reasons, and the **verdict card** with its "what would clear it" line.
 5. **Export** `report.md`, `report.json`, or `source-ledger.csv` — all generated
    locally in your browser.
+
+Need the ledger shape? Start with [`docs/ledger-authoring.md`](docs/ledger-authoring.md)
+for minimal, passing, and failing ledgers, source-ID rules, and the evidence-class
+decision table.
 
 Prefer to drive it from a model? The ledger stage has a **Bring your own model**
 panel (copy the neutral retrieval prompt, paste a ledger back), or use the MCP
@@ -112,8 +118,10 @@ schema-valid ledger JSON. No runtime.
 - **Object gate** routes you before any seams render — a capital allocator can
   never be forced through the product-company instrument.
 - **Sourcing gate** blocks the verdict until **three load-bearing fields are
-  sourced**. Below that, the only output is object type, route, known evidence,
-  missing fields, and a copyable neutral pull-list.
+  sourced** by external evidence (`confirmed`, `reported`, or `derived` with a
+  real source). `judgment` and `open` claims do not unlock the verdict. Below
+  threshold, the only output is object type, route, known evidence, missing
+  fields, and a copyable neutral pull-list.
 - **Contamination** renders as a **bucket with source-backed component reasons,
   never a bare number**.
 - Every verdict carries its **falsification line** — what would clear it — or it
@@ -141,6 +149,34 @@ claim, and to prove it can **acquit, classify, or refuse to verdict**:
 
 See [`docs/regression-suite.md`](docs/regression-suite.md) for the three trap
 columns (deference, innuendo, scope) and the loaded-request sanitization test.
+
+## Limitations
+
+- **Not a fact-finder.** The app does not retrieve facts, verify source
+  authenticity, or decide what happened in the world. It only evaluates the
+  ledger you provide.
+- **Not legal or wrongdoing analysis.** Output is a structural assessment. A
+  contamination bucket means proof-dependency or circularity, not misconduct.
+- **Three fields is a floor, not proof.** Passing the sourcing gate unlocks the
+  analysis layer; it does not prove the underlying capability.
+- **Ledger quality controls output quality.** Weak statements, missing dates,
+  placeholder citations, or over-upgraded evidence classes produce weak reports.
+- **Public structural scope only.** Retrieval is scoped to public capacities and
+  public structural records; do not use the method to assemble private dossiers.
+- **Examples are illustrative.** The worked examples are synthetic regression
+  locks for acquit / classify / refuse behavior, not real diligence files.
+
+## Privacy
+
+- **Static browser app:** no backend, no server-held API keys, and no telemetry in
+  the public demo.
+- **In-memory state:** audits live in React state while the page is open. The app
+  does not write audits to `localStorage`, `sessionStorage`, or IndexedDB.
+- **Local exports:** `report.md`, `report.json`, and `source-ledger.csv` are
+  generated in your browser and downloaded locally.
+- **Bring your own model means bring your own exposure:** if you paste prompts or
+  ledgers into an external model or connect the MCP server to a client, that
+  provider/client's data policy governs that interaction.
 
 ## Run locally
 
