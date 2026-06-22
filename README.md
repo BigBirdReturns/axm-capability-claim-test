@@ -73,6 +73,8 @@ named public nodes.
   in the model of your choice and paste the ledger JSON back.
 - **Adapter** — a developer wires a provider that fills the same ledger schema
   (`app/src/lib/adapters/`). The public demo never executes paid model calls.
+  See **[`docs/adapter-developer-guide.md`](docs/adapter-developer-guide.md)** for
+  the contract, a provider skeleton, and the security checklist.
 
 ## Call it from your own AI
 

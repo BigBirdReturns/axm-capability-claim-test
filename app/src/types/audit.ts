@@ -44,9 +44,10 @@ export interface Claim {
   // 0..1 analyst confidence. Internal only; never travels as a verdict.
   confidence?: number;
   // Source ids backing this claim. A claim counts as "sourced" toward the
-  // sourcing gate iff it cites at least one resolving source AND its evidence
-  // class is external — i.e. not "open" and not "judgment" (the analyst's own
-  // call, which is recorded but never unlocks a verdict on its own).
+  // sourcing gate iff it cites at least one usable, resolving source AND its
+  // evidence class is one of the external classes (confirmed / reported /
+  // derived). "judgment" is preserved in the ledger as analyst interpretation,
+  // but never unlocks a verdict on its own.
   sourceIds: string[];
   notes?: string;
 }

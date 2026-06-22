@@ -99,6 +99,48 @@ describe("sourcing gate", () => {
     expect(r.passed).toBe(true);
   });
 
+  // The allowlist must fail closed: an unknown / misspelled evidence class
+  // arriving from a door that skipped validateLedger must NOT count, even with a
+  // real source. (Cast through unknown because the type system forbids the typo.)
+  it("does not count an unknown evidence class even with a real source", () => {
+    const r = runSourcingGate(
+      ledger({
+        sources: [{ id: "s1", title: "src" }],
+        claims: [
+          { id: "a", field: "capital_raised", statement: "x", evidenceClass: "confimed" as unknown as "confirmed", sourceIds: ["s1"] },
+          { id: "b", field: "valuation", statement: "x", evidenceClass: "totally_made_up" as unknown as "confirmed", sourceIds: ["s1"] },
+          { id: "c", field: "named_customer", statement: "x", evidenceClass: "reported", sourceIds: ["s1"] },
+        ],
+      }),
+    );
+    expect(r.sourcedCount).toBe(1);
+    expect(r.passed).toBe(false);
+  });
+
+  // A blank draft source (no details) does not resolve, so a claim citing only
+  // it is not sourced. Editing in a title flips it to sourced.
+  it("does not count a claim whose only source is a blank draft", () => {
+    const blank = runSourcingGate(
+      ledger({
+        sources: [{ id: "u1", title: "" }],
+        claims: [
+          { id: "a", field: "capital_raised", statement: "x", evidenceClass: "confirmed", sourceIds: ["u1"] },
+        ],
+      }),
+    );
+    expect(blank.sourcedCount).toBe(0);
+
+    const filled = runSourcingGate(
+      ledger({
+        sources: [{ id: "u1", title: "A real title" }],
+        claims: [
+          { id: "a", field: "capital_raised", statement: "x", evidenceClass: "confirmed", sourceIds: ["u1"] },
+        ],
+      }),
+    );
+    expect(filled.sourcedCount).toBe(1);
+  });
+
   it("uses allocator fields for an allocator, not product fields", () => {
     const r = runSourcingGate(
       ledger({

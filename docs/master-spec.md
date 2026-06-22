@@ -64,7 +64,9 @@ claim, and to prove it can **acquit, classify, or refuse to verdict**. See
 ## Enforced-in-code rules
 
 - The sourcing gate blocks the verdict panel until three load-bearing fields
-  are sourced; before that, output is object type, route, known evidence,
+  are sourced by external evidence (`confirmed`, `reported`, or `derived`) with
+  non-blank source records; `judgment` is preserved as analysis but does not
+  unlock the gate. Before that, output is object type, route, known evidence,
   missing fields, and a copyable neutral pull-list.
 - Contamination renders as a bucket with source-backed component reasons,
   never as a bare number.

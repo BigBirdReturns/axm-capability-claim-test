@@ -70,11 +70,12 @@ classes. Never upgrade a claim beyond its source.
 **Why `judgment` does not count.** The sourcing gate exists to require external
 anchoring before any verdict. `judgment` is the analyst's own call, so three
 judgments are not three sources — letting them unlock a verdict would let an
-analyst freehand straight past the gate. A judgment claim is still recorded and
-shown as known evidence (and it's the right home for genuine interpretation);
-it just can't be one of the three fields that opens the verdict. If a judgment
-is actually backed by an external record, classify it by that record
-(`reported`/`derived`), not as `judgment`.
+analyst freehand straight past the gate. A judgment claim is still preserved in
+the ledger and the CSV export (and it's the right home for genuine
+interpretation); it just isn't counted as external evidence and can't be one of
+the three fields that opens the verdict. If a judgment is actually backed by an
+external record, classify it by that record (`reported`/`derived`), not as
+`judgment`.
 
 Picking between the external classes, in practice:
 
@@ -90,9 +91,12 @@ Picking between the external classes, in practice:
 ## 4. The sourcing gate, concretely
 
 A **load-bearing field counts as sourced** when at least one of its claims is an
-external class (`confirmed`/`reported`/`derived`) **and** cites a resolving
-source. Notes:
+external class (`confirmed`/`reported`/`derived`) **and** cites a resolving,
+**non-blank** source. Notes:
 
+- **Blank draft sources don't count.** The editor lets you add an empty source
+  row, but until it carries at least one detail (title, URL, publisher, or date)
+  it resolves to nothing and can't satisfy the gate.
 - **One field counts once.** Three sourced claims on a single field is still one
   sourced field — you can't stack one field to reach the threshold of three.
 - **Any sourced claim wins** for that field, regardless of order; the reported

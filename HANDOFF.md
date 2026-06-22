@@ -134,8 +134,11 @@ cream/brick-red look). Specifically:
 - **Only external evidence classes count toward the sourcing gate** —
   `confirmed` / `reported` / `derived`. `open` and `judgment` never do
   (`judgment` is the analyst's own call; three judgments are not three sources).
-  This is a deliberate doctrine call; see `NON_SOURCING_CLASSES` in
-  `runSourcingGate.ts` and the evidence-class table in `docs/ledger-authoring.md`.
+  This is enforced as an **allowlist** (`SOURCING_CLASSES` in
+  `runSourcingGate.ts`), not a blacklist, so an unknown/misspelled class from a
+  door that skipped `validateLedger` fails closed. Sources must also be
+  **usable** (`isUsableSource`): a blank draft row never satisfies the gate. See
+  the evidence-class table in `docs/ledger-authoring.md`.
 - The retired internal codename stays retired.
 
 ## 8. Open work (prioritized)

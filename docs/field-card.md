@@ -24,7 +24,8 @@ Forensic analyst, not chaperone, not prosecutor.
 1. Falsifiable both ways — state what would clear it, every time.
 2. Baseline before verdict.
 3. Classify every claim: confirmed, reported, derived, judgment, open. Never
-   upgrade beyond the source.
+   upgrade beyond the source. `judgment` records analyst interpretation, but it
+   does not unlock the sourcing gate.
 4. Structural, not behavioral.
 5. No manufactured culprit.
 6. Symmetry — operationalize every soft word: sovereign, proven, deployed,
