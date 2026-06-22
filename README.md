@@ -36,7 +36,12 @@ To run your own, click **Start a blank audit**, then:
 2. In the **ledger** stage, type a claim per **load-bearing field** and toggle its
    **evidence class** (`confirmed` / `reported` / `derived` / `judgment` / `open`)
    and **cite a source**. Watch the gate meter in the rail respond live. A field
-   only counts when it cites a source and isn't `open`.
+   only counts toward the gate when it cites a source and its class is *external*
+   — `confirmed`, `reported`, or `derived`. `open` is unsourced; `judgment` is
+   your own interpretive call, recorded but never enough to unlock a verdict.
+   See **[`docs/ledger-authoring.md`](docs/ledger-authoring.md)** for the
+   evidence-class decision table and copyable minimal / passing / failing
+   ledgers.
 3. The **sourcing gate** unlocks the verdict once **three** fields are sourced.
    Below that you get the pull-list instead — by design.
 4. Read the **contamination bucket** (clean / mixed / circular) with its sourced
@@ -141,6 +146,47 @@ claim, and to prove it can **acquit, classify, or refuse to verdict**:
 
 See [`docs/regression-suite.md`](docs/regression-suite.md) for the three trap
 columns (deference, innuendo, scope) and the loaded-request sanitization test.
+
+## Limitations (what it does *not* do)
+
+Read this before trusting an output. The tool is a method, not an oracle:
+
+- **It does not find facts.** It retrieves nothing on its own. Every fact comes
+  from you or a model you run; the page only structures and gates what it's given.
+- **It does not verify sources.** It checks that a cited source *id resolves*
+  inside your ledger — not that the source is real, authentic, or says what the
+  claim says. Garbage sources in, gated garbage out.
+- **It is not an allegation of wrongdoing.** "Contamination" means **structural
+  dependency / circularity in the proof or validation** — e.g. a company's
+  validators are funded by its own backers — **not** fraud, illegality, or moral
+  judgment. A `circular` bucket is a statement about proof structure, full stop.
+- **It does not establish legal conclusions.** No output is a finding of fact,
+  liability, or criminal conduct.
+- **Three sourced fields is a procedural floor, not proof of truth.** Passing the
+  sourcing gate means you have enough *externally anchored* fields to attempt a
+  classification — not that the claim is true.
+- **Output quality tracks ledger quality.** A lazily built ledger (weak sources,
+  inflated evidence classes, placeholder citations) yields a confident-looking
+  report that isn't earned. See [`docs/ledger-authoring.md`](docs/ledger-authoring.md).
+- **Scope is the public, structural record.** It is not built for private-life
+  dossiers on individuals; loaded "find the dirt on X" requests are rewritten
+  into neutral, object-scoped retrieval, never into a private profile.
+- **The worked examples are synthetic** regression fixtures, not real diligence.
+
+## Privacy & data handling
+
+- **No backend, no API keys, no telemetry in the page.** The static app holds no
+  secrets and calls no server of ours. The method runs entirely in your browser.
+- **State is in-memory only.** The ledger lives in React state for the session;
+  nothing is written to `localStorage` or sent anywhere. Reloading the tab
+  discards it — export if you want to keep it.
+- **Exports are generated locally.** `report.md`, `report.json`, and
+  `source-ledger.csv` are produced by in-browser code and downloaded directly;
+  they never transit a server.
+- **Your own model is your own exposure.** If you use the LLM-assisted or adapter
+  path, whatever you send to that provider is governed by *their* terms — the
+  neutral retrieval prompt and any evidence you paste leave your machine for that
+  model. The MCP server runs locally and makes no model calls itself.
 
 ## Run locally
 

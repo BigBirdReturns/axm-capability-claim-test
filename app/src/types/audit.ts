@@ -43,8 +43,10 @@ export interface Claim {
   evidenceClass: EvidenceClass;
   // 0..1 analyst confidence. Internal only; never travels as a verdict.
   confidence?: number;
-  // Source ids backing this claim. A claim is "sourced" iff it cites at least
-  // one source AND its evidence class is not "open".
+  // Source ids backing this claim. A claim counts as "sourced" toward the
+  // sourcing gate iff it cites at least one resolving source AND its evidence
+  // class is external — i.e. not "open" and not "judgment" (the analyst's own
+  // call, which is recorded but never unlocks a verdict on its own).
   sourceIds: string[];
   notes?: string;
 }

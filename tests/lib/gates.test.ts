@@ -65,6 +65,40 @@ describe("sourcing gate", () => {
     expect(r.passed).toBe(true);
   });
 
+  // Doctrine: "judgment" is the analyst's own interpretive call, not external
+  // evidence. A cited judgment claim is NOT sourced and three of them cannot
+  // unlock a verdict — otherwise the gate is freehand-able.
+  it("does not count a cited judgment claim toward the threshold", () => {
+    const r = runSourcingGate(
+      ledger({
+        sources: [{ id: "s1", title: "src" }],
+        claims: [
+          { id: "j1", field: "capital_raised", statement: "x", evidenceClass: "judgment", sourceIds: ["s1"] },
+          { id: "j2", field: "valuation", statement: "x", evidenceClass: "judgment", sourceIds: ["s1"] },
+          { id: "j3", field: "named_customer", statement: "x", evidenceClass: "judgment", sourceIds: ["s1"] },
+        ],
+      }),
+    );
+    expect(r.sourcedCount).toBe(0);
+    expect(r.passed).toBe(false);
+  });
+
+  // The external classes (confirmed / reported / derived) still count.
+  it("counts confirmed, reported, and derived claims toward the threshold", () => {
+    const r = runSourcingGate(
+      ledger({
+        sources: [{ id: "s1", title: "src" }],
+        claims: [
+          { id: "a", field: "capital_raised", statement: "x", evidenceClass: "confirmed", sourceIds: ["s1"] },
+          { id: "b", field: "valuation", statement: "x", evidenceClass: "reported", sourceIds: ["s1"] },
+          { id: "c", field: "named_customer", statement: "x", evidenceClass: "derived", sourceIds: ["s1"] },
+        ],
+      }),
+    );
+    expect(r.sourcedCount).toBe(3);
+    expect(r.passed).toBe(true);
+  });
+
   it("uses allocator fields for an allocator, not product fields", () => {
     const r = runSourcingGate(
       ledger({

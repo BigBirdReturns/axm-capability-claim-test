@@ -131,6 +131,11 @@ cream/brick-red look). Specifically:
 - Contamination is **always** a bucket with sourced reasons — never a bare score.
 - The gates are **sequenced and structural**, not warning banners. Keep the
   object gate before seams and the sourcing gate before the verdict.
+- **Only external evidence classes count toward the sourcing gate** —
+  `confirmed` / `reported` / `derived`. `open` and `judgment` never do
+  (`judgment` is the analyst's own call; three judgments are not three sources).
+  This is a deliberate doctrine call; see `NON_SOURCING_CLASSES` in
+  `runSourcingGate.ts` and the evidence-class table in `docs/ledger-authoring.md`.
 - The retired internal codename stays retired.
 
 ## 8. Open work (prioritized)
