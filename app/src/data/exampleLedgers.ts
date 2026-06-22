@@ -14,6 +14,9 @@ export type ExampleKey =
 export interface ExampleDef {
   key: ExampleKey;
   buttonLabel: string;
+  name: string;
+  behavior: string;
+  verdictTag: string;
   blurb: string;
   ledger: Ledger;
 }
@@ -31,26 +34,38 @@ function load(raw: unknown, name: string): Ledger {
 export const EXAMPLES: ExampleDef[] = [
   {
     key: "cleared",
+    name: "Cleared Capability",
     buttonLabel: "Load Example: Cleared Capability",
-    blurb: "Acquit — A / Clean. Operating proof present, validation arms-length.",
+    behavior: "Acquit",
+    verdictTag: "A / Clean",
+    blurb: "A company with real proof. The tool acquits it.",
     ledger: load(clearedRaw, "cleared-capability"),
   },
   {
     key: "circular",
+    name: "Circular / Unproven",
     buttonLabel: "Load Example: Circular / Unproven",
-    blurb: "Classify — C / Circular. Survivability proof substituting for operating proof.",
+    behavior: "Classify",
+    verdictTag: "C / Circular",
+    blurb: "Legitimacy manufactured by its own backers. The tool classifies it — every reason sourced.",
     ledger: load(circularRaw, "circular-unproven"),
   },
   {
     key: "insufficient",
+    name: "Insufficient Ledger",
     buttonLabel: "Load Example: Insufficient Ledger",
-    blurb: "Refuse to verdict — fewer than three sourced fields. Pull-list only.",
+    behavior: "Refuse to verdict",
+    verdictTag: "Pull-list only",
+    blurb: "Too little is sourced. The tool refuses to verdict and hands back what to go find.",
     ledger: load(insufficientRaw, "insufficient-ledger"),
   },
   {
     key: "allocator_insufficient",
+    name: "Capital Allocator",
     buttonLabel: "Load Example: Capital Allocator / Insufficient Attribution Ledger",
-    blurb: "Allocator route — attribution fields, not product seams. Pull-list only.",
+    behavior: "Refuse + route",
+    verdictTag: "Attribution route",
+    blurb: "A fund, routed through attribution questions — not product-company ones.",
     ledger: load(allocatorRaw, "capital-allocator-insufficient"),
   },
 ];

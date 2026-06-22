@@ -30,6 +30,16 @@ export const ALLOCATOR_LOAD_BEARING: FieldDef[] = [
 
 export const SOURCING_THRESHOLD = 3;
 
+import type { EvidenceClass } from "../types/audit";
+
+export const EVIDENCE_CLASSES: EvidenceClass[] = [
+  "confirmed",
+  "reported",
+  "derived",
+  "judgment",
+  "open",
+];
+
 export function fieldsForSet(fieldSet: "product" | "allocator" | "none"): FieldDef[] {
   if (fieldSet === "product") return PRODUCT_LOAD_BEARING;
   if (fieldSet === "allocator") return ALLOCATOR_LOAD_BEARING;

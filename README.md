@@ -14,35 +14,39 @@ The output is a **structural assessment, not an allegation of wrongdoing**.
 
 Open the live page: **https://bigbirdreturns.github.io/axm-capability-claim-test/**
 
-You'll see five buttons. Start by clicking an **example** — that's the fastest way
-to understand what the tool does:
+A left rail shows the **four-layer method** as a spine and a **live sourcing-gate
+meter**; the main column is the audit, staged Object → Ledger → Analysis →
+Report. Start by clicking a **worked-example card** — the fastest way to see what
+the tool does:
 
-- **Load Example: Cleared Capability** → a company with real proof. The tool
-  *acquits* it: verdict **A**, contamination **clean**.
-- **Load Example: Circular / Unproven** → a company whose legitimacy is
-  manufactured by its own backers. The tool *classifies* it: verdict **C**,
-  contamination **circular** — each reason sourced.
-- **Load Example: Insufficient Ledger** → too little is sourced, so the tool
-  *refuses to verdict* and hands back a **pull-list** of what to go find.
-- **Load Example: Capital Allocator…** → shows the tool routing a fund through
-  *attribution* questions, not product-company ones.
+- **Cleared Capability** → a company with real proof. The tool *acquits* it:
+  verdict **A**, contamination **clean**.
+- **Circular / Unproven** → a company whose legitimacy is manufactured by its own
+  backers. The tool *classifies* it: verdict **C**, contamination **circular** —
+  each reason sourced.
+- **Insufficient Ledger** → too little is sourced, so the tool *refuses to
+  verdict* and hands back a **pull-list** of what to go find.
+- **Capital Allocator** → the tool routing a fund through *attribution*
+  questions, not product-company ones.
 
-To run your own audit, click **Start New Audit**, then:
+To run your own, click **Start a blank audit**, then:
 
 1. Pick the **object type** (company, fund, ranking, program…). This fixes the
    route — you can't push a fund through the company instrument.
-2. Fill the **load-bearing fields** with claims, each tagged with a source and an
-   evidence class (`confirmed` / `reported` / `derived` / `judgment` / `open`).
-   A field only "counts" when it cites a source and isn't `open`.
+2. In the **ledger** stage, type a claim per **load-bearing field** and toggle its
+   **evidence class** (`confirmed` / `reported` / `derived` / `judgment` / `open`)
+   and **cite a source**. Watch the gate meter in the rail respond live. A field
+   only counts when it cites a source and isn't `open`.
 3. The **sourcing gate** unlocks the verdict once **three** fields are sourced.
    Below that you get the pull-list instead — by design.
 4. Read the **contamination bucket** (clean / mixed / circular) with its sourced
-   reasons, and the **verdict** with its "what would clear it" line.
+   reasons, and the **verdict card** with its "what would clear it" line.
 5. **Export** `report.md`, `report.json`, or `source-ledger.csv` — all generated
    locally in your browser.
 
-Prefer to drive it from a chatbot instead of the web form? See
-**[Call it from your own AI](#call-it-from-your-own-ai)** below (MCP server or skill).
+Prefer to drive it from a model? The ledger stage has a **Bring your own model**
+panel (copy the neutral retrieval prompt, paste a ledger back), or use the MCP
+server / skill — see **[Call it from your own AI](#call-it-from-your-own-ai)**.
 
 ## The four-layer workflow
 
