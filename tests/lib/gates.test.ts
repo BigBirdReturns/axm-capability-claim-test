@@ -3,6 +3,8 @@ import type { Ledger } from "../../app/src/types/audit";
 import { runObjectGate } from "../../app/src/lib/runObjectGate";
 import { runSourcingGate } from "../../app/src/lib/runSourcingGate";
 import { runContaminationBucket } from "../../app/src/lib/runContaminationBucket";
+import { runSeams, weakSignalCount } from "../../app/src/lib/runSeams";
+import type { SeamResult } from "../../app/src/types/audit";
 import { buildReport } from "../../app/src/lib/renderReport";
 
 function ledger(partial: Partial<Ledger>): Ledger {
@@ -93,6 +95,46 @@ describe("sourcing gate", () => {
       }),
     );
     expect(r.sourcedCount).toBe(0);
+  });
+
+  // §8.1 duplicate-claim airtightness: multiple claims on ONE load-bearing
+  // field cannot inflate the sourced count past 1. You cannot reach the
+  // threshold of three by stuffing three sourced claims onto a single field.
+  it("counts a field at most once no matter how many claims target it", () => {
+    const r = runSourcingGate(
+      ledger({
+        sources: [{ id: "s1", title: "src" }],
+        claims: [
+          sourced("capital_raised"),
+          { ...sourced("capital_raised"), id: "dup1" },
+          { ...sourced("capital_raised"), id: "dup2" },
+        ],
+      }),
+    );
+    expect(r.sourcedCount).toBe(1);
+    expect(r.passed).toBe(false);
+  });
+
+  // §8.1 duplicate-claim airtightness: a field is sourced if ANY of its claims
+  // is sourced, regardless of order — an unsourced claim listed first does not
+  // mask a sourced sibling.
+  it("treats a field as sourced when any claim is sourced, order-independent", () => {
+    const base = {
+      sources: [{ id: "s1", title: "src" }],
+      claims: [
+        { id: "open1", field: "capital_raised", statement: "x", evidenceClass: "open" as const, sourceIds: [] },
+        sourced("capital_raised"),
+      ],
+    };
+    const forward = runSourcingGate(ledger(base));
+    const reversed = runSourcingGate(
+      ledger({ ...base, claims: [...base.claims].reverse() }),
+    );
+    expect(forward.sourcedCount).toBe(1);
+    expect(reversed.sourcedCount).toBe(1);
+    // The reported evidence class is the sourced claim's, not the open one's.
+    expect(forward.fields.find((f) => f.field === "capital_raised")?.evidenceClass).toBe("confirmed");
+    expect(reversed.fields.find((f) => f.field === "capital_raised")?.evidenceClass).toBe("confirmed");
   });
 });
 
@@ -188,6 +230,125 @@ describe("contamination bucket", () => {
     for (const c of r.components) {
       expect(c.reason).not.toMatch(/^\d+$/);
     }
+  });
+
+  // §8.1 explicit-vs-derived disagreement: an author cannot launder sourced
+  // contamination into a clean reading. A "clean" bucket asserted over a
+  // source-backed component that derives circular yields the HARDER bucket.
+  it("does not let an explicit clean bucket override source-backed circular", () => {
+    const r = runContaminationBucket(
+      ledger({
+        contamination: {
+          bucket: "clean",
+          components: [
+            {
+              key: "cap_table_circularity",
+              present: true,
+              reason: "Consortium supplies most capital.",
+              sourceIds: ["s4"],
+              internalScore: 100,
+            },
+          ],
+        },
+      }),
+    );
+    expect(r.bucket).toBe("circular");
+  });
+
+  // §8.1: the same guard applies to an under-call of "mixed" over circular.
+  it("does not let an explicit mixed bucket soften source-backed circular", () => {
+    const r = runContaminationBucket(
+      ledger({
+        contamination: {
+          bucket: "mixed",
+          components: [
+            {
+              key: "cap_table_circularity",
+              present: true,
+              reason: "Consortium supplies most capital.",
+              sourceIds: ["s4"],
+              internalScore: 100,
+            },
+          ],
+        },
+      }),
+    );
+    expect(r.bucket).toBe("circular");
+  });
+
+  // §8.1: the guard is one-directional. An explicit bucket HARDER than the
+  // derived one is honored — an author may read contamination more severely
+  // than the average score, provided the assertion is itself source-backed.
+  it("honors an explicit circular bucket harder than the derived score", () => {
+    const r = runContaminationBucket(
+      ledger({
+        contamination: {
+          bucket: "circular",
+          components: [
+            {
+              key: "cap_table_circularity",
+              present: true,
+              reason: "One thin circular tie.",
+              sourceIds: ["s4"],
+              internalScore: 10, // derives "clean" on its own
+            },
+          ],
+        },
+      }),
+    );
+    expect(r.bucket).toBe("circular");
+  });
+
+  // §8.1: an explicit clean bucket with NO source-backed component is honored
+  // (the cleared-capability example shape) — clean is not an assertion of
+  // contamination, and there is no contradicting evidence to answer to.
+  it("honors an explicit clean bucket when no component is source-backed", () => {
+    const r = runContaminationBucket(
+      ledger({
+        contamination: {
+          bucket: "clean",
+          components: [
+            { key: "validator_circularity", present: false, reason: "Independent test range.", sourceIds: ["s2"] },
+          ],
+        },
+      }),
+    );
+    expect(r.bucket).toBe("clean");
+  });
+});
+
+describe("seam accounting", () => {
+  const seam = (state: SeamResult["state"]): SeamResult => ({
+    id: "x",
+    question: "q",
+    state,
+    reason: "r",
+    sourceIds: [],
+  });
+
+  // §8.1 not_applicable accounting: only triggered seams are weak signal.
+  // not_applicable, unclear, and not_triggered never contribute — this is the
+  // contract any future weighting must not breach.
+  it("counts only triggered seams as weak signal", () => {
+    const seams = [
+      seam("triggered"),
+      seam("not_applicable"),
+      seam("unclear"),
+      seam("not_triggered"),
+    ];
+    expect(weakSignalCount(seams)).toBe(1);
+  });
+
+  it("never counts not_applicable, even in bulk", () => {
+    const seams = Array.from({ length: 5 }, () => seam("not_applicable"));
+    expect(weakSignalCount(seams)).toBe(0);
+  });
+
+  // Un-annotated seams default to unclear (an open question), not a signal.
+  it("defaults un-annotated seams to unclear and counts no weak signal", () => {
+    const seams = runSeams(ledger({}));
+    expect(seams.every((s) => s.state === "unclear")).toBe(true);
+    expect(weakSignalCount(seams)).toBe(0);
   });
 });
 
