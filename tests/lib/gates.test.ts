@@ -133,6 +133,23 @@ describe("sourcing gate", () => {
     );
     expect(r.sourcedCount).toBe(0);
   });
+
+  it("keeps judgment and blank-source claims out of known external evidence", () => {
+    const r = buildReport(
+      ledger({
+        sources: [
+          { id: "s1", title: "src" },
+          { id: "draft", title: "" },
+        ],
+        claims: [
+          sourced("capital_raised"),
+          { id: "c_j", field: "valuation", statement: "x", evidenceClass: "judgment", sourceIds: ["s1"] },
+          { id: "c_d", field: "named_customer", statement: "x", evidenceClass: "reported", sourceIds: ["draft"] },
+        ],
+      }),
+    );
+    expect(r.knownEvidence.map((e) => e.field)).toEqual(["capital_raised"]);
+  });
 });
 
 describe("contamination bucket", () => {

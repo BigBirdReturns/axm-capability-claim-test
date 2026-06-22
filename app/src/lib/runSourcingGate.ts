@@ -9,7 +9,7 @@ import { SOURCING_THRESHOLD, fieldsForSet } from "../data/loadBearingFields";
 
 const NON_SOURCING_CLASSES = new Set<Claim["evidenceClass"]>(["open", "judgment"]);
 
-function isUsableSource(source: Ledger["sources"][number]): boolean {
+export function isUsableSource(source: Ledger["sources"][number]): boolean {
   return Boolean(
     source.title.trim() ||
       source.url?.trim() ||

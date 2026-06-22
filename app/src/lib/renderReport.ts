@@ -4,7 +4,7 @@ import type {
   Verdict,
 } from "../types/audit";
 import { runObjectGate } from "./runObjectGate";
-import { runSourcingGate } from "./runSourcingGate";
+import { isClaimSourced, isUsableSource, runSourcingGate } from "./runSourcingGate";
 import { runSeams } from "./runSeams";
 import { runContaminationBucket, BUCKET_LABELS } from "./runContaminationBucket";
 import { generateNeutralPrompt } from "./generateNeutralPrompt";
@@ -24,8 +24,9 @@ export function buildReport(ledger: Ledger): Report {
   const objectGate = runObjectGate(ledger);
   const sourcingGate = runSourcingGate(ledger);
 
+  const validSourceIds = new Set(ledger.sources.filter(isUsableSource).map((s) => s.id));
   const knownEvidence = ledger.claims
-    .filter((c) => c.evidenceClass !== "open" && c.sourceIds.length > 0)
+    .filter((c) => isClaimSourced(c, validSourceIds))
     .map((c) => ({
       field: c.field,
       statement: c.statement,

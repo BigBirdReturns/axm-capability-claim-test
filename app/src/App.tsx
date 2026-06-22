@@ -637,7 +637,7 @@ function BlockedPanels({ report, flash }: { report: Report; flash: (m: string) =
   return (
     <>
       <div className="panel">
-        <div className="micro" style={{ marginBottom: 10 }}>Known evidence (sourced so far)</div>
+        <div className="micro" style={{ marginBottom: 10 }}>Known external evidence (sourced so far)</div>
         {report.knownEvidence.length === 0 ? (
           <p className="muted">Nothing sourced yet.</p>
         ) : (
