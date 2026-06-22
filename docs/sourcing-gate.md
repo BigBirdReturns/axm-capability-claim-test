@@ -19,8 +19,8 @@ No seams, no contamination bucket, no verdict.
 ## What counts as "sourced"
 
 A claim is sourced for gate-unlocking purposes iff it **cites at least one
-source** AND its evidence class is external evidence: `confirmed`, `reported`,
-or `derived`. An `open` claim is a question, not evidence. A `judgment` claim is
+non-blank source record** AND its evidence class is external evidence:
+`confirmed`, `reported`, or `derived`. An `open` claim is a question, not evidence. A `judgment` claim is
 analyst interpretation, not external evidence, so it stays in the ledger but
 does **not** count toward the three-field threshold. One sourced external claim
 per load-bearing field counts that field as sourced.

@@ -33,7 +33,9 @@ load-bearing fields, so the app returns a neutral pull-list.
 ## Source-ID rule
 
 Every claim cites sources by ID. A claim only counts if at least one `sourceIds[]`
-entry resolves to an object in `sources[]`.
+entry resolves to a non-blank object in `sources[]`. A draft source with no title,
+URL, publisher, date, or note stays editable in the UI, but it does not unlock
+the gate.
 
 ```json
 {
@@ -57,7 +59,7 @@ entry resolves to an object in `sources[]`.
 
 A claim that cites `"ghost"` when no source has `"id": "ghost"` is not sourced.
 `validateLedger` reports that as an error, and the sourcing gate also refuses to
-count phantom citations defensively.
+count phantom or blank draft citations defensively.
 
 ## Evidence-class decision table
 

@@ -147,13 +147,14 @@ cream/brick-red look). Specifically:
      signal anywhere, including future weighting).
    - `runContaminationBucket` when annotations are **partial** (some components
      present without reasons, explicit bucket vs derived bucket disagreement).
-   - `buildReport` when `verdictNotes` is absent but the gate passes (currently
-     yields `unclassifiable` — confirm that's the intended floor).
+   - Duplicate claims on the same load-bearing field in `knownEvidence` (the
+     gate picks a sourced claim, but the evidence table still lists every
+     non-open cited claim).
 2. **Reconcile branches:** PR the feature branch into `main`; fix the Pages env
    so `main` deploys.
-3. **Optional — deeper UX:** the manual form is functional but minimal (no
-   per-claim multi-source UI, no seam/contamination editing in-form; those come
-   via Import JSON / LLM mode today).
+3. **Optional — deeper UX:** seam/contamination editing in-form. Source records
+   and per-field citations are now editable in the ledger stage; seams and
+   contamination still come via Import JSON / LLM mode today.
 4. **Optional — visual identity:** if an AXM-styled skin is ever wanted, it's a
    self-contained `styles.css` pass; intentionally not done.
 

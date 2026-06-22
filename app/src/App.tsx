@@ -5,6 +5,7 @@ import type {
   Ledger,
   ObjectType,
   Report,
+  Source,
   VerdictState,
 } from "./types/audit";
 import { OBJECT_ROUTES, OBJECT_TYPE_OPTIONS } from "./data/objectRoutes";
@@ -328,6 +329,13 @@ function ensureClaim(ledger: Ledger, field: string): { ledger: Ledger; claim: Cl
   return { ledger: { ...ledger, claims }, claim };
 }
 
+function nextSourceId(sources: Source[]): string {
+  let n = sources.length + 1;
+  const existing = new Set(sources.map((s) => s.id));
+  while (existing.has(`u${n}`)) n += 1;
+  return `u${n}`;
+}
+
 function LedgerStage({ ledger, report, setLedger, flash }: WBProps) {
   const fieldSet = OBJECT_ROUTES[ledger.objectType].fieldSet;
   const fields = fieldsForSet(fieldSet);
@@ -344,24 +352,72 @@ function LedgerStage({ ledger, report, setLedger, flash }: WBProps) {
     setLedger({ ...l, claims: l.claims.map((c) => (c.field === field ? { ...c, statement } : c)) });
   }
 
-  // Cite/uncite adds (or removes) a real source so the gate — which resolves
-  // source ids — actually counts it. A citation without a source is not sourced.
-  function toggleCite(field: string) {
+  function addSource(): string {
+    const id = nextSourceId(ledger.sources);
+    setLedger({ ...ledger, sources: [...ledger.sources, { id, title: "", url: "" }] });
+    return id;
+  }
+
+  function updateSource(id: string, patch: Partial<Source>) {
+    setLedger({
+      ...ledger,
+      sources: ledger.sources.map((s) => (s.id === id ? { ...s, ...patch } : s)),
+    });
+  }
+
+  function removeSource(id: string) {
+    setLedger({
+      ...ledger,
+      sources: ledger.sources.filter((s) => s.id !== id),
+      claims: ledger.claims.map((c) => ({
+        ...c,
+        sourceIds: c.sourceIds.filter((sid) => sid !== id),
+      })),
+    });
+  }
+
+  // Citation now links a field to an editable source record. The previous
+  // placeholder-only path made the gate feel satisfied by an opaque chip; this
+  // keeps the source object visible and editable before it can carry the field.
+  function citeSource(field: string, sourceId: string) {
     const { ledger: l, claim } = ensureClaim(ledger, field);
-    if (claim.sourceIds.length > 0) {
-      setLedger({
-        ...l,
-        claims: l.claims.map((c) => (c.field === field ? { ...c, sourceIds: [] } : c)),
-      });
-      return;
-    }
-    const id = `u${l.sources.length + 1}`;
     setLedger({
       ...l,
-      sources: [...l.sources, { id, title: "User-added citation" }],
       claims: l.claims.map((c) =>
         c.field === field
-          ? { ...c, sourceIds: [id], evidenceClass: c.evidenceClass === "open" ? "reported" : c.evidenceClass }
+          ? {
+              ...c,
+              sourceIds: Array.from(new Set([...claim.sourceIds, sourceId])),
+              evidenceClass: c.evidenceClass === "open" ? "reported" : c.evidenceClass,
+            }
+          : c,
+      ),
+    });
+  }
+
+  function unciteSource(field: string, sourceId: string) {
+    const { ledger: l } = ensureClaim(ledger, field);
+    setLedger({
+      ...l,
+      claims: l.claims.map((c) =>
+        c.field === field ? { ...c, sourceIds: c.sourceIds.filter((id) => id !== sourceId) } : c,
+      ),
+    });
+  }
+
+  function addAndCite(field: string) {
+    const { ledger: l, claim } = ensureClaim(ledger, field);
+    const id = nextSourceId(l.sources);
+    setLedger({
+      ...l,
+      sources: [...l.sources, { id, title: "", url: "" }],
+      claims: l.claims.map((c) =>
+        c.field === field
+          ? {
+              ...c,
+              sourceIds: Array.from(new Set([...claim.sourceIds, id])),
+              evidenceClass: c.evidenceClass === "open" ? "reported" : c.evidenceClass,
+            }
           : c,
       ),
     });
@@ -393,6 +449,55 @@ function LedgerStage({ ledger, report, setLedger, flash }: WBProps) {
           <div className="lh-meta"><b>{report.sourcingGate.sourcedCount}</b> sourced</div>
         </div>
 
+        <div className="source-library">
+          <div className="source-library-head">
+            <div>
+              <div className="micro" style={{ marginBottom: 3 }}>Sources</div>
+              <p className="muted">
+                Add source records here, then cite them from fields. Empty draft sources stay
+                visible, but they do not count until at least one source detail is filled.
+              </p>
+            </div>
+            <button className="btn ghost sm" onClick={() => { addSource(); flash("Source added"); }}>
+              ＋ Add source
+            </button>
+          </div>
+          {ledger.sources.length === 0 ? (
+            <div className="source-empty">No sources yet. Add one here or create one from a field row.</div>
+          ) : (
+            <div className="source-list">
+              {ledger.sources.map((source) => (
+                <div key={source.id} className="source-row">
+                  <div className="source-id">{source.id}</div>
+                  <input
+                    value={source.title}
+                    placeholder="Source title"
+                    onChange={(e) => updateSource(source.id, { title: e.target.value })}
+                  />
+                  <input
+                    value={source.url ?? ""}
+                    placeholder="URL or citation"
+                    onChange={(e) => updateSource(source.id, { url: e.target.value })}
+                  />
+                  <input
+                    value={source.publisher ?? ""}
+                    placeholder="Publisher"
+                    onChange={(e) => updateSource(source.id, { publisher: e.target.value })}
+                  />
+                  <input
+                    value={source.date ?? ""}
+                    placeholder="Date"
+                    onChange={(e) => updateSource(source.id, { date: e.target.value })}
+                  />
+                  <button className="btn ghost sm" onClick={() => removeSource(source.id)}>
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {fields.length === 0 ? (
           <p className="muted" style={{ marginTop: 12 }}>
             Claim-only route: assess tense, source class, baseline, beneficiary — no
@@ -407,6 +512,7 @@ function LedgerStage({ ledger, report, setLedger, flash }: WBProps) {
               const cls = claim?.evidenceClass ?? "open";
               const srcIds = claim?.sourceIds ?? [];
               const canCite = !!(claim && claim.statement);
+              const availableSources = ledger.sources.filter((s) => !srcIds.includes(s.id));
               return (
                 <div key={f.field} className={`frow${sourced ? " sourced" : ""}`}>
                   <div className="f-label">{f.label}</div>
@@ -434,12 +540,37 @@ function LedgerStage({ ledger, report, setLedger, flash }: WBProps) {
                   />
                   <div className="f-srcs">
                     {srcIds.length > 0
-                      ? srcIds.map((id) => <span key={id} className="src-chip">{id}</span>)
+                      ? srcIds.map((id) => {
+                          const source = ledger.sources.find((s) => s.id === id);
+                          const label = source?.title?.trim() || source?.url?.trim() || id;
+                          return (
+                            <span key={id} className="src-chip cited" title={label}>
+                              {id}
+                              <button onClick={() => unciteSource(f.field, id)} aria-label={`Uncite ${id}`}>×</button>
+                            </span>
+                          );
+                        })
                       : <span className="src-chip none">uncited</span>}
                     {canCite && (
-                      <button className="btn ghost sm" style={{ padding: "2px 8px", fontSize: 10.5 }} onClick={() => toggleCite(f.field)}>
-                        {srcIds.length ? "✕ uncite" : "+ cite source"}
-                      </button>
+                      <>
+                        <select
+                          className="cite-select"
+                          value=""
+                          onChange={(e) => {
+                            if (e.target.value) citeSource(f.field, e.target.value);
+                          }}
+                        >
+                          <option value="">Cite existing…</option>
+                          {availableSources.map((source) => (
+                            <option key={source.id} value={source.id}>
+                              {source.id} — {source.title || source.url || "draft source"}
+                            </option>
+                          ))}
+                        </select>
+                        <button className="btn ghost sm" style={{ padding: "2px 8px", fontSize: 10.5 }} onClick={() => addAndCite(f.field)}>
+                          + new source
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>

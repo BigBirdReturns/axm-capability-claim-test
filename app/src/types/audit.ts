@@ -44,9 +44,9 @@ export interface Claim {
   // 0..1 analyst confidence. Internal only; never travels as a verdict.
   confidence?: number;
   // Source ids backing this claim. For the sourcing gate, a claim unlocks a
-  // field only when it cites at least one source AND its evidence class is
-  // external (`confirmed`, `reported`, or `derived`). `judgment` is preserved in
-  // the ledger as analysis, but does not count toward the three-field threshold.
+  // field only when it cites at least one non-blank source AND its evidence class
+  // is external (`confirmed`, `reported`, or `derived`). `judgment` is preserved
+  // in the ledger as analysis, but does not count toward the three-field threshold.
   sourceIds: string[];
   notes?: string;
 }

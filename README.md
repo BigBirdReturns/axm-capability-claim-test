@@ -48,7 +48,7 @@ To run your own, click **Start a blank audit**, then:
 
 Need the ledger shape? Start with [`docs/ledger-authoring.md`](docs/ledger-authoring.md)
 for minimal, passing, and failing ledgers, source-ID rules, and the evidence-class
-decision table.
+decision table. Wiring a provider? Use [`docs/adapter-developer-guide.md`](docs/adapter-developer-guide.md).
 
 Prefer to drive it from a model? The ledger stage has a **Bring your own model**
 panel (copy the neutral retrieval prompt, paste a ledger back), or use the MCP
@@ -73,7 +73,7 @@ named public nodes.
 - **LLM-assisted** — the site generates a neutral retrieval prompt; you run it
   in the model of your choice and paste the ledger JSON back.
 - **Adapter** — a developer wires a provider that fills the same ledger schema
-  (`app/src/lib/adapters/`). The public demo never executes paid model calls.
+  (`app/src/lib/adapters/`). The public demo never executes paid model calls; see [`docs/adapter-developer-guide.md`](docs/adapter-developer-guide.md) for the self-deploy pattern.
 
 ## Call it from your own AI
 
@@ -119,7 +119,7 @@ schema-valid ledger JSON. No runtime.
   never be forced through the product-company instrument.
 - **Sourcing gate** blocks the verdict until **three load-bearing fields are
   sourced** by external evidence (`confirmed`, `reported`, or `derived` with a
-  real source). `judgment` and `open` claims do not unlock the verdict. Below
+  non-blank source record). `judgment` and `open` claims do not unlock the verdict. Below
   threshold, the only output is object type, route, known evidence, missing
   fields, and a copyable neutral pull-list.
 - **Contamination** renders as a **bucket with source-backed component reasons,

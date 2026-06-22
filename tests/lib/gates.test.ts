@@ -123,6 +123,16 @@ describe("sourcing gate", () => {
     );
     expect(r.sourcedCount).toBe(0);
   });
+
+  it("does not count a claim citing a blank draft source", () => {
+    const r = runSourcingGate(
+      ledger({
+        sources: [{ id: "s1", title: "" }],
+        claims: [sourced("capital_raised")],
+      }),
+    );
+    expect(r.sourcedCount).toBe(0);
+  });
 });
 
 describe("contamination bucket", () => {

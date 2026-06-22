@@ -9,14 +9,24 @@ import { SOURCING_THRESHOLD, fieldsForSet } from "../data/loadBearingFields";
 
 const NON_SOURCING_CLASSES = new Set<Claim["evidenceClass"]>(["open", "judgment"]);
 
+function isUsableSource(source: Ledger["sources"][number]): boolean {
+  return Boolean(
+    source.title.trim() ||
+      source.url?.trim() ||
+      source.publisher?.trim() ||
+      source.date?.trim() ||
+      source.note?.trim(),
+  );
+}
+
 // A claim is "sourced" for gate-unlocking purposes iff it cites at least one
-// source that RESOLVES to a real source in the ledger, and its evidence class is
-// external rather than interpretive (`confirmed`, `reported`, or `derived`).
-// Resolving the ids here (not only in validateLedger) makes the gate
-// self-contained: any door that builds a Ledger — the web app, the MCP server,
-// a test fixture — gets the same guarantee even if it skipped validation. A
-// claim citing a phantom id is not sourced, and an analyst `judgment` does not
-// unlock a verdict by itself.
+// usable source that RESOLVES in the ledger, and its evidence class is external
+// rather than interpretive (`confirmed`, `reported`, or `derived`). Resolving the
+// ids here (not only in validateLedger) makes the gate self-contained: any door
+// that builds a Ledger — the web app, the MCP server, a test fixture — gets the
+// same guarantee even if it skipped validation. A claim citing a phantom or
+// blank draft source is not sourced, and an analyst `judgment` does not unlock a
+// verdict by itself.
 export function isClaimSourced(claim: Claim, validSourceIds?: Set<string>): boolean {
   if (NON_SOURCING_CLASSES.has(claim.evidenceClass)) return false;
   const cited = validSourceIds
@@ -31,7 +41,7 @@ export function isClaimSourced(claim: Claim, validSourceIds?: Set<string>): bool
 export function runSourcingGate(ledger: Ledger): SourcingGateResult {
   const def = OBJECT_ROUTES[ledger.objectType];
   const fields = fieldsForSet(def.fieldSet);
-  const validSourceIds = new Set(ledger.sources.map((s) => s.id));
+  const validSourceIds = new Set(ledger.sources.filter(isUsableSource).map((s) => s.id));
 
   const statuses: LoadBearingFieldStatus[] = fields.map((f) => {
     const claimsForField = ledger.claims.filter((c) => c.field === f.field);
