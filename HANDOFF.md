@@ -74,7 +74,7 @@ app/src/
     generateNeutralPrompt.ts neutral retrieval + loaded-request sanitization
     exportFiles.ts          md / json / csv, all client-side
     adapters/               ProviderAdapter interface + MockAdapter (no calls)
-  components/             one panel per stage; App.tsx wires the sequence
+  App.tsx                 staged workbench UI (rail + Object/Ledger/Analysis/Report)
 schemas/                 JSON Schemas mirrored by validateLedger
 prompts/                 neutral-source-pull, ledger-builder, audit-run, publication-check
 docs/                    the method + doctrines + regression-suite
