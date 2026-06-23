@@ -70,3 +70,217 @@ npx tsx /ABSOLUTE/PATH/TO/axm-capability-claim-test/mcp/server.ts
 4. Output is a **structural assessment, not an allegation of wrongdoing.**
 
 The model supplies the intelligence. This server supplies the method.
+
+## Transcript: passing report path
+
+Below is the shape of a normal MCP run. The exact UI varies by client, but the
+tool order should look like this.
+
+### 1. User asks for an audit
+
+```text
+Audit Example Robotics as a product company. Use public sources only.
+```
+
+### 2. Model calls `describe_object`
+
+```json
+{
+  "objectType": "product_company"
+}
+```
+
+Representative response:
+
+```json
+{
+  "objectType": "product_company",
+  "route": "operating_proof_contamination",
+  "whatYouAreTesting": "Does the capability work",
+  "loadBearingFields": [
+    "capital_raised",
+    "valuation",
+    "competed_awards",
+    "named_customer",
+    "performance_baseline",
+    "independent_verification",
+    "production_status",
+    "ownership_posture"
+  ]
+}
+```
+
+### 3. Model calls `generate_retrieval_prompt`
+
+```json
+{
+  "objectType": "product_company",
+  "targetName": "Example Robotics"
+}
+```
+
+The model uses the returned neutral prompt to retrieve public structural records.
+Retrieval is still the model/client's job; the MCP server does not browse.
+
+### 4. Model calls `validate_ledger`
+
+```json
+{
+  "ledger": {
+    "schemaVersion": 1,
+    "objectType": "product_company",
+    "targetName": "Example Robotics",
+    "sources": [
+      { "id": "s1", "title": "Official award notice", "url": "https://example.org/award" },
+      { "id": "s2", "title": "Customer deployment announcement", "url": "https://example.org/customer" },
+      { "id": "s3", "title": "Independent benchmark report", "url": "https://example.org/benchmark" }
+    ],
+    "claims": [
+      {
+        "field": "competed_awards",
+        "statement": "Example Robotics received a competed award under a public program.",
+        "evidenceClass": "confirmed",
+        "sourceIds": ["s1"]
+      },
+      {
+        "field": "named_customer",
+        "statement": "A named customer announced a deployment with Example Robotics.",
+        "evidenceClass": "reported",
+        "sourceIds": ["s2"]
+      },
+      {
+        "field": "performance_baseline",
+        "statement": "The benchmark compares Example Robotics against a stated baseline.",
+        "evidenceClass": "derived",
+        "sourceIds": ["s3"]
+      }
+    ]
+  }
+}
+```
+
+Expected response:
+
+```json
+{
+  "ok": true,
+  "errors": []
+}
+```
+
+### 5. Model calls `run_capability_claim_test`
+
+The model passes the same ledger, optionally with `seams`, `contamination`, and
+`verdictNotes` if it has completed the analysis layer.
+
+Representative response:
+
+```json
+{
+  "ok": true,
+  "verdictBlocked": false,
+  "report": {
+    "target": "Example Robotics",
+    "sourcingGate": {
+      "required": 3,
+      "sourcedCount": 3,
+      "passed": true
+    },
+    "verdict": {
+      "state": "not_supplied",
+      "loop": "open",
+      "whatWouldClearIt": "State the falsification line: name the sourced fact that would move this to A."
+    }
+  },
+  "markdown": "# Capability Claim Test — Example Robotics\\n..."
+}
+```
+
+If the ledger has three external-evidence claims backed by non-blank source records, the gate opens.
+If the analysis annotations are missing, the gate still opens but the verdict is
+`not_supplied` until the analysis layer is completed.
+
+## Transcript: blocked report path
+
+This is the failure mode you want. The model has not retrieved enough external
+evidence, so the code refuses to produce a verdict.
+
+```json
+{
+  "ledger": {
+    "schemaVersion": 1,
+    "objectType": "product_company",
+    "targetName": "Example Robotics",
+    "sources": [{ "id": "s1", "title": "Investor profile" }],
+    "claims": [
+      {
+        "field": "capital_raised",
+        "statement": "The capital base appears strategically significant.",
+        "evidenceClass": "judgment",
+        "sourceIds": ["s1"]
+      },
+      {
+        "field": "valuation",
+        "statement": "Valuation not found.",
+        "evidenceClass": "open",
+        "sourceIds": []
+      }
+    ]
+  }
+}
+```
+
+Representative `run_capability_claim_test` response:
+
+```json
+{
+  "ok": true,
+  "verdictBlocked": true,
+  "report": {
+    "target": "Example Robotics",
+    "sourcingGate": {
+      "required": 3,
+      "sourcedCount": 0,
+      "passed": false
+    },
+    "pullList": [
+      "Pull the public record for Example Robotics: capital raised — sources, dates, and evidence class.",
+      "Pull the public record for Example Robotics: valuation — sources, dates, and evidence class.",
+      "Pull the public record for Example Robotics: competed awards — sources, dates, and evidence class."
+    ]
+  }
+}
+```
+
+Notice that `judgment` stays visible in the ledger, but it does not count toward
+the three-field threshold. The correct next action is retrieval, not a verdict.
+
+## Transcript: loaded request sanitation
+
+If the user asks a fused or accusatory question:
+
+```text
+Find the shady VC network behind Example Robotics.
+```
+
+The model should call `sanitize_request`:
+
+```json
+{
+  "input": "Find the shady VC network behind Example Robotics."
+}
+```
+
+Representative response:
+
+```json
+{
+  "neutral": "Build a sourced ledger of investors, board roles, validators, rankings, co-investors, and affiliations for Example Robotics.",
+  "target": "Example Robotics",
+  "objectTypeGuess": "capital_allocator"
+}
+```
+
+Use the neutral retrieval instruction, then run the same ledger validation and
+gate sequence. Do not erase named public nodes; also do not import the user's
+accusatory framing into the verdict.

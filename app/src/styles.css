@@ -286,6 +286,47 @@ button { font-family: var(--sans); }
   background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 5px; padding: 2px 6px;
 }
 .src-chip.none { color: var(--faint); border-style: dashed; }
+.src-chip.cited { display: inline-flex; align-items: center; gap: 5px; }
+.src-chip.cited button {
+  border: none; background: transparent; color: var(--faint);
+  font-family: var(--mono); font-size: 12px; line-height: 1; padding: 0; cursor: pointer;
+}
+.src-chip.cited button:hover { color: var(--bad); }
+.cite-select {
+  max-width: 190px; background: var(--panel-2); color: var(--ink-2);
+  border: 1px solid var(--line); border-radius: 5px; padding: 3px 7px;
+  font-family: var(--mono); font-size: 10.5px;
+}
+
+/* Source editor */
+.source-library {
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line);
+}
+.source-library-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 14px;
+}
+.source-library-head p { margin: 0; font-size: 12.5px; line-height: 1.45; max-width: 60ch; }
+.source-empty {
+  margin-top: 10px; border: 1px dashed var(--line-2); border-radius: var(--r-s);
+  padding: 10px 12px; color: var(--faint); font-size: 12.5px; background: var(--bg-2);
+}
+.source-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.source-row {
+  display: grid; grid-template-columns: 52px minmax(140px, 1.4fr) minmax(150px, 1.6fr) minmax(110px, 1fr) 86px auto;
+  gap: 7px; align-items: center; background: var(--bg-2);
+  border: 1px solid var(--line); border-radius: var(--r-s); padding: 8px;
+}
+.source-row .source-id {
+  font-family: var(--mono); font-size: 11px; color: var(--accent);
+  background: var(--accent-d); border: 1px solid color-mix(in oklab, var(--accent) 35%, var(--line));
+  border-radius: 5px; padding: 5px 7px; text-align: center;
+}
+.source-row input {
+  min-width: 0; background: #0f1218; color: var(--ink);
+  border: 1px solid var(--line-2); border-radius: 5px; padding: 6px 8px;
+  font: 12.5px/1.35 var(--sans);
+}
+.source-row input:focus, .cite-select:focus { outline: none; border-color: var(--accent); }
 
 .state-badge {
   font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
@@ -465,5 +506,7 @@ button { font-family: var(--sans); }
   .rail { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--line); }
   .gate { margin-top: 18px; }
   .ex-grid, .vfields, .export-grid { grid-template-columns: 1fr; }
+  .source-row { grid-template-columns: 1fr; }
+  .source-row .source-id { text-align: left; }
   .wrap { padding: 0 22px; }
 }

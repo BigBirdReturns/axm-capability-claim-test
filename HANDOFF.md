@@ -3,7 +3,7 @@
 **The "pick this up cold and succeed" artifact.** Read this first. It states
 what the thing is, where it stands, the conventions to uphold, and the open work.
 
-_Last updated: 2026-06-20._
+_Last updated: 2026-06-22._
 
 ---
 
@@ -131,20 +131,34 @@ cream/brick-red look). Specifically:
 - Contamination is **always** a bucket with sourced reasons — never a bare score.
 - The gates are **sequenced and structural**, not warning banners. Keep the
   object gate before seams and the sourcing gate before the verdict.
+- **Only external evidence classes count toward the sourcing gate** —
+  `confirmed` / `reported` / `derived`. `open` and `judgment` never do
+  (`judgment` is the analyst's own call; three judgments are not three sources).
+  This is enforced as an **allowlist** (`SOURCING_CLASSES` in
+  `runSourcingGate.ts`), not a blacklist, so an unknown/misspelled class from a
+  door that skipped `validateLedger` fails closed. Sources must also be
+  **usable** (`isUsableSource`): a blank draft row never satisfies the gate. See
+  the evidence-class table in `docs/ledger-authoring.md`.
 - The retired internal codename stays retired.
 
 ## 8. Open work (prioritized)
 
-1. **Logic-airtightness audit** (the substantive one). Verify the gates are as
-   airtight as the README claims. Edge cases to nail down with tests:
-   - Duplicate claims on the same load-bearing field (which one wins in
-     `runSourcingGate` / "known evidence").
-   - `not_applicable` seam accounting (confirm it never contributes to weak
-     signal anywhere, including future weighting).
-   - `runContaminationBucket` when annotations are **partial** (some components
-     present without reasons, explicit bucket vs derived bucket disagreement).
-   - `buildReport` when `verdictNotes` is absent but the gate passes (currently
-     yields `unclassifiable` — confirm that's the intended floor).
+1. **Logic-airtightness audit** — ✅ **done** (2026-06-22). All four edge cases
+   nailed down with regression locks in `tests/lib/gates.test.ts` (36 tests):
+   - Duplicate claims on one load-bearing field cannot inflate the sourced
+     count past 1, and a field is sourced if *any* claim is sourced
+     (order-independent; the sourced claim's evidence class is the one reported).
+   - `not_applicable` (and `unclear` / `not_triggered`) never count as weak
+     signal — `weakSignalCount` locked to triggered-only, the contract any
+     future weighting must not breach.
+   - **Found + fixed a hole** in `runContaminationBucket`: an explicit bucket
+     could read *cleaner* than its own source-backed components derived, letting
+     an author launder sourced contamination into a "clean"/"mixed" reading. The
+     guard is now symmetric — an explicit bucket can never be less severe than
+     the evidence-derived bucket (harder explicit calls are still honored;
+     `clean` with no source-backed component is still honored).
+   - `buildReport` with `verdictNotes` absent → `not_supplied` (distinct from
+     `unclassifiable`); confirmed and already locked.
 2. **Reconcile branches:** PR the feature branch into `main`; fix the Pages env
    so `main` deploys.
 3. **Optional — deeper UX:** the manual form is functional but minimal (no

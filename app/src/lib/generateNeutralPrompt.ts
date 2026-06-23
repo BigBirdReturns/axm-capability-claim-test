@@ -18,6 +18,7 @@ export function generateNeutralPrompt(ledger: Ledger): string {
     `Scope: public structural record only — the entity acting in a public capacity. Do not assemble a private individual's life.`,
     ``,
     `Collect, for each item: claim / source (with URL or citation) / evidence class (confirmed, reported, derived, judgment, open) / confidence / notes.`,
+    `Use judgment only for analyst interpretation; it will not count toward the three-field sourcing gate.`,
     ``,
     `Load-bearing fields to populate:`,
     fieldLines || `- (claim-only: tense, source class, baseline, beneficiary)`,
