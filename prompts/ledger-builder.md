@@ -44,5 +44,6 @@ Return JSON matching `schemas/ledger.schema.json`:
 
 - One `field` per claim; multiple claims may share a field.
 - A claim is **sourced** only if it cites at least one source id and its
-  evidence class is not `open`.
+  evidence class is `confirmed`, `reported`, or `derived` (external evidence);
+  `open` and `judgment` never count toward the gate.
 - Do not invent sources. An unsourced item is class `open` with empty `sourceIds`.
