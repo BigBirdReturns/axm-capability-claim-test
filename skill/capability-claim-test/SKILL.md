@@ -46,7 +46,9 @@ capacities; never assemble a private individual's life. See
 Produce JSON matching `schemas/ledger.schema.json`: `claims[]` (field,
 statement, evidenceClass ∈ confirmed|reported|derived|judgment|open,
 confidence, sourceIds) and `sources[]`. A claim is **sourced** only if it cites
-a source and is not class `open`. See `prompts/ledger-builder.md`.
+a source and its class is `confirmed`, `reported`, or `derived` (external
+evidence); `open` and `judgment` never count toward the gate. See
+`prompts/ledger-builder.md`.
 
 **Load-bearing fields — product company:** capital_raised, valuation,
 competed_awards, named_customer, performance_baseline, independent_verification,

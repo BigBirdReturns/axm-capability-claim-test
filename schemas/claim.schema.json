@@ -25,7 +25,7 @@
     "sourceIds": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Source ids. A claim is sourced iff it cites >=1 source and is not class 'open'."
+      "description": "Source ids. A claim is sourced iff it cites >=1 source and its class is 'confirmed', 'reported', or 'derived' (external evidence); 'open' and 'judgment' never count."
     },
     "notes": { "type": "string" }
   },
