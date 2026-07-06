@@ -8,6 +8,7 @@ export type ObjectType =
   | "integrator_platform"
   | "ranking_validator_media"
   | "government_program_vehicle"
+  | "frontier_model"
   | "claim_only";
 
 export type Route =
@@ -16,6 +17,7 @@ export type Route =
   | "removal_test_operating_control_contamination"
   | "independence_proof_contamination"
   | "removal_test_ownership"
+  | "capability_delta_replication"
   | "claim_test";
 
 // Evidence class — never upgrade a claim beyond its source.
@@ -204,6 +206,65 @@ export interface Verdict {
   nextPulls: string[];
 }
 
+// ---- Replication plan (frontier_model route) --------------------------------
+
+// How settled the evidence is that a composition actually closes the gap.
+// Mirrors the evidence-class ladder: only externally-anchored maturities
+// ("established" / "reported") can PRICE an axis. "experimental" is carried in
+// the plan as a lead, never as a price.
+export type StrategyMaturity = "established" | "reported" | "experimental";
+
+export interface ReplicationStrategyMatch {
+  key: string;
+  label: string;
+  maturity: StrategyMaturity;
+  // The recipe: how lesser/open components are composed to cover the axis.
+  composition: string;
+  // Named component roles (router, verifier, open-weights worker, …).
+  components: string[];
+  // MANDATORY. What the composition does NOT give back. A strategy with no
+  // residual is not finished — same doctrine as the falsification line.
+  residual: string;
+  costNote: string;
+}
+
+export type AxisReplicationStatus =
+  // Sourced delta + at least one pricing-grade strategy: here is the recipe.
+  | "priced"
+  // Sourced delta but nothing pricing-grade covers it: this stays frontier.
+  | "frontier_residual"
+  // Delta not sourced: the plan refuses to price a marketing claim.
+  | "unpriced_delta";
+
+export interface AxisReplication {
+  field: string;
+  label: string;
+  deltaSourced: boolean;
+  // Evidence class of the sourced delta claim, when one exists.
+  evidenceClass?: EvidenceClass;
+  status: AxisReplicationStatus;
+  // Pricing-grade strategies first, experimental leads flagged after.
+  strategies: ReplicationStrategyMatch[];
+  // Residual lines carried from the pricing strategies (or the frontier-
+  // residual line). Never empty for a priced or frontier_residual axis.
+  residuals: string[];
+  // One-line reading of the axis, in method language.
+  note: string;
+}
+
+export interface ReplicationPlan {
+  target: string;
+  axes: AxisReplication[];
+  pricedCount: number;
+  // Labels of axes that stay frontier — the honest ceiling.
+  residualAxes: string[];
+  // Labels of axes the plan refused to price (delta unsourced).
+  unpricedAxes: string[];
+  // Mandatory falsification line for the plan as a whole.
+  falsificationLine: string;
+  doctrine: string;
+}
+
 // ---- Report ----------------------------------------------------------------
 
 export interface Report {
@@ -215,6 +276,8 @@ export interface Report {
   seams?: SeamResult[];
   contamination?: ContaminationResult;
   verdict?: Verdict;
+  // Present only for frontier_model objects when the sourcing gate passes.
+  replicationPlan?: ReplicationPlan;
   // Present only when the sourcing gate fails (insufficient ledger).
   pullList?: string[];
   knownEvidence: { field: string; statement: string; evidenceClass: EvidenceClass }[];

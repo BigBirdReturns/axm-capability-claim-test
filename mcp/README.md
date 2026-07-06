@@ -58,7 +58,9 @@ npx tsx /ABSOLUTE/PATH/TO/axm-capability-claim-test/mcp/server.ts
 | `sanitize_request` | Retrieval | Rewrites a loaded/accusatory request into neutral retrieval. |
 | `describe_object` | Object gate | Route + load-bearing field keys for an object type. |
 | `validate_ledger` | Ledger | Validates ledger JSON against the schema. |
-| `run_capability_claim_test` | Analysis | Runs object + sourcing gates. Below three sourced fields it **refuses to verdict** and returns a pull-list. At/above, it returns contamination-as-bucket and the verdict with its falsification line. |
+| `run_capability_claim_test` | Analysis | Runs object + sourcing gates. Below three sourced fields it **refuses to verdict** and returns a pull-list. At/above, it returns contamination-as-bucket and the verdict with its falsification line. For `frontier_model` objects the report also carries the replication plan. |
+| `list_replication_strategies` | Frontier route | The replication catalog: open/lesser compositions with maturity and mandatory residuals. |
+| `build_replication_plan` | Frontier route | Prices each **sourced** frontier capability delta with open/lesser compositions (residuals carried), names the frontier residual, and **refuses to price** unsourced axes. Below three sourced axes: pull-list. |
 
 ## The intended loop
 

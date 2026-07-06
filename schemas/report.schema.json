@@ -37,6 +37,36 @@
       "description": "Present only when the sourcing gate fails."
     },
     "seams": { "type": "array", "description": "Present only when the gate passes." },
+    "replicationPlan": {
+      "type": "object",
+      "description": "Present only for frontier_model objects when the gate passes. Prices only sourced deltas; unsourced axes are refused, sourced-but-uncovered axes are named as the frontier residual.",
+      "required": ["target", "axes", "pricedCount", "residualAxes", "unpricedAxes", "falsificationLine", "doctrine"],
+      "properties": {
+        "target": { "type": "string" },
+        "axes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["field", "label", "deltaSourced", "status", "strategies", "residuals", "note"],
+            "properties": {
+              "field": { "type": "string" },
+              "label": { "type": "string" },
+              "deltaSourced": { "type": "boolean" },
+              "evidenceClass": { "type": "string" },
+              "status": { "type": "string", "enum": ["priced", "frontier_residual", "unpriced_delta"] },
+              "strategies": { "type": "array" },
+              "residuals": { "type": "array", "items": { "type": "string" } },
+              "note": { "type": "string" }
+            }
+          }
+        },
+        "pricedCount": { "type": "integer" },
+        "residualAxes": { "type": "array", "items": { "type": "string" } },
+        "unpricedAxes": { "type": "array", "items": { "type": "string" } },
+        "falsificationLine": { "type": "string" },
+        "doctrine": { "type": "string" }
+      }
+    },
     "contamination": { "$ref": "contamination.schema.json" },
     "verdict": { "$ref": "verdict.schema.json" },
     "ledger": { "$ref": "ledger.schema.json" }

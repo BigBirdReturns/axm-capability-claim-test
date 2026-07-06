@@ -23,7 +23,11 @@ export function generateNeutralPrompt(ledger: Ledger): string {
     `Load-bearing fields to populate:`,
     fieldLines || `- (claim-only: tense, source class, baseline, beneficiary)`,
     ``,
-    `Also collect the structural nodes: investors, board roles, validators, rankings, co-investors, and affiliations.`,
+    // The structural nodes follow the object: for a frontier model the network
+    // is the measurement chain, not a cap table.
+    def.fieldSet === "frontier"
+      ? `Also collect the measurement nodes: named versioned baselines, eval harnesses and who runs them, benchmark owners and funders, model cards, leaderboards, and independent replication attempts.`
+      : `Also collect the structural nodes: investors, board roles, validators, rankings, co-investors, and affiliations.`,
     ``,
     `Return strictly as JSON matching the ledger schema (objectType, targetName, sources[], claims[]). Do not include analysis or a verdict.`,
   ].join("\n");

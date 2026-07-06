@@ -1,10 +1,12 @@
 import { useMemo, useRef, useState } from "react";
 import type {
+  AxisReplication,
   Claim,
   EvidenceClass,
   Ledger,
   ObjectType,
   Report,
+  ReplicationPlan,
   Source,
   VerdictState,
 } from "./types/audit";
@@ -709,9 +711,13 @@ function AnalysisPanels({ report }: { report: Report }) {
         </div>
       </div>
 
+      {report.replicationPlan && <ReplicationPanel plan={report.replicationPlan} />}
+
       <div className="panel reveal">
         <div className="bucket-row">
-          <span className="micro" style={{ marginRight: 4 }}>Capital contamination</span>
+          <span className="micro" style={{ marginRight: 4 }}>
+            {report.objectGate.objectType === "frontier_model" ? "Proof contamination" : "Capital contamination"}
+          </span>
           <span className={`bucket-tag bucket-${c.bucket}`}>{BUCKET_LABELS[c.bucket]}</span>
         </div>
         <p className="never-bare">A bucket with source-backed reasons — never a bare number.</p>
@@ -753,6 +759,59 @@ function AnalysisPanels({ report }: { report: Report }) {
         </div>
       )}
     </>
+  );
+}
+
+// Replication plan — frontier route only. Same posture as everything else:
+// priced axes carry their residuals, refused axes say why, and the plan ends
+// on its falsification line.
+function ReplicationPanel({ plan }: { plan: ReplicationPlan }) {
+  const STATUS_LABEL: Record<AxisReplication["status"], string> = {
+    priced: "● priced",
+    frontier_residual: "◆ frontier residual",
+    unpriced_delta: "○ refused — delta unsourced",
+  };
+  return (
+    <div className="panel reveal">
+      <div className="micro" style={{ marginBottom: 4 }}>Replication plan — pricing the sourced delta</div>
+      <p className="never-bare">{plan.doctrine}</p>
+      <div className="comps">
+        {plan.axes.map((a) => (
+          <div key={a.field} className={`comp${a.status !== "unpriced_delta" ? " present" : ""}`}>
+            <div className="c-label">{a.label}</div>
+            <div className="c-pres">
+              {STATUS_LABEL[a.status]}
+              {a.evidenceClass ? ` · ${a.evidenceClass}` : ""}
+            </div>
+            <div className="c-reason">{a.note}</div>
+            {a.strategies.length > 0 && (
+              <div style={{ marginTop: 6 }}>
+                {a.strategies.map((s) => (
+                  <div key={s.key} style={{ margin: "6px 0" }}>
+                    <div className="c-label">
+                      {s.label} <span className="src-chip">{s.maturity}</span>
+                    </div>
+                    <div className="c-reason">{s.composition}</div>
+                    <div className="c-reason" style={{ opacity: 0.8 }}>Residual: {s.residual}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <div style={{ marginTop: 12 }}>
+        {plan.residualAxes.length > 0 && (
+          <div className="c-reason"><b>Stays frontier:</b> {plan.residualAxes.join(", ")}</div>
+        )}
+        {plan.unpricedAxes.length > 0 && (
+          <div className="c-reason"><b>Refused to price:</b> {plan.unpricedAxes.join(", ")}</div>
+        )}
+        <div className="c-reason" style={{ marginTop: 6 }}>
+          <b>▶ Falsification:</b> {plan.falsificationLine}
+        </div>
+      </div>
+    </div>
   );
 }
 

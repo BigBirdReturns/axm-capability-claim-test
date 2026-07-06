@@ -25,12 +25,25 @@ export const ALLOCATOR_SEAMS: SeamDef[] = [
   { id: "founder_visible_help", question: "What founder-visible help is independently tied to them." },
 ];
 
+// Frontier model — the forced questions for a claimed capability delta. The
+// killer seam is harness parity: most published deltas hand the frontier model
+// a scaffold (tools, retries, verification) the baseline never got.
+export const FRONTIER_SEAMS: SeamDef[] = [
+  { id: "named_baseline", question: "Named baseline. Delta over what — a named, versioned lesser model, or 'previous models'?" },
+  { id: "eval_independence", question: "Eval independence. Who measured the delta — an independent harness, or the vendor's own model card?" },
+  { id: "harness_parity", question: "Harness parity. Did the baseline get the same scaffolding — tools, retries, verification — before the delta was measured?" },
+  { id: "benchmark_saturation", question: "Benchmark saturation. Is the cited benchmark saturated, gamed, or plausibly inside the training data?" },
+  { id: "delta_tense", question: "Tense of the delta. Measured today on fixed tasks, or projected from a demo?" },
+  { id: "marketing_minus_benchmark", question: "Marketing minus benchmark. Strip the launch language. What measured headroom remains?" },
+];
+
 // Integrator / platform and government program / vehicle lean on removal +
 // ownership; reuse the product seam frame with emphasis on the removal seams.
 export function seamsForFieldSet(
-  fieldSet: "product" | "allocator" | "none",
+  fieldSet: "product" | "allocator" | "frontier" | "none",
 ): SeamDef[] {
   if (fieldSet === "allocator") return ALLOCATOR_SEAMS;
   if (fieldSet === "product") return PRODUCT_SEAMS;
+  if (fieldSet === "frontier") return FRONTIER_SEAMS;
   return [];
 }
