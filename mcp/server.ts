@@ -23,6 +23,10 @@ import {
 } from "../app/src/lib/generateNeutralPrompt.ts";
 import { OBJECT_ROUTES, OBJECT_TYPE_OPTIONS } from "../app/src/data/objectRoutes.ts";
 import { fieldsForSet } from "../app/src/data/loadBearingFields.ts";
+import { REPLICATION_STRATEGIES } from "../app/src/data/replicationStrategies.ts";
+import { runReplicationPlan } from "../app/src/lib/runReplicationPlan.ts";
+import { runSourcingGate } from "../app/src/lib/runSourcingGate.ts";
+import { buildPullList } from "../app/src/lib/renderReport.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -168,6 +172,84 @@ server.registerTool(
           report,
           markdown,
         },
+        null,
+        2,
+      ),
+    );
+  },
+);
+
+// 4. FRONTIER ROUTE ----------------------------------------------------------
+// The replication catalog: how sourced frontier deltas are priced with open
+// tools / lesser-model compositions. Reference data — no gate needed to read it.
+server.registerTool(
+  "list_replication_strategies",
+  {
+    title: "List replication strategies",
+    description:
+      "Returns the replication catalog for the frontier_model route: compositions of open tools and lesser models that price frontier capability axes, each with its maturity (established / reported / experimental) and its MANDATORY residual — what the composition does not give back. Experimental entries are leads, never prices.",
+    inputSchema: {},
+  },
+  async () => text(JSON.stringify(REPLICATION_STRATEGIES, null, 2)),
+);
+
+server.registerTool(
+  "build_replication_plan",
+  {
+    title: "Build a frontier replication plan",
+    description:
+      "Frontier route analysis. Takes a frontier_model ledger and — only if the sourcing gate passes — prices each SOURCED capability delta with open/lesser compositions (residuals carried verbatim), names sourced axes with no pricing-grade composition as the frontier residual, and REFUSES TO PRICE axes whose delta is unsourced. Below three sourced axes it returns the pull-list instead. The plan prices only sourced deltas — it never turns a launch claim into an engineering roadmap.",
+    inputSchema: {
+      ledger: z
+        .union([z.string(), z.record(z.any())])
+        .describe("Ledger object or JSON string with objectType 'frontier_model'."),
+    },
+  },
+  async ({ ledger }) => {
+    const result = validateLedger(ledger);
+    if (!result.ok || !result.ledger) {
+      return text(
+        JSON.stringify(
+          { ok: false, errors: result.errors, hint: "Fix the ledger and retry." },
+          null,
+          2,
+        ),
+      );
+    }
+    if (result.ledger.objectType !== "frontier_model") {
+      // Object gate: wrong object, wrong test — a company cannot be pushed
+      // through the replication instrument.
+      return text(
+        JSON.stringify(
+          {
+            ok: false,
+            errors: [
+              `Object gate: replication plans apply to frontier_model objects only (got "${result.ledger.objectType}").`,
+            ],
+          },
+          null,
+          2,
+        ),
+      );
+    }
+    const sourcingGate = runSourcingGate(result.ledger);
+    if (!sourcingGate.passed) {
+      return text(
+        JSON.stringify(
+          {
+            ok: true,
+            planBlocked: true,
+            sourcingGate,
+            pullList: buildPullList(result.ledger),
+          },
+          null,
+          2,
+        ),
+      );
+    }
+    return text(
+      JSON.stringify(
+        { ok: true, planBlocked: false, plan: runReplicationPlan(result.ledger) },
         null,
         2,
       ),

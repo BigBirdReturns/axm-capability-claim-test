@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "objectType": "frontier_model",
+  "targetName": "Vega-1 (illustrative frontier model)",
+  "context": "Synthetic example. Demonstrates the frontier route: the instrument prices the SOURCED deltas with open/lesser compositions (residuals carried), names the sourced-but-unreplicable axis as the honest ceiling, and refuses to price the axes only the launch post asserts.",
+  "sources": [
+    { "id": "s1", "title": "Independent eval-lab harness run: Vega-1 vs Basalt-70B (open weights)", "publisher": "Independent eval lab", "url": "https://example.org/vega-harness", "date": "2026-04-02" },
+    { "id": "s2", "title": "Vega-1 model card", "publisher": "Vendor", "url": "https://example.org/vega-modelcard", "date": "2026-03-15" },
+    { "id": "s3", "title": "Long-horizon agentic benchmark results", "publisher": "University systems lab", "url": "https://example.org/vega-horizon", "date": "2026-05-10" },
+    { "id": "s4", "title": "Leaderboard placement announcement", "publisher": "Leaderboard operated by a foundation funded by the vendor's lead investor", "url": "https://example.org/vega-leaderboard", "date": "2026-03-20" },
+    { "id": "s5", "title": "Context stress-test external replication", "publisher": "Open-source replication repo", "url": "https://example.org/vega-context-repro", "date": "2026-04-22" },
+    { "id": "s6", "title": "Cross-domain synthesis study (small n)", "publisher": "Independent researcher", "url": "https://example.org/vega-synthesis", "date": "2026-05-28" }
+  ],
+  "claims": [
+    { "id": "c1", "field": "benchmark_delta", "statement": "+11 points over the named, versioned open baseline Basalt-70B on an independent harness, both models bare.", "evidenceClass": "confirmed", "confidence": 0.9, "sourceIds": ["s1"] },
+    { "id": "c2", "field": "context_capacity", "statement": "Usable 1M-token context; 92% needle-retrieval externally replicated.", "evidenceClass": "confirmed", "confidence": 0.85, "sourceIds": ["s5"] },
+    { "id": "c3", "field": "long_horizon_agency", "statement": "Completes 4-hour agentic tasks at 71% vs Basalt-70B's 38% on the university benchmark; baseline ran with the same scaffold.", "evidenceClass": "reported", "confidence": 0.7, "sourceIds": ["s3"] },
+    { "id": "c4", "field": "reasoning_depth", "statement": "Vendor model card reports large gains on graduate-level reasoning suites; no independent replication yet.", "evidenceClass": "reported", "confidence": 0.5, "sourceIds": ["s2"] },
+    { "id": "c5", "field": "novel_synthesis", "statement": "Small-n independent study finds cross-domain synthesis quality no lesser-model composition matched.", "evidenceClass": "reported", "confidence": 0.55, "sourceIds": ["s6"] },
+    { "id": "c6", "field": "multimodal_range", "statement": "Launch post claims best-in-class multimodal understanding; no eval cited.", "evidenceClass": "open", "confidence": 0.2, "sourceIds": [] },
+    { "id": "c7", "field": "instruction_reliability", "statement": "Launch post claims near-perfect instruction following; no harness or number cited.", "evidenceClass": "open", "confidence": 0.2, "sourceIds": [] },
+    { "id": "c8", "field": "tool_orchestration", "statement": "Demos show fluent tool use; no benchmark against a scaffolded baseline.", "evidenceClass": "open", "confidence": 0.3, "sourceIds": [] },
+    { "id": "c9", "field": "cost_latency_profile", "statement": "Analyst read: premium per-token price implies routing economics favor cascades for most traffic.", "evidenceClass": "judgment", "confidence": 0.6, "sourceIds": [] }
+  ],
+  "seams": [
+    { "id": "named_baseline", "state": "not_triggered", "reason": "Delta is stated against a named, versioned open baseline (Basalt-70B).", "sourceIds": ["s1"] },
+    { "id": "eval_independence", "state": "unclear", "reason": "The headline delta is independently harnessed, but the reasoning-depth claim rests on the vendor model card alone.", "sourceIds": ["s1", "s2"] },
+    { "id": "harness_parity", "state": "not_triggered", "reason": "Both the harness run and the horizon benchmark gave the baseline the same scaffold.", "sourceIds": ["s1", "s3"] },
+    { "id": "benchmark_saturation", "state": "unclear", "reason": "Contamination screening not published for the reasoning suites cited in the model card.", "sourceIds": ["s2"] },
+    { "id": "delta_tense", "state": "not_triggered", "reason": "Sourced deltas are measured on fixed tasks, present tense.", "sourceIds": ["s1", "s3", "s5"] },
+    { "id": "marketing_minus_benchmark", "state": "triggered", "reason": "Strip the launch language and the multimodal, reliability, and tool-use claims have no measured headroom behind them.", "sourceIds": ["s2"] }
+  ],
+  "contamination": {
+    "bucket": "mixed",
+    "components": [
+      { "key": "validator_circularity", "present": true, "reason": "The most-cited leaderboard placement is operated by a foundation funded by the vendor's lead investor.", "sourceIds": ["s4"], "internalScore": 45 }
+    ]
+  },
+  "verdictNotes": {
+    "state": "B_ahead_of_proof",
+    "loop": "open",
+    "rationale": "Three axes carry independently anchored, harness-parity deltas — the frontier claim is real where it is measured. But the widest launch claims (multimodal, reliability, tool use) are unsourced, and part of the cited legitimacy routes through a vendor-adjacent leaderboard. Ahead of proof, not costume.",
+    "largestGap": "Breadth: the marketing surface is far wider than the measured surface.",
+    "tenseOfProof": "Present for the harnessed axes; promissory for the rest.",
+    "whatWouldClearIt": "Independent, harness-parity runs on the unsourced axes, and contamination screening for the reasoning suites, would move this toward A.",
+    "rootsBeliefSupplier": "Independent eval lab and university benchmark for the measured axes; the vendor's own launch surface for the rest.",
+    "rootsValueRetainer": "Vendor retains weights, eval details, and pricing; open compositions replicate priced axes without them.",
+    "nextPulls": ["Independent multimodal eval with a scaffolded baseline", "Instruction-reliability harness run", "Contamination screen for the cited reasoning suites"]
+  }
+}

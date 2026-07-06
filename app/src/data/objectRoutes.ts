@@ -7,7 +7,7 @@ export interface ObjectRouteDef {
   routeLabel: string;
   whatYouAreTesting: string;
   // Which load-bearing field set applies. "none" => claim-only style routes.
-  fieldSet: "product" | "allocator" | "none";
+  fieldSet: "product" | "allocator" | "frontier" | "none";
   // Whether the product seam panel renders for this object.
   showsProductSeams: boolean;
 }
@@ -60,6 +60,16 @@ export const OBJECT_ROUTES: Record<ObjectType, ObjectRouteDef> = {
     fieldSet: "product",
     showsProductSeams: true,
   },
+  frontier_model: {
+    objectType: "frontier_model",
+    objectLabel: "Frontier model (capability delta)",
+    route: "capability_delta_replication",
+    routeLabel: "Capability delta + replication pricing",
+    whatYouAreTesting:
+      "Is the claimed frontier delta independently measured, and what composition replicates it",
+    fieldSet: "frontier",
+    showsProductSeams: false,
+  },
   claim_only: {
     objectType: "claim_only",
     objectLabel: "Claim only",
@@ -77,5 +87,6 @@ export const OBJECT_TYPE_OPTIONS: ObjectType[] = [
   "integrator_platform",
   "ranking_validator_media",
   "government_program_vehicle",
+  "frontier_model",
   "claim_only",
 ];

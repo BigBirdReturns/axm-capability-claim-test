@@ -4,12 +4,14 @@ import clearedRaw from "../../../examples/cleared-capability/ledger.json";
 import circularRaw from "../../../examples/circular-unproven/ledger.json";
 import insufficientRaw from "../../../examples/insufficient-ledger/ledger.json";
 import allocatorRaw from "../../../examples/capital-allocator-insufficient/ledger.json";
+import frontierRaw from "../../../examples/frontier-delta-replication/ledger.json";
 
 export type ExampleKey =
   | "cleared"
   | "circular"
   | "insufficient"
-  | "allocator_insufficient";
+  | "allocator_insufficient"
+  | "frontier_delta";
 
 export interface ExampleDef {
   key: ExampleKey;
@@ -67,5 +69,14 @@ export const EXAMPLES: ExampleDef[] = [
     verdictTag: "Attribution route",
     blurb: "A fund, routed through attribution questions — not product-company ones.",
     ledger: load(allocatorRaw, "capital-allocator-insufficient"),
+  },
+  {
+    key: "frontier_delta",
+    name: "Frontier Model Delta",
+    buttonLabel: "Load Example: Frontier Model / Replication Plan",
+    behavior: "Price the delta",
+    verdictTag: "B / Replication plan",
+    blurb: "A frontier model's claimed edge. Sourced deltas get an open-composition price with residuals; marketing axes are refused.",
+    ledger: load(frontierRaw, "frontier-delta-replication"),
   },
 ];

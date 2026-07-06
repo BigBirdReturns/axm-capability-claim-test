@@ -5,6 +5,7 @@ import cleared from "../../examples/cleared-capability/ledger.json";
 import circular from "../../examples/circular-unproven/ledger.json";
 import insufficient from "../../examples/insufficient-ledger/ledger.json";
 import allocator from "../../examples/capital-allocator-insufficient/ledger.json";
+import frontier from "../../examples/frontier-delta-replication/ledger.json";
 
 function report(raw: unknown) {
   const v = validateLedger(raw);
@@ -46,5 +47,19 @@ describe("example regression suite", () => {
     expect(r.sourcingGate.fields.map((f) => f.field)).not.toContain("competed_awards");
     expect(r.sourcingGate.passed).toBe(false);
     expect(r.verdict).toBeUndefined();
+  });
+
+  it("prices the frontier delta: sourced axes priced, marketing refused, ceiling named", () => {
+    const r = report(frontier);
+    expect(r.objectGate.route).toBe("capability_delta_replication");
+    expect(r.sourcingGate.passed).toBe(true);
+    expect(r.verdict?.state).toBe("B_ahead_of_proof");
+    expect(r.contamination?.bucket).toBe("mixed");
+    const plan = r.replicationPlan!;
+    expect(plan.pricedCount).toBe(4);
+    expect(plan.residualAxes).toEqual(["Novel synthesis"]);
+    expect(plan.unpricedAxes).toContain("Multimodal range");
+    // Judgment with no external anchor never prices, even on the cost axis.
+    expect(plan.unpricedAxes).toContain("Cost / latency profile");
   });
 });

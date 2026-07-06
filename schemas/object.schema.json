@@ -14,6 +14,7 @@
         "integrator_platform",
         "ranking_validator_media",
         "government_program_vehicle",
+        "frontier_model",
         "claim_only"
       ]
     },
@@ -25,6 +26,7 @@
         "removal_test_operating_control_contamination",
         "independence_proof_contamination",
         "removal_test_ownership",
+        "capability_delta_replication",
         "claim_test"
       ]
     }

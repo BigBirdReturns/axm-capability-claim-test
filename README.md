@@ -127,12 +127,44 @@ schema-valid ledger JSON. No runtime.
   is not finished.
 
 Object types: `product_company`, `capital_allocator`, `integrator_platform`,
-`ranking_validator_media`, `government_program_vehicle`, `claim_only`.
+`ranking_validator_media`, `government_program_vehicle`, `frontier_model`,
+`claim_only`.
 
 Verdict states: `A_capability_with_proof`, `B_ahead_of_proof`,
 `C_costume_or_proof_substitution`, `unclassifiable`, `not_applicable`.
 
 Contamination buckets: `clean`, `mixed`, `circular`, `insufficient_data`.
+
+## The frontier route — audit a frontier model's claimed edge
+
+The same method, turned on frontier AI models themselves. The
+`frontier_model` object type treats each capability axis (benchmark delta,
+reasoning depth, long-horizon agency, context capacity, tool orchestration,
+multimodal range, instruction reliability, novel synthesis, cost/latency) as a
+load-bearing field: a delta over a **named, versioned baseline** counts only
+when it is externally sourced — the vendor's launch post is not a measurement.
+
+When the gate passes, the report carries a **replication plan**: each *sourced*
+delta is priced with compositions of open tools and lesser models (cascade
+routing, best-of-N + verification, agentic decomposition, retrieval
+augmentation, tool scaffolding, specialist fine-tunes, multimodal pipelines),
+each carrying its **residual** — what the composition does *not* give back.
+Three outcomes per axis:
+
+- **Priced** — a sourced delta with an established or independently reported
+  composition. Here is the recipe, and here is what it costs you.
+- **Frontier residual** — a sourced delta nothing pricing-grade covers. The
+  honest ceiling: what you actually pay the frontier for.
+- **Refused** — the delta was never sourced. The plan does not turn a launch
+  claim into an engineering roadmap.
+
+The seams force the questions vendor benchmarks skate past (eval independence,
+**harness parity** — did the baseline get the same scaffolding? — benchmark
+saturation), and vendor-funded leaderboards land in the same contamination
+bucket a sponsored ranking does. See
+[`docs/frontier-replication.md`](docs/frontier-replication.md), the neutral
+retrieval prompt in [`prompts/frontier-delta-pull.md`](prompts/frontier-delta-pull.md),
+and the `build_replication_plan` / `list_replication_strategies` MCP tools.
 
 ## Examples (the regression principle)
 
@@ -145,6 +177,7 @@ claim, and to prove it can **acquit, classify, or refuse to verdict**:
 | Load Example: Circular / Unproven | **Classify** — C / Circular |
 | Load Example: Insufficient Ledger | **Refuse to verdict** — pull-list only |
 | Load Example: Capital Allocator / Insufficient Attribution Ledger | **Refuse + route** — attribution fields, not product seams |
+| Load Example: Frontier Model / Replication Plan | **Price the delta** — sourced axes priced with residuals, marketing axes refused, ceiling named |
 
 See [`docs/regression-suite.md`](docs/regression-suite.md) for the three trap
 columns (deference, innuendo, scope) and the loaded-request sanitization test.

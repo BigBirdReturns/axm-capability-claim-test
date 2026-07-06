@@ -3,7 +3,7 @@
 **The "pick this up cold and succeed" artifact.** Read this first. It states
 what the thing is, where it stands, the conventions to uphold, and the open work.
 
-_Last updated: 2026-06-22._
+_Last updated: 2026-07-06._
 
 ---
 
@@ -35,6 +35,7 @@ regression suite:
 | Circular / Unproven | product_company | **Classify** — verdict C, contamination circular |
 | Insufficient Ledger | product_company | **Refuse to verdict** — pull-list only |
 | Capital Allocator… | capital_allocator | **Route** — attribution fields, not product seams |
+| Frontier Model Delta | frontier_model | **Price** — sourced deltas priced with residuals; marketing axes refused |
 
 **Start New Audit** runs the real flow: pick object type → fill load-bearing
 fields (claim + source + evidence class) → sourcing gate unlocks the verdict at
@@ -57,6 +58,14 @@ three sourced fields → read contamination bucket + verdict → export md/json/
 5. **Verdict** — `A_capability_with_proof` / `B_ahead_of_proof` /
    `C_costume_or_proof_substitution` / `unclassifiable` / `not_applicable`, with
    a mandatory falsification line ("what would clear it").
+6. **Replication plan** (`runReplicationPlan`, `frontier_model` route only) —
+   prices each **sourced** capability delta with open/lesser compositions from
+   the catalog (`data/replicationStrategies.ts`), carrying each composition's
+   mandatory residual. Refuses to price unsourced axes; names sourced axes with
+   no `established`/`reported` composition as the frontier residual. Maturity
+   is an allowlist (`isPricingStrategy`) mirroring `SOURCING_CLASSES` —
+   `experimental` and unknown maturities fail closed. Sits behind the sourcing
+   gate like everything else. See `docs/frontier-replication.md`.
 
 ## 4. Architecture (the method is split from the UI)
 
@@ -70,6 +79,7 @@ app/src/
     runSourcingGate.ts       } the gates
     runContaminationBucket.ts/
     runSeams.ts
+    runReplicationPlan.ts   frontier route: price sourced deltas, name the residual
     renderReport.ts         buildReport() + markdown rendering
     generateNeutralPrompt.ts neutral retrieval + loaded-request sanitization
     exportFiles.ts          md / json / csv, all client-side

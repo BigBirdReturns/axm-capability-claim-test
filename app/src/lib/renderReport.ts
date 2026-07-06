@@ -7,6 +7,7 @@ import { runObjectGate } from "./runObjectGate";
 import { isClaimSourced, isUsableSource, runSourcingGate } from "./runSourcingGate";
 import { runSeams } from "./runSeams";
 import { runContaminationBucket, BUCKET_LABELS } from "./runContaminationBucket";
+import { runReplicationPlan } from "./runReplicationPlan";
 import { generateNeutralPrompt } from "./generateNeutralPrompt";
 
 const VERDICT_LABELS: Record<Verdict["state"], string> = {
@@ -55,6 +56,12 @@ export function buildReport(ledger: Ledger): Report {
   report.seams = runSeams(ledger);
   report.contamination = runContaminationBucket(ledger);
   report.verdict = buildVerdict(ledger);
+  // The replication plan is the second half of the frontier route, and it sits
+  // BEHIND the sourcing gate like everything else: below threshold the only
+  // output is the pull-list, never a recipe.
+  if (ledger.objectType === "frontier_model") {
+    report.replicationPlan = runReplicationPlan(ledger);
+  }
   return report;
 }
 
@@ -149,9 +156,13 @@ export function renderReportMarkdown(report: Report): string {
   });
   L.push("");
 
-  // Contamination
+  // Contamination. Same bucket doctrine everywhere; the label follows the
+  // route — for a frontier model the circularity is in the proof chain
+  // (vendor-funded evals), not a cap table.
   const c = report.contamination!;
-  L.push(`## Capital contamination`);
+  L.push(
+    `## ${report.objectGate.objectType === "frontier_model" ? "Proof contamination" : "Capital contamination"}`,
+  );
   L.push(`- **Bucket:** ${BUCKET_LABELS[c.bucket]} (\`${c.bucket}\`)`);
   L.push(`- **Components (source-backed reasons, never a bare number):**`);
   c.components.forEach((comp) => {
@@ -160,6 +171,37 @@ export function renderReportMarkdown(report: Report): string {
     );
   });
   L.push("");
+
+  // Replication plan (frontier route only)
+  if (report.replicationPlan) {
+    const p = report.replicationPlan;
+    L.push(`## Replication plan`);
+    L.push(`_${p.doctrine}_`);
+    L.push("");
+    p.axes.forEach((a) => {
+      const status =
+        a.status === "priced"
+          ? "priced"
+          : a.status === "frontier_residual"
+            ? "frontier residual"
+            : "unpriced — delta not sourced";
+      L.push(`- **${a.label}** — ${status}${a.evidenceClass ? ` _(${a.evidenceClass})_` : ""}`);
+      L.push(`  - ${a.note}`);
+      a.strategies.forEach((s) => {
+        L.push(`  - **${s.label}** \`${s.maturity}\` — ${s.composition}`);
+        L.push(`    - Residual: ${s.residual}`);
+      });
+    });
+    L.push("");
+    if (p.residualAxes.length > 0) {
+      L.push(`- **Frontier residual (what stays frontier):** ${p.residualAxes.join(", ")}`);
+    }
+    if (p.unpricedAxes.length > 0) {
+      L.push(`- **Refused to price (delta unsourced):** ${p.unpricedAxes.join(", ")}`);
+    }
+    L.push(`- **Falsification:** ${p.falsificationLine}`);
+    L.push("");
+  }
 
   // Verdict
   const v = report.verdict!;

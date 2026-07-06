@@ -30,6 +30,7 @@ Pick the object type and route. Wrong object, wrong test.
 | `integrator_platform` | removal + operating control + contamination | Does the mission survive removal of the vendor |
 | `ranking_validator_media` | independence proof + contamination | Is the legitimacy it confers independent |
 | `government_program_vehicle` | removal + ownership | Who owns the seams |
+| `frontier_model` | capability delta + replication pricing | Is the claimed frontier delta independently measured, and what composition replicates it |
 | `claim_only` | claim test | Tense, source class, baseline, beneficiary |
 
 ## 1. Retrieval (neutral, mechanical, object-scoped)
@@ -58,6 +59,13 @@ production_status, ownership_posture.
 lead_investor_status, board_role, entry_timing, follow_on_outcomes,
 founder_validation, attributable_wins.
 
+**Load-bearing fields — frontier model (capability axes):** benchmark_delta,
+reasoning_depth, long_horizon_agency, context_capacity, tool_orchestration,
+multimodal_range, instruction_reliability, novel_synthesis,
+cost_latency_profile. Every delta names a versioned baseline; note harness
+parity. A vendor's own model card is at best `reported`. See
+`prompts/frontier-delta-pull.md`.
+
 ## 3. Sourcing gate (the stop rule)
 
 **No verdict below three sourced load-bearing fields.** If fewer than three are
@@ -78,6 +86,18 @@ Structural, not behavioral. See `prompts/audit-run.md`.
   `B_ahead_of_proof` / `C_costume_or_proof_substitution` / `unclassifiable`,
   loop open or closed. Read the cell, not the letter. A real weapon clears most
   seams; the honest answer is often B, not C.
+
+### Frontier route only: replication pricing
+
+For `frontier_model` objects, after the analysis layer, price the replication:
+for each **sourced** axis, match compositions of open tools / lesser models
+(cascade routing, best-of-N + verification, agentic decomposition, retrieval
+augmentation, tool scaffolding, specialist fine-tune, multimodal pipeline) and
+carry each composition's **residual** — what it does not give back. **Price
+only sourced deltas.** Refuse to price unsourced axes; name sourced axes with
+no established/reported composition as the frontier residual. End with the
+falsification line: re-run the source benchmark against the composition, with
+harness parity. See `docs/frontier-replication.md`.
 
 ## 5. Publication
 
