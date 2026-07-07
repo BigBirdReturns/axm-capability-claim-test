@@ -166,6 +166,14 @@ bucket a sponsored ranking does. See
 retrieval prompt in [`prompts/frontier-delta-pull.md`](prompts/frontier-delta-pull.md),
 and the `build_replication_plan` / `list_replication_strategies` MCP tools.
 
+**Companion instrument:** this route audits the *claims* — what nobody has
+measured yet. Its measurement counterpart is
+[Tier Bench](https://bigbirdreturns.github.io/tier-bench/), which runs the
+deterministic benchmark on your own machine and prices the replication
+empirically. A Tier Bench harness run is exactly the `confirmed`-class,
+harness-parity source this ledger wants; the two tools split the frontier
+question into *measured below the ruler* and *audited above it*.
+
 ## Examples (the regression principle)
 
 The tool is not built to convict; it is built to keep the evidence inside the
