@@ -61,11 +61,9 @@ export function runOfferingEvidenceGate(
     }
   });
 
-  if (packet.subject.offeringVersion?.trim()) admitted.add("offering_version");
-  if (packet.subject.claimant.trim() && packet.subject.offering.trim()) {
-    admitted.add("offering_identity");
-  }
-
+  // Subject metadata is useful for identity and display, but it never satisfies
+  // an evidence gate by itself. Every admitted field must be carried by a claim
+  // whose evidence cell proves the relevant proposition.
   const goalExtractionMissing = ([
     "offering_identity",
     "advertised_outcome",
