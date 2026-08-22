@@ -1,3 +1,5 @@
+import type { FieldSet } from "./objectRoutes";
+
 export interface SeamDef {
   id: string;
   question: string;
@@ -25,6 +27,17 @@ export const ALLOCATOR_SEAMS: SeamDef[] = [
   { id: "founder_visible_help", question: "What founder-visible help is independently tied to them." },
 ];
 
+// Capability offering — separate the purchased outcome from the vendor's chosen
+// implementation before any replication plan exists.
+export const OFFERING_SEAMS: SeamDef[] = [
+  { id: "goal_vs_mechanism", question: "Goal versus mechanism. What state change is the customer buying after the named product categories are removed?" },
+  { id: "evidence_target", question: "Evidence target. Does each source prove that a claim was made, that a deployment occurred, or that performance was measured?" },
+  { id: "version_identity", question: "Version identity. Which exact offering configuration, date, and operating state is under review?" },
+  { id: "operating_boundary", question: "Operating boundary. Under what environment, duration, load, staffing, and authority does the claimed outcome apply?" },
+  { id: "economic_boundary", question: "Economic boundary. Do the compared costs include the same equipment, labor, support, sustainment, period, and mission denominator?" },
+  { id: "architecture_leakage", question: "Architecture leakage. Which vendor-specific features are actually required by the mission outcome?" },
+];
+
 // Frontier model — the forced questions for a claimed capability delta. The
 // killer seam is harness parity: most published deltas hand the frontier model
 // a scaffold (tools, retries, verification) the baseline never got.
@@ -39,11 +52,10 @@ export const FRONTIER_SEAMS: SeamDef[] = [
 
 // Integrator / platform and government program / vehicle lean on removal +
 // ownership; reuse the product seam frame with emphasis on the removal seams.
-export function seamsForFieldSet(
-  fieldSet: "product" | "allocator" | "frontier" | "none",
-): SeamDef[] {
+export function seamsForFieldSet(fieldSet: FieldSet): SeamDef[] {
   if (fieldSet === "allocator") return ALLOCATOR_SEAMS;
   if (fieldSet === "product") return PRODUCT_SEAMS;
+  if (fieldSet === "offering") return OFFERING_SEAMS;
   if (fieldSet === "frontier") return FRONTIER_SEAMS;
   return [];
 }
