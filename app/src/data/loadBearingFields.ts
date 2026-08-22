@@ -1,3 +1,6 @@
+import type { EvidenceClass } from "../types/audit";
+import type { FieldSet } from "./objectRoutes";
+
 export interface FieldDef {
   field: string;
   label: string;
@@ -28,6 +31,25 @@ export const ALLOCATOR_LOAD_BEARING: FieldDef[] = [
   { field: "attributable_wins", label: "Attributable wins" },
 ];
 
+// Generic offering fields. Advertised claims remain separate from evidence that
+// a deployment occurred, performance was measured, or the economics share a
+// complete accounting boundary.
+export const OFFERING_LOAD_BEARING: FieldDef[] = [
+  { field: "offering_identity", label: "Offering identity" },
+  { field: "offering_version", label: "Offering version" },
+  { field: "advertised_outcome", label: "Advertised customer outcome" },
+  { field: "claimed_mechanism", label: "Claimed mechanism" },
+  { field: "advertised_economics", label: "Advertised economics" },
+  { field: "named_operator_need", label: "Named operator need" },
+  { field: "deployment_record", label: "Deployment record" },
+  { field: "measured_performance", label: "Measured performance" },
+  { field: "economic_baseline", label: "Economic baseline" },
+  { field: "operating_environment", label: "Operating environment" },
+  { field: "system_boundary", label: "Complete system boundary" },
+  { field: "independent_verification", label: "Independent verification" },
+  { field: "ownership_and_lock_in", label: "Ownership and lock-in" },
+];
+
 // Frontier-model load-bearing fields — the capability axes a frontier delta is
 // claimed on. Each field is a claim of headroom over a NAMED lesser baseline;
 // the sourcing gate treats "the vendor said so at launch" exactly like any
@@ -46,8 +68,6 @@ export const FRONTIER_LOAD_BEARING: FieldDef[] = [
 
 export const SOURCING_THRESHOLD = 3;
 
-import type { EvidenceClass } from "../types/audit";
-
 export const EVIDENCE_CLASSES: EvidenceClass[] = [
   "confirmed",
   "reported",
@@ -56,11 +76,10 @@ export const EVIDENCE_CLASSES: EvidenceClass[] = [
   "open",
 ];
 
-export function fieldsForSet(
-  fieldSet: "product" | "allocator" | "frontier" | "none",
-): FieldDef[] {
+export function fieldsForSet(fieldSet: FieldSet): FieldDef[] {
   if (fieldSet === "product") return PRODUCT_LOAD_BEARING;
   if (fieldSet === "allocator") return ALLOCATOR_LOAD_BEARING;
+  if (fieldSet === "offering") return OFFERING_LOAD_BEARING;
   if (fieldSet === "frontier") return FRONTIER_LOAD_BEARING;
   return [];
 }
