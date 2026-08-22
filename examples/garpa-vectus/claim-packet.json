@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "subject": {
+    "claimant": "Swarmer",
+    "organization": "Swarmer",
+    "offering": "Vectus Air Defense Systems",
+    "offeringType": "service"
+  },
+  "artifacts": [
+    {
+      "id": "artifact_vectus_launch_post",
+      "kind": "social_post",
+      "title": "Swarmer launch post for Vectus Air Defense Systems",
+      "publisher": "LinkedIn",
+      "author": "Swarmer",
+      "publishedAt": "2026-08-22",
+      "capturedAt": "2026-08-22",
+      "notes": "Transcribed from a user-provided screenshot. The fixture preserves the visible claims but does not treat the post as performance evidence."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e_identity",
+      "target": "offering_identity",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "artifact_vectus_launch_post",
+        "section": "opening paragraph",
+        "quotedText": "We are incredibly proud to launch Vectus Air Defense Systems"
+      },
+      "statement": "Swarmer publicly names and launches an offering called Vectus Air Defense Systems.",
+      "limitations": [
+        "No exact product or service version is stated."
+      ]
+    },
+    {
+      "id": "e_outcome_claim",
+      "target": "claim_was_made",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "artifact_vectus_launch_post",
+        "section": "opening paragraph",
+        "quotedText": "designed to protect high-value sites"
+      },
+      "statement": "Swarmer claims the offering is designed to protect high-value sites.",
+      "limitations": [
+        "The protected-site class, threat set, geometry, duration, and success threshold are not specified."
+      ]
+    },
+    {
+      "id": "e_mechanism_claim",
+      "target": "claim_was_made",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "artifact_vectus_launch_post",
+        "section": "second paragraph",
+        "quotedText": "integrating proven detection, electronic warfare, and interceptor technologies into one managed service"
+      },
+      "statement": "Swarmer describes detection, electronic warfare, interceptors, and managed operation as the offering mechanism.",
+      "limitations": [
+        "The post does not identify component models, interfaces, staffing, authorization, or a measured system configuration.",
+        "The word proven is claimant language, not independent verification."
+      ]
+    },
+    {
+      "id": "e_economics_claim",
+      "target": "claim_was_made",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "artifact_vectus_launch_post",
+        "section": "second paragraph",
+        "quotedText": "operating at a fraction of the cost of legacy systems"
+      },
+      "statement": "Swarmer claims the managed service operates at a fraction of the cost of legacy systems.",
+      "limitations": [
+        "No legacy comparator, numerical price, accounting period, staffing model, or cost boundary is supplied."
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim_identity",
+      "field": "offering_identity",
+      "target": "offering_identity",
+      "statement": "The launch artifact names the offering Vectus Air Defense Systems.",
+      "evidenceCellIds": ["e_identity"],
+      "lifecycle": "active",
+      "limitations": [
+        "The exact version remains unresolved."
+      ]
+    },
+    {
+      "id": "claim_advertised_outcome",
+      "field": "advertised_outcome",
+      "target": "claim_was_made",
+      "statement": "Vectus is designed to protect high-value sites from proliferating aerial threats.",
+      "evidenceCellIds": ["e_outcome_claim"],
+      "lifecycle": "active",
+      "limitations": [
+        "This is an advertised outcome, not an observed result."
+      ]
+    },
+    {
+      "id": "claim_mechanism",
+      "field": "claimed_mechanism",
+      "target": "claim_was_made",
+      "statement": "Vectus integrates detection, electronic warfare, interceptors, and managed operation.",
+      "evidenceCellIds": ["e_mechanism_claim"],
+      "lifecycle": "active",
+      "limitations": [
+        "No complete system architecture or interface evidence is provided."
+      ]
+    },
+    {
+      "id": "claim_advertised_economics",
+      "field": "advertised_economics",
+      "target": "claim_was_made",
+      "statement": "Vectus operates at a fraction of the cost of legacy systems.",
+      "evidenceCellIds": ["e_economics_claim"],
+      "lifecycle": "active",
+      "limitations": [
+        "No comparable numerical baseline or accounting boundary is provided."
+      ]
+    }
+  ],
+  "conflicts": [],
+  "capturedAt": "2026-08-22"
+}
