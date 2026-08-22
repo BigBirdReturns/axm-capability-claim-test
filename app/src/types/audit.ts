@@ -8,6 +8,7 @@ export type ObjectType =
   | "integrator_platform"
   | "ranking_validator_media"
   | "government_program_vehicle"
+  | "capability_offering"
   | "frontier_model"
   | "claim_only";
 
@@ -17,6 +18,7 @@ export type Route =
   | "removal_test_operating_control_contamination"
   | "independence_proof_contamination"
   | "removal_test_ownership"
+  | "mission_outcome_replication"
   | "capability_delta_replication"
   | "claim_test";
 
