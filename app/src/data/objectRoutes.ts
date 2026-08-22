@@ -1,5 +1,7 @@
 import type { ObjectType, Route } from "../types/audit";
 
+export type FieldSet = "product" | "allocator" | "offering" | "frontier" | "none";
+
 export interface ObjectRouteDef {
   objectType: ObjectType;
   objectLabel: string;
@@ -7,7 +9,7 @@ export interface ObjectRouteDef {
   routeLabel: string;
   whatYouAreTesting: string;
   // Which load-bearing field set applies. "none" => claim-only style routes.
-  fieldSet: "product" | "allocator" | "frontier" | "none";
+  fieldSet: FieldSet;
   // Whether the product seam panel renders for this object.
   showsProductSeams: boolean;
 }
@@ -60,6 +62,16 @@ export const OBJECT_ROUTES: Record<ObjectType, ObjectRouteDef> = {
     fieldSet: "product",
     showsProductSeams: true,
   },
+  capability_offering: {
+    objectType: "capability_offering",
+    objectLabel: "Capability offering (product, service, or system)",
+    route: "mission_outcome_replication",
+    routeLabel: "Claim packet + mission outcome admission",
+    whatYouAreTesting:
+      "What outcome is being bought, and is it specified well enough to engineer against",
+    fieldSet: "offering",
+    showsProductSeams: false,
+  },
   frontier_model: {
     objectType: "frontier_model",
     objectLabel: "Frontier model (capability delta)",
@@ -87,6 +99,7 @@ export const OBJECT_TYPE_OPTIONS: ObjectType[] = [
   "integrator_platform",
   "ranking_validator_media",
   "government_program_vehicle",
+  "capability_offering",
   "frontier_model",
   "claim_only",
 ];

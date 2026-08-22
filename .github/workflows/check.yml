@@ -1,0 +1,41 @@
+name: check
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - claude/tender-rubin-n26gr6
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Typecheck and test
+        run: npm run check
+
+      - name: Build static app
+        run: npm run build
+
+      - name: Install MCP dependencies
+        working-directory: mcp
+        run: npm ci
+
+      - name: Typecheck MCP server
+        working-directory: mcp
+        run: npm run typecheck

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/artifact.schema.json",
+  "title": "GARPA Artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "kind", "title", "capturedAt"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "social_post",
+        "web_page",
+        "article",
+        "pitch_deck",
+        "datasheet",
+        "procurement_record",
+        "contract_record",
+        "patent",
+        "paper",
+        "benchmark",
+        "video",
+        "transcript",
+        "image",
+        "local_test",
+        "other"
+      ]
+    },
+    "title": { "type": "string", "minLength": 1 },
+    "uri": { "type": "string" },
+    "publisher": { "type": "string" },
+    "author": { "type": "string" },
+    "publishedAt": { "type": "string" },
+    "capturedAt": { "type": "string", "minLength": 1 },
+    "contentDigest": { "type": "string" },
+    "exactVersion": { "type": "string" },
+    "notes": { "type": "string" }
+  }
+}

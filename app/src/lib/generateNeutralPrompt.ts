@@ -10,6 +10,13 @@ export function generateNeutralPrompt(ledger: Ledger): string {
   const fields = fieldsForSet(def.fieldSet);
   const fieldLines = fields.map((f) => `- ${f.label}`).join("\n");
 
+  const additionalNodes =
+    def.fieldSet === "frontier"
+      ? `Also collect the measurement nodes: named versioned baselines, eval harnesses and who runs them, benchmark owners and funders, model cards, leaderboards, and independent replication attempts.`
+      : def.fieldSet === "offering"
+        ? `Also collect the offering boundary: exact version, claimant and operator statements, deployment and test records, scenario and metric definitions, cost accounting boundary, staffing, external services, and independent reproduction attempts.`
+        : `Also collect the structural nodes: investors, board roles, validators, rankings, co-investors, and affiliations.`;
+
   return [
     `Build a sourced ledger for the following public object. Retrieval only — do not assess, rank, or conclude.`,
     ``,
@@ -23,11 +30,7 @@ export function generateNeutralPrompt(ledger: Ledger): string {
     `Load-bearing fields to populate:`,
     fieldLines || `- (claim-only: tense, source class, baseline, beneficiary)`,
     ``,
-    // The structural nodes follow the object: for a frontier model the network
-    // is the measurement chain, not a cap table.
-    def.fieldSet === "frontier"
-      ? `Also collect the measurement nodes: named versioned baselines, eval harnesses and who runs them, benchmark owners and funders, model cards, leaderboards, and independent replication attempts.`
-      : `Also collect the structural nodes: investors, board roles, validators, rankings, co-investors, and affiliations.`,
+    additionalNodes,
     ``,
     `Return strictly as JSON matching the ledger schema (objectType, targetName, sources[], claims[]). Do not include analysis or a verdict.`,
   ].join("\n");

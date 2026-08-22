@@ -17,6 +17,7 @@ const objectType = z.enum([
   "integrator_platform",
   "ranking_validator_media",
   "government_program_vehicle",
+  "capability_offering",
   "frontier_model",
   "claim_only",
 ]);

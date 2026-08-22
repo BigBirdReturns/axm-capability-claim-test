@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/evidence-cell.schema.json",
+  "title": "GARPA Evidence Cell",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "target", "venue", "control", "locator", "statement", "limitations"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "target": {
+      "type": "string",
+      "enum": [
+        "claim_was_made",
+        "offering_identity",
+        "offering_version",
+        "operator_need",
+        "deployment_occurred",
+        "performance_observed",
+        "cost_observed",
+        "system_boundary",
+        "ownership_or_lock_in",
+        "local_result",
+        "other"
+      ]
+    },
+    "venue": {
+      "type": "string",
+      "enum": [
+        "claimant_publication",
+        "customer_publication",
+        "government_record",
+        "independent_test",
+        "published_benchmark",
+        "journalistic_report",
+        "community_report",
+        "local_reproduction",
+        "analyst_derivation"
+      ]
+    },
+    "control": {
+      "type": "string",
+      "enum": [
+        "claimant_controlled",
+        "commercially_related",
+        "externally_attributed",
+        "independent",
+        "local_measured",
+        "unknown"
+      ]
+    },
+    "locator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId"],
+      "properties": {
+        "artifactId": { "type": "string", "minLength": 1 },
+        "page": { "type": "integer", "minimum": 1 },
+        "timestampStart": { "type": "string" },
+        "timestampEnd": { "type": "string" },
+        "section": { "type": "string" },
+        "quotedText": { "type": "string" },
+        "description": { "type": "string" }
+      }
+    },
+    "statement": { "type": "string", "minLength": 1 },
+    "subjectVersion": { "type": "string" },
+    "fixture": { "type": "string" },
+    "environment": { "type": "string" },
+    "metric": { "type": "string" },
+    "method": { "type": "string" },
+    "limitations": { "type": "array", "items": { "type": "string" } }
+  }
+}

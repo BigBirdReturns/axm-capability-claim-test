@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/mission-outcome.schema.json",
+  "title": "GARPA Mission Outcome",
+  "description": "The customer outcome separated from the vendor architecture. Every non-open value carries evidence-cell references.",
+  "$defs": {
+    "evidenceBoundValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis", "evidenceCellIds", "limitations"],
+      "properties": {
+        "value": { "type": "string" },
+        "basis": {
+          "type": "string",
+          "enum": ["explicitly_stated", "externally_supported", "derived", "analyst_hypothesis", "open"]
+        },
+        "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+        "limitations": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "operator",
+    "protectedOrAffectedObject",
+    "problemOrThreat",
+    "desiredStateChange",
+    "operatingEnvironment",
+    "timeAndCoverageRequirement",
+    "baseline",
+    "successMetrics",
+    "exclusions"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "operator": { "$ref": "#/$defs/evidenceBoundValue" },
+    "protectedOrAffectedObject": { "$ref": "#/$defs/evidenceBoundValue" },
+    "problemOrThreat": { "$ref": "#/$defs/evidenceBoundValue" },
+    "desiredStateChange": { "$ref": "#/$defs/evidenceBoundValue" },
+    "operatingEnvironment": { "$ref": "#/$defs/evidenceBoundValue" },
+    "timeAndCoverageRequirement": { "$ref": "#/$defs/evidenceBoundValue" },
+    "baseline": { "$ref": "#/$defs/evidenceBoundValue" },
+    "economicConstraint": { "$ref": "#/$defs/evidenceBoundValue" },
+    "successMetrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "comparator", "basis", "evidenceCellIds", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "unit": { "type": "string" },
+          "comparator": { "type": "string", "enum": ["gte", "lte", "range", "boolean", "categorical"] },
+          "threshold": { "type": ["number", "string"] },
+          "baseline": { "type": ["number", "string"] },
+          "basis": {
+            "type": "string",
+            "enum": ["explicitly_stated", "externally_supported", "derived", "analyst_hypothesis", "open"]
+          },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "exclusions": { "type": "array", "items": { "type": "string" } }
+  }
+}

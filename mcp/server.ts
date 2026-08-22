@@ -27,6 +27,9 @@ import { REPLICATION_STRATEGIES } from "../app/src/data/replicationStrategies.ts
 import { runReplicationPlan } from "../app/src/lib/runReplicationPlan.ts";
 import { runSourcingGate } from "../app/src/lib/runSourcingGate.ts";
 import { buildPullList } from "../app/src/lib/renderReport.ts";
+import { generateGarpaIntakePrompt } from "../app/src/lib/garpa/generateGarpaIntakePrompt.ts";
+import { runGarpaAdmission } from "../app/src/lib/garpa/runGarpaAdmission.ts";
+import { validateClaimPacket } from "../app/src/lib/garpa/validateClaimPacket.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -117,6 +120,19 @@ server.registerTool(
   },
 );
 
+// GARPA intake: the model extracts a claim packet and mission-outcome proposal;
+// the code later decides how far the case is admitted.
+server.registerTool(
+  "generate_garpa_intake_prompt",
+  {
+    title: "Generate GARPA intake prompt",
+    description:
+      "Returns the neutral extraction prompt for an arbitrary capability-offering artifact. The model must separate claimant statements, observed evidence, and the customer mission outcome; it must not select an architecture or issue a verdict.",
+    inputSchema: { targetHint: z.string().optional() },
+  },
+  async ({ targetHint }) => text(generateGarpaIntakePrompt(targetHint)),
+);
+
 // 2. LEDGER LAYER ------------------------------------------------------------
 server.registerTool(
   "validate_ledger",
@@ -136,6 +152,44 @@ server.registerTool(
       JSON.stringify({ ok: result.ok, errors: result.errors }, null, 2),
     );
   },
+);
+
+server.registerTool(
+  "validate_claim_packet",
+  {
+    title: "Validate a GARPA claim packet",
+    description:
+      "Validates a versioned capability-offering claim packet. Cross-checks artifact, evidence-cell, claim, and conflict references and refuses claimant-controlled prose as measured performance or independent verification.",
+    inputSchema: {
+      claimPacket: z
+        .union([z.string(), z.record(z.any())])
+        .describe("GARPA claim packet object or JSON string."),
+    },
+  },
+  async ({ claimPacket }) => {
+    const result = validateClaimPacket(claimPacket);
+    return text(JSON.stringify({ ok: result.ok, errors: result.errors }, null, 2));
+  },
+);
+
+server.registerTool(
+  "run_garpa_admission",
+  {
+    title: "Run GARPA admission",
+    description:
+      "Compiles an attribution-safe capability_offering ledger, runs the ordinary sourcing gate, then applies the stricter offering-evidence and mission-goal gates. Returns the furthest admitted stage and a precise pull-list. It cannot emit an architecture when the actual customer outcome is underspecified.",
+    inputSchema: {
+      claimPacket: z
+        .union([z.string(), z.record(z.any())])
+        .describe("GARPA claim packet object or JSON string."),
+      missionOutcome: z
+        .union([z.string(), z.record(z.any())])
+        .optional()
+        .describe("Optional mission-outcome object or JSON string."),
+    },
+  },
+  async ({ claimPacket, missionOutcome }) =>
+    text(JSON.stringify(runGarpaAdmission(claimPacket, missionOutcome), null, 2)),
 );
 
 // 3. ANALYSIS LAYER (the gates run HERE) ------------------------------------

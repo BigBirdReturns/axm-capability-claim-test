@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/claim-packet.schema.json",
+  "title": "GARPA Claim Packet",
+  "description": "Versioned intake object that preserves what an offering claims without promoting claimant language into measured capability.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "subject", "artifacts", "evidence", "claims", "conflicts", "capturedAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimant", "offering", "offeringType"],
+      "properties": {
+        "claimant": { "type": "string", "minLength": 1 },
+        "organization": { "type": "string" },
+        "offering": { "type": "string", "minLength": 1 },
+        "offeringVersion": { "type": "string" },
+        "offeringType": {
+          "type": "string",
+          "enum": ["product", "service", "system", "platform", "program", "architecture"]
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "artifact.schema.json" }
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "evidence-cell.schema.json" }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "field", "target", "statement", "evidenceCellIds", "lifecycle", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "field": {
+            "type": "string",
+            "enum": [
+              "offering_identity",
+              "offering_version",
+              "advertised_outcome",
+              "claimed_mechanism",
+              "advertised_economics",
+              "named_operator_need",
+              "deployment_record",
+              "measured_performance",
+              "economic_baseline",
+              "operating_environment",
+              "system_boundary",
+              "independent_verification",
+              "ownership_and_lock_in"
+            ]
+          },
+          "target": {
+            "type": "string",
+            "enum": [
+              "claim_was_made",
+              "offering_identity",
+              "offering_version",
+              "operator_need",
+              "deployment_occurred",
+              "performance_observed",
+              "cost_observed",
+              "system_boundary",
+              "ownership_or_lock_in",
+              "local_result",
+              "other"
+            ]
+          },
+          "statement": { "type": "string", "minLength": 1 },
+          "scope": { "type": "string" },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+          "lifecycle": {
+            "type": "string",
+            "enum": ["active", "superseded", "withdrawn", "conflicted", "unknown"]
+          },
+          "limitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "claimIds", "description"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "claimIds": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+          "description": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "capturedAt": { "type": "string", "minLength": 1 }
+  }
+}
