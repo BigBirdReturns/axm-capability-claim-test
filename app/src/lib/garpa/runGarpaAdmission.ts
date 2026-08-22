@@ -60,7 +60,21 @@ export function runGarpaAdmission(
   const missionOutcome = missionResult.missionOutcome;
   const goalGate = runGoalGate(missionOutcome);
   const architectureReady =
-    offeringEvidenceGate.architecturePreconditionsPassed && goalGate.passed;
+    sourcingGate.passed &&
+    offeringEvidenceGate.architecturePreconditionsPassed &&
+    goalGate.passed;
+
+  const sourcingReasons = sourcingGate.passed
+    ? []
+    : [
+        `Capability Claim Test sourcing gate blocked: ${sourcingGate.sourcedCount}/${sourcingGate.required} load-bearing fields sourced.`,
+      ];
+  const sourcingPulls = sourcingGate.passed
+    ? []
+    : sourcingGate.missing.map(
+        (field) =>
+          `Retrieve external evidence for offering field ${field.field} (${field.label}).`,
+      );
 
   return {
     ok: true,
@@ -77,9 +91,14 @@ export function runGarpaAdmission(
     missionOutcome,
     goalGate,
     blockingReasons: unique([
+      ...sourcingReasons,
       ...offeringEvidenceGate.blockingReasons,
       ...goalGate.blockingReasons,
     ]),
-    pullList: unique([...offeringEvidenceGate.pullList, ...goalGate.pullList]),
+    pullList: unique([
+      ...sourcingPulls,
+      ...offeringEvidenceGate.pullList,
+      ...goalGate.pullList,
+    ]),
   };
 }
