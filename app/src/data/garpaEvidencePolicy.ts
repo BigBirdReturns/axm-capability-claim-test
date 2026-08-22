@@ -34,7 +34,7 @@ const EXTERNAL_PERFORMANCE_CONTROLS: ReadonlySet<EvidenceControl> = new Set([
   "local_measured",
 ]);
 
-const EXTERNAL_DEPLOYMENT_CONTROLS: ReadonlySet<EvidenceControl> = new Set([
+const EXTERNAL_ATTRIBUTION_CONTROLS: ReadonlySet<EvidenceControl> = new Set([
   "externally_attributed",
   "independent",
   "local_measured",
@@ -47,8 +47,8 @@ export function evidenceCellSupportsField(
   if (!OFFERING_FIELD_TARGETS[field].includes(cell.target)) return false;
 
   // Claimant-controlled prose may establish that a statement was made. It may
-  // not establish measured performance, independent verification, or a
-  // deployment outside the claimant's own account.
+  // not establish measured performance, independent verification, deployment,
+  // an operator-owned requirement, or a comparator cost baseline.
   if (
     (field === "measured_performance" || field === "independent_verification") &&
     !EXTERNAL_PERFORMANCE_CONTROLS.has(cell.control)
@@ -57,8 +57,10 @@ export function evidenceCellSupportsField(
   }
 
   if (
-    field === "deployment_record" &&
-    !EXTERNAL_DEPLOYMENT_CONTROLS.has(cell.control)
+    (field === "deployment_record" ||
+      field === "named_operator_need" ||
+      field === "economic_baseline") &&
+    !EXTERNAL_ATTRIBUTION_CONTROLS.has(cell.control)
   ) {
     return false;
   }
