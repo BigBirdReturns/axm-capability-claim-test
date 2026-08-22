@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "operator": {
+    "value": "An operator responsible for a high-value fixed site",
+    "basis": "derived",
+    "evidenceCellIds": ["e_outcome_claim"],
+    "limitations": [
+      "No named customer, operator class, or authority boundary appears in the launch post."
+    ]
+  },
+  "protectedOrAffectedObject": {
+    "value": "A high-value site",
+    "basis": "explicitly_stated",
+    "evidenceCellIds": ["e_outcome_claim"],
+    "limitations": [
+      "The site type, geometry, and protected assets are not specified."
+    ]
+  },
+  "problemOrThreat": {
+    "value": "Proliferating aerial threats against the protected site",
+    "basis": "derived",
+    "evidenceCellIds": ["e_outcome_claim", "e_mechanism_claim"],
+    "limitations": [
+      "Threat classes, speeds, signatures, concurrency, and rules of engagement are unresolved."
+    ]
+  },
+  "desiredStateChange": {
+    "value": "Reduce successful aerial-threat effects against the protected site",
+    "basis": "derived",
+    "evidenceCellIds": ["e_outcome_claim"],
+    "limitations": [
+      "The post says protect but does not define detection, disruption, defeat, deterrence, or another measurable endpoint."
+    ]
+  },
+  "operatingEnvironment": {
+    "basis": "open",
+    "evidenceCellIds": [],
+    "limitations": [
+      "No geography, weather, electromagnetic environment, airspace, background traffic, or venue constraints are supplied."
+    ]
+  },
+  "timeAndCoverageRequirement": {
+    "basis": "open",
+    "evidenceCellIds": [],
+    "limitations": [
+      "No coverage geometry, endurance, concurrency, availability, or response-time requirement is supplied."
+    ]
+  },
+  "baseline": {
+    "basis": "open",
+    "evidenceCellIds": [],
+    "limitations": [
+      "Legacy systems are referenced but not named, configured, measured, or priced."
+    ]
+  },
+  "successMetrics": [
+    {
+      "id": "metric_site_protection",
+      "name": "Protected-site outcome effectiveness",
+      "comparator": "boolean",
+      "basis": "analyst_hypothesis",
+      "evidenceCellIds": ["e_outcome_claim"],
+      "limitations": [
+        "No testable endpoint or pass threshold can be recovered from the launch post."
+      ]
+    }
+  ],
+  "economicConstraint": {
+    "value": "Lower full-system operating cost than the relevant legacy comparator",
+    "basis": "analyst_hypothesis",
+    "evidenceCellIds": ["e_economics_claim"],
+    "limitations": [
+      "The claimant provides no numerical comparator or complete accounting boundary."
+    ]
+  },
+  "exclusions": [
+    "No claim of measured performance is admitted.",
+    "No deployment is admitted.",
+    "No independent verification is admitted.",
+    "No active electronic or physical effect is authorized or proposed by this fixture.",
+    "No product-level parity conclusion is available."
+  ]
+}
