@@ -33,6 +33,9 @@ import {
 } from "../app/src/lib/garpa/validateClaimPacket.ts";
 import { runGarpaAdmission } from "../app/src/lib/garpa/runGarpaAdmission.ts";
 import { renderGarpaRealityBrief } from "../app/src/lib/garpa/renderRealityBrief.ts";
+import { validateCapabilityGraph } from "../app/src/lib/garpa/validateCapabilityGraph.ts";
+import { runCapabilityGraphGate } from "../app/src/lib/garpa/runCapabilityGraphGate.ts";
+import { renderCapabilityGraphBrief } from "../app/src/lib/garpa/renderCapabilityGraphBrief.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -328,6 +331,137 @@ server.registerTool(
           admissionBlocked: !admission.passed,
           admission,
           realityBrief,
+        },
+        null,
+        2,
+      ),
+    );
+  },
+);
+
+// 6. GARPA CAPABILITY GRAPH --------------------------------------------------
+// Decomposition is available only after offering and goal admission. The graph
+// names functions, interfaces, roles, dependencies, and constraints. It does
+// not select components or produce a candidate architecture.
+server.registerTool(
+  "validate_garpa_capability_graph",
+  {
+    title: "Validate a GARPA capability graph",
+    description:
+      "Validates a GARPA capability graph against its claim packet and mission outcome. Checks schema shape, unique ids, evidence references, function/interface/dependency references, metric traces, human roles, and declared feedback-loop references.",
+    inputSchema: {
+      claimPacket: JSON_INPUT.describe("GARPA claim packet object or JSON string."),
+      missionOutcome: JSON_INPUT.describe("GARPA mission outcome object or JSON string."),
+      capabilityGraph: JSON_INPUT.describe("GARPA capability graph object or JSON string."),
+    },
+  },
+  async ({ claimPacket, missionOutcome, capabilityGraph }) => {
+    const packet = validateClaimPacket(claimPacket);
+    if (!packet.ok || !packet.value) {
+      return text(
+        JSON.stringify(
+          { ok: false, stage: "claim_packet", errors: packet.errors },
+          null,
+          2,
+        ),
+      );
+    }
+    const outcome = validateMissionOutcome(missionOutcome, packet.value);
+    if (!outcome.ok || !outcome.value) {
+      return text(
+        JSON.stringify(
+          { ok: false, stage: "mission_outcome", errors: outcome.errors },
+          null,
+          2,
+        ),
+      );
+    }
+    const graph = validateCapabilityGraph(
+      capabilityGraph,
+      packet.value,
+      outcome.value,
+    );
+    return text(
+      JSON.stringify(
+        { ok: graph.ok, stage: "capability_graph", errors: graph.errors },
+        null,
+        2,
+      ),
+    );
+  },
+);
+
+server.registerTool(
+  "run_garpa_capability_graph_gate",
+  {
+    title: "Run the GARPA capability graph gate",
+    description:
+      "Runs GARPA admission and then, only when admission passes, evaluates mission traces, essential functions, interfaces, dependencies, human roles, constraint completeness, authorization boundaries, vendor-architecture leakage, and declared feedback loops. Returns the highest admissible state and never selects components or emits an architecture.",
+    inputSchema: {
+      claimPacket: JSON_INPUT.describe("GARPA claim packet object or JSON string."),
+      missionOutcome: JSON_INPUT.describe("GARPA mission outcome object or JSON string."),
+      missionOutcomeDigest: z.string().min(1).describe(
+        "Digest of the current admitted mission outcome. Must match the graph binding.",
+      ),
+      capabilityGraph: JSON_INPUT.describe("GARPA capability graph object or JSON string."),
+    },
+  },
+  async ({
+    claimPacket,
+    missionOutcome,
+    missionOutcomeDigest,
+    capabilityGraph,
+  }) => {
+    const packet = validateClaimPacket(claimPacket);
+    if (!packet.ok || !packet.value) {
+      return text(
+        JSON.stringify(
+          { ok: false, stage: "claim_packet", errors: packet.errors },
+          null,
+          2,
+        ),
+      );
+    }
+    const outcome = validateMissionOutcome(missionOutcome, packet.value);
+    if (!outcome.ok || !outcome.value) {
+      return text(
+        JSON.stringify(
+          { ok: false, stage: "mission_outcome", errors: outcome.errors },
+          null,
+          2,
+        ),
+      );
+    }
+    const graph = validateCapabilityGraph(
+      capabilityGraph,
+      packet.value,
+      outcome.value,
+    );
+    if (!graph.ok || !graph.value) {
+      return text(
+        JSON.stringify(
+          { ok: false, stage: "capability_graph", errors: graph.errors },
+          null,
+          2,
+        ),
+      );
+    }
+    const admission = runGarpaAdmission(packet.value, outcome.value);
+    const graphGate = runCapabilityGraphGate(
+      graph.value,
+      outcome.value,
+      admission,
+      missionOutcomeDigest,
+    );
+    const graphBrief = renderCapabilityGraphBrief(graph.value, graphGate);
+    return text(
+      JSON.stringify(
+        {
+          ok: true,
+          graphBlocked: !graphGate.passed,
+          admission,
+          graphGate,
+          graphBrief,
         },
         null,
         2,
