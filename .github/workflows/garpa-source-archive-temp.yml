@@ -33,7 +33,7 @@ jobs:
           cat .github/garpa-build-payload-*.b64 > /tmp/garpa-build-changes.b64
           base64 --decode /tmp/garpa-build-changes.b64 > /tmp/garpa-build-changes.tar.gz
           tar -xzf /tmp/garpa-build-changes.tar.gz
-          rm -f .github/workflows/garpa-source-archive-temp.yml
+          rm -f .github/workflows/garpa-commons-seeded-build-manifest-check.yml
           rm -f .github/garpa-build-payload-*.b64
           rm -f .github/garpa-bootstrap-trigger
 
