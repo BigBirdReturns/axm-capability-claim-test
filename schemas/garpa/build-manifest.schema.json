@@ -1,0 +1,300 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/build-manifest.schema.json",
+  "title": "GARPA Build Manifest",
+  "description": "Frozen exact components, software, compatibility edges, roles, instrumentation, calibration, substitution policy, assembly sequence, and architecture cost/schedule traces. This is intent, not an as-built receipt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "candidateArchitectureDigest",
+    "qualificationContractDigest",
+    "components",
+    "customCode",
+    "compatibilityEdges",
+    "humanRoles",
+    "dependencies",
+    "instrumentation",
+    "calibrationPlan",
+    "substitutionPolicies",
+    "assemblySteps",
+    "expectedCostLineIds",
+    "expectedScheduleLineIds",
+    "manifestDigest",
+    "frozenAt",
+    "state"
+  ],
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "componentId",
+        "kind",
+        "exactModelOrVersion",
+        "quantity",
+        "supplierOrSource",
+        "acquisitionState",
+        "unitCost",
+        "currency",
+        "configurationDigest",
+        "serialOrLotPolicy",
+        "functionIds",
+        "interfaceIds",
+        "calibrationRequired"
+      ],
+      "properties": {
+        "componentId": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "hardware",
+            "software",
+            "service",
+            "fabricated_item",
+            "test_equipment",
+            "other"
+          ]
+        },
+        "exactModelOrVersion": { "type": "string", "minLength": 1 },
+        "quantity": { "type": "number", "exclusiveMinimum": 0 },
+        "supplierOrSource": { "type": "string", "minLength": 1 },
+        "acquisitionState": {
+          "enum": ["existing", "to_acquire", "reserved"]
+        },
+        "unitCost": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "minLength": 1 },
+        "configurationDigest": { "type": "string", "minLength": 1 },
+        "firmwareOrRuntimeVersion": { "type": "string" },
+        "license": { "type": "string" },
+        "serialOrLotPolicy": {
+          "enum": ["record_each", "not_applicable"]
+        },
+        "functionIds": { "$ref": "#/$defs/stringArray" },
+        "interfaceIds": { "$ref": "#/$defs/stringArray" },
+        "calibrationRequired": { "type": "boolean" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "candidateArchitectureDigest": { "type": "string", "minLength": 1 },
+    "qualificationContractDigest": { "type": "string", "minLength": 1 },
+    "components": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "customCode": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "customCodeId",
+          "exactVersion",
+          "sourceCommit",
+          "packageDigest",
+          "dependencyLockDigest",
+          "configurationDigest",
+          "buildAndInstallProcedure",
+          "functionIds",
+          "interfaceIds"
+        ],
+        "properties": {
+          "customCodeId": { "type": "string", "minLength": 1 },
+          "exactVersion": { "type": "string", "minLength": 1 },
+          "sourceCommit": { "type": "string", "minLength": 1 },
+          "packageDigest": { "type": "string", "minLength": 1 },
+          "dependencyLockDigest": { "type": "string", "minLength": 1 },
+          "configurationDigest": { "type": "string", "minLength": 1 },
+          "buildAndInstallProcedure": { "$ref": "#/$defs/stringArray" },
+          "functionIds": { "$ref": "#/$defs/stringArray" },
+          "interfaceIds": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "compatibilityEdges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "compatibilityEdgeId",
+          "interfaceId",
+          "producerComponentIds",
+          "consumerComponentIds",
+          "adapterComponentIds",
+          "customCodeIds",
+          "acceptanceTestIds"
+        ],
+        "properties": {
+          "compatibilityEdgeId": { "type": "string", "minLength": 1 },
+          "interfaceId": { "type": "string", "minLength": 1 },
+          "producerComponentIds": { "$ref": "#/$defs/stringArray" },
+          "consumerComponentIds": { "$ref": "#/$defs/stringArray" },
+          "adapterComponentIds": { "$ref": "#/$defs/stringArray" },
+          "customCodeIds": { "$ref": "#/$defs/stringArray" },
+          "acceptanceTestIds": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "humanRoles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "humanRoleId",
+          "staffing",
+          "requiredTraining",
+          "responsibilities"
+        ],
+        "properties": {
+          "humanRoleId": { "type": "string", "minLength": 1 },
+          "staffing": { "type": "string", "minLength": 1 },
+          "requiredTraining": { "$ref": "#/$defs/stringArray" },
+          "responsibilities": { "$ref": "#/$defs/stringArray" },
+          "authorityBoundary": { "type": "string" }
+        }
+      }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dependencyId",
+          "providerOrSource",
+          "exactServiceOrDatasetVersion",
+          "availabilityCheck"
+        ],
+        "properties": {
+          "dependencyId": { "type": "string", "minLength": 1 },
+          "providerOrSource": { "type": "string", "minLength": 1 },
+          "exactServiceOrDatasetVersion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "availabilityCheck": { "type": "string", "minLength": 1 },
+          "fallback": { "type": "string" }
+        }
+      }
+    },
+    "instrumentation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instrumentationId",
+          "exactModelOrVersion",
+          "configurationDigest",
+          "calibrationState",
+          "calibrationEvidenceIds",
+          "storagePath"
+        ],
+        "properties": {
+          "instrumentationId": { "type": "string", "minLength": 1 },
+          "exactModelOrVersion": { "type": "string", "minLength": 1 },
+          "configurationDigest": { "type": "string", "minLength": 1 },
+          "calibrationState": {
+            "enum": ["current", "not_required"]
+          },
+          "calibrationEvidenceIds": { "$ref": "#/$defs/stringArray" },
+          "storagePath": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "calibrationPlan": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "subjectId",
+          "method",
+          "acceptanceCondition",
+          "evidenceArtifactPattern",
+          "owner"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "subjectId": { "type": "string", "minLength": 1 },
+          "method": { "type": "string", "minLength": 1 },
+          "acceptanceCondition": { "type": "string", "minLength": 1 },
+          "evidenceArtifactPattern": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "substitutionPolicies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "componentId",
+          "policy",
+          "equivalenceCriteria",
+          "requiredRegressionTestIds",
+          "prohibitedSubstitutions"
+        ],
+        "properties": {
+          "componentId": { "type": "string", "minLength": 1 },
+          "policy": {
+            "enum": [
+              "no_substitution",
+              "equivalent_with_retest",
+              "architecture_review"
+            ]
+          },
+          "equivalenceCriteria": { "$ref": "#/$defs/stringArray" },
+          "requiredRegressionTestIds": { "$ref": "#/$defs/stringArray" },
+          "prohibitedSubstitutions": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "assemblySteps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "predecessorIds",
+          "componentIds",
+          "customCodeIds",
+          "compatibilityEdgeIds",
+          "procedure",
+          "acceptanceCondition",
+          "rollbackProcedure",
+          "owner"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "predecessorIds": { "$ref": "#/$defs/stringArray" },
+          "componentIds": { "$ref": "#/$defs/stringArray" },
+          "customCodeIds": { "$ref": "#/$defs/stringArray" },
+          "compatibilityEdgeIds": { "$ref": "#/$defs/stringArray" },
+          "procedure": { "$ref": "#/$defs/stringArray" },
+          "acceptanceCondition": { "type": "string", "minLength": 1 },
+          "rollbackProcedure": { "$ref": "#/$defs/stringArray" },
+          "owner": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "expectedCostLineIds": { "$ref": "#/$defs/stringArray" },
+    "expectedScheduleLineIds": { "$ref": "#/$defs/stringArray" },
+    "manifestDigest": { "type": "string", "minLength": 1 },
+    "frozenAt": { "type": "string", "minLength": 1 },
+    "state": { "enum": ["candidate", "frozen", "superseded"] }
+  }
+}
