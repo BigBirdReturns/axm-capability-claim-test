@@ -24,6 +24,7 @@ export const IMPLEMENTED_GARPA_STAGES = [
   "commons_seeded_substitution",
   "commons_seeded_architecture",
   "commons_seeded_qualification",
+  "commons_seeded_build_manifest",
 ] as const;
 
 export type ImplementedGarpaStage = (typeof IMPLEMENTED_GARPA_STAGES)[number];

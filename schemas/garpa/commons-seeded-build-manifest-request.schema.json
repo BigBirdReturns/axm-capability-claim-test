@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-build-manifest-request.schema.json",
+  "title": "GARPA Commons-Seeded Build Manifest Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededQualificationRequest",
+    "expectedSeededQualificationResultDigest",
+    "buildManifest",
+    "seededComponentBindings",
+    "frozenAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededQualificationRequest": { "type": "object" },
+    "expectedSeededQualificationResultDigest": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "buildManifest": { "type": "object" },
+    "seededComponentBindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bindingId",
+          "componentId",
+          "sourceCatalogObjectId",
+          "sourceRevisionId",
+          "sourceObjectDigest",
+          "qualificationBindingId",
+          "architectureSelectionDigest",
+          "architectureConfigurationDigest",
+          "buildComponentDigest",
+          "substitutionPolicyDigest",
+          "requiredCalibrationItemIds",
+          "requiredAssemblyStepIds"
+        ],
+        "properties": {
+          "bindingId": { "type": "string", "minLength": 1 },
+          "componentId": { "type": "string", "minLength": 1 },
+          "sourceCatalogObjectId": { "type": "string", "minLength": 1 },
+          "sourceRevisionId": { "type": "string", "minLength": 1 },
+          "sourceObjectDigest": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "qualificationBindingId": { "type": "string", "minLength": 1 },
+          "architectureSelectionDigest": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "architectureConfigurationDigest": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "buildComponentDigest": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "substitutionPolicyDigest": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "requiredCalibrationItemIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "requiredAssemblyStepIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    },
+    "frozenAt": { "type": "string", "format": "date-time" }
+  }
+}
