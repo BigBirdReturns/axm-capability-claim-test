@@ -1,0 +1,33 @@
+[
+  {
+    "operationId": "catalog-create-primitive-1",
+    "objectType": "primitive",
+    "incomingObjectId": "primitive-detect-before-boundary",
+    "action": "create",
+    "catalogObjectId": "primitive-detect-before-boundary",
+    "aliasesAdded": [
+      "Detect before boundary"
+    ],
+    "reason": "First current-release admission of the capability primitive."
+  },
+  {
+    "operationId": "catalog-create-component-observation-1",
+    "objectType": "component_observation",
+    "incomingObjectId": "observation-sensor-v1-controlled-fixture",
+    "action": "create",
+    "catalogObjectId": "observation-sensor-v1-controlled-fixture",
+    "aliasesAdded": [],
+    "reason": "First current-release admission of the exact-version component observation."
+  },
+  {
+    "operationId": "catalog-create-pattern-1",
+    "objectType": "architecture_pattern",
+    "incomingObjectId": "pattern-observe-detect-present",
+    "action": "create",
+    "catalogObjectId": "pattern-observe-detect-present",
+    "aliasesAdded": [
+      "Observe-detect-present"
+    ],
+    "reason": "First current-release admission of the architecture pattern."
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "catalogId": "GARPA-COMMONS-1",
+  "revision": 0,
+  "createdAt": "2026-08-23T05:20:00Z",
+  "updatedAt": "2026-08-23T05:20:00Z",
+  "primitiveEntries": [],
+  "componentObservationEntries": [],
+  "architecturePatternEntries": [],
+  "catalogDigest": "6284dc256061ea2d19b8c97da84fd736a819776a84529b0ae895c6a47f7d60d2"
+}
