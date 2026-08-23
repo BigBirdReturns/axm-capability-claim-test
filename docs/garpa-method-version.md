@@ -1,7 +1,7 @@
 # GARPA method version
 
-Current branch method version: `0.6.0-commons-seeded-architecture`.
+Current branch method version: `0.7.0-commons-seeded-qualification`.
 
-The highest governed stage preserves exact Commons-seeded component custody in a target candidate architecture and returns substantive admission to the existing architecture validator and gate. The method now covers claim intake, mission reconstruction, functional decomposition, target substitution, candidate architecture, qualification, build and test custody, mission evaluation, vendor parity, publication, release verification, correction and registry history, Commons admission, catalog search, target retrieval, source-bound nomination, exact-version component projection, seeded substitution, and seeded architecture admission.
+The highest governed stage freezes target qualification after a Commons-seeded architecture reaches the existing architecture gate. Every seeded component remains bound to its exact Commons source, target architecture selection, risk set, residual set, and target scenarios and metrics that close each source-required requalification test under the exact target environment. The existing qualification validator and gate remain authoritative for mission coverage, instrumentation, thresholds, comparators, accounting, authorization, acceptance, and frozen-contract state.
 
-Automatic physical execution is not implemented or authorized. Seeded architecture does not transfer source qualification, permit seed omission or remapping, or bypass target option, compatibility, role, dependency, cost, schedule, risk, residual, qualification, procurement, build, test, deployment, publication, or equivalence gates.
+Automatic physical execution is not implemented or authorized. Seeded qualification does not transfer source runs, pass states, calibration, authority, qualification, compatibility, deployment fitness, vendor parity, publication authority, or mission equivalence. A passing result admits preparation of an exact target build manifest only.

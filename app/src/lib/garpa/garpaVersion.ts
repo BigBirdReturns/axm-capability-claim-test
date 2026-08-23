@@ -1,1 +1,1 @@
-export const GARPA_METHOD_VERSION = "0.6.0-commons-seeded-architecture";
+export const GARPA_METHOD_VERSION = "0.7.0-commons-seeded-qualification";

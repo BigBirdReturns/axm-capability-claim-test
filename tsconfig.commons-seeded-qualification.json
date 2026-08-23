@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededQualification.ts",
+    "app/src/lib/garpa/commonsSeededQualificationDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededQualification.ts",
+    "app/src/lib/garpa/runCommonsSeededQualificationGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededQualification.ts",
+    "app/src/lib/garpa/garpaVersion.ts",
+    "app/src/lib/garpa/implementedStages.ts",
+    "tests/fixtures/garpaCommonsSeededQualificationFixture.ts",
+    "tests/lib/garpaCommonsSeededQualification.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts",
+    "examples/garpa-commons-seeded-qualification/**/*.json"
+  ]
+}

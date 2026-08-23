@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-commons-seeded-qualification-server.ts",
+    "garpaCommonsSeededQualificationTools.ts"
+  ]
+}

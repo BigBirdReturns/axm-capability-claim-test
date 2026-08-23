@@ -1,0 +1,87 @@
+name: garpa-commons-seeded-qualification-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededQualification.ts"
+      - "app/src/lib/garpa/commonsSeededQualificationDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededQualification.ts"
+      - "app/src/lib/garpa/runCommonsSeededQualificationGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededQualification.ts"
+      - "app/src/lib/garpa/garpaVersion.ts"
+      - "app/src/lib/garpa/implementedStages.ts"
+      - "tests/fixtures/garpaCommonsSeededQualificationFixture.ts"
+      - "tests/lib/garpaCommonsSeededQualification.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "examples/garpa-commons-seeded-qualification/**"
+      - "schemas/garpa/commons-seeded-qualification-*.schema.json"
+      - "docs/garpa-commons-seeded-qualification.md"
+      - "docs/garpa-method-version.md"
+      - "mcp/garpaCommonsSeededQualificationTools.ts"
+      - "mcp/garpa-commons-seeded-qualification-server.ts"
+      - "mcp/tsconfig.commons-seeded-qualification.json"
+      - "mcp/README-GARPA-COMMONS-SEEDED-QUALIFICATION.md"
+      - "mcp/garpaCompleteServer.ts"
+      - "tsconfig.commons-seeded-qualification.json"
+      - ".github/workflows/garpa-commons-seeded-qualification-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-qualification-v1"
+    paths:
+      - "app/src/types/garpaCommonsSeededQualification.ts"
+      - "app/src/lib/garpa/commonsSeededQualificationDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededQualification.ts"
+      - "app/src/lib/garpa/runCommonsSeededQualificationGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededQualification.ts"
+      - "app/src/lib/garpa/garpaVersion.ts"
+      - "app/src/lib/garpa/implementedStages.ts"
+      - "tests/fixtures/garpaCommonsSeededQualificationFixture.ts"
+      - "tests/lib/garpaCommonsSeededQualification.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "examples/garpa-commons-seeded-qualification/**"
+      - "schemas/garpa/commons-seeded-qualification-*.schema.json"
+      - "docs/garpa-commons-seeded-qualification.md"
+      - "docs/garpa-method-version.md"
+      - "mcp/garpaCommonsSeededQualificationTools.ts"
+      - "mcp/garpa-commons-seeded-qualification-server.ts"
+      - "mcp/tsconfig.commons-seeded-qualification.json"
+      - "mcp/README-GARPA-COMMONS-SEEDED-QUALIFICATION.md"
+      - "mcp/garpaCompleteServer.ts"
+      - "tsconfig.commons-seeded-qualification.json"
+      - ".github/workflows/garpa-commons-seeded-qualification-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  seeded-qualification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA Commons-seeded qualification tests
+        run: npx vitest run tests/lib/garpaCommonsSeededQualification.test.ts tests/lib/garpaMethodVersion.test.ts
+
+      - name: Typecheck GARPA Commons-seeded qualification surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-qualification.json
+
+      - name: Build static workbench bundle
+        run: npx vite build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA Commons-seeded qualification MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-qualification.json
+        working-directory: mcp
