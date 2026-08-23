@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/preflight-request.schema.json",
+  "title": "GARPA Preflight Request",
+  "description": "The frozen inputs required before one execution can be admitted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "expectedArchitectureDigest",
+    "expectedBuildManifestDigest",
+    "expectedQualificationContractDigest",
+    "requiredExecutionClass",
+    "requiredActivities",
+    "requiredOperatorRoles",
+    "buildReceipt",
+    "authority",
+    "instrumentation",
+    "fixtureReady",
+    "storageReady",
+    "clocksReady",
+    "abortPathReady",
+    "runIdReserved",
+    "assignedOperatorRoles",
+    "now"
+  ],
+  "properties": {
+    "expectedArchitectureDigest": { "type": "string", "minLength": 1 },
+    "expectedBuildManifestDigest": { "type": "string", "minLength": 1 },
+    "expectedQualificationContractDigest": { "type": "string", "minLength": 1 },
+    "requiredExecutionClass": {
+      "enum": [
+        "E0_analysis_only",
+        "E1_simulation_or_replay",
+        "E2_bench_passive",
+        "E3_controlled_field_inert",
+        "E4_regulated_active",
+        "E5_operational_environment"
+      ]
+    },
+    "requiredActivities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "requiredOperatorRoles": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "buildReceipt": { "$ref": "build-receipt.schema.json" },
+    "authority": { "$ref": "execution-authority.schema.json" },
+    "instrumentation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instrumentId",
+          "required",
+          "present",
+          "calibrationState",
+          "clockSynchronized"
+        ],
+        "properties": {
+          "instrumentId": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "present": { "type": "boolean" },
+          "calibrationState": {
+            "enum": ["current", "expired", "not_required", "unknown"]
+          },
+          "clockSynchronized": { "type": "boolean" }
+        }
+      }
+    },
+    "fixtureReady": { "type": "boolean" },
+    "storageReady": { "type": "boolean" },
+    "clocksReady": { "type": "boolean" },
+    "abortPathReady": { "type": "boolean" },
+    "runIdReserved": { "type": "boolean" },
+    "assignedOperatorRoles": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "now": { "type": "string", "minLength": 1 }
+  }
+}
