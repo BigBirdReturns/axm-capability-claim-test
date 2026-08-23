@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "currentEntry": {
+    "schemaVersion": 1,
+    "caseId": "GARPA-PUBLICATION-0001",
+    "canonicalSubject": "Synthetic Observation Composition",
+    "aliases": [],
+    "claimant": "GARPA synthetic fixture",
+    "organization": "GARPA synthetic fixture",
+    "offering": "Synthetic Observation Composition",
+    "versions": [
+      {
+        "versionId": "synthetic-observation-v1",
+        "label": "Synthetic Observation Composition v1",
+        "exactVersion": "1.0.0",
+        "firstSeenAt": "2026-08-22T18:00:00Z",
+        "sourceArtifactIds": ["identity-artifact-v1"],
+        "state": "current"
+      }
+    ],
+    "lineage": [],
+    "domainTags": ["synthetic-fixture"],
+    "capabilityTags": ["passive-observation", "operator-presentation"],
+    "currentState": "publication_ready",
+    "currentDisposition": "compose",
+    "releases": [
+      {
+        "releaseId": "GARPA-PUBLICATION-0001-R1",
+        "releaseNumber": 1,
+        "manifestDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "state": "current",
+        "createdAt": "2026-08-22T19:00:00Z"
+      }
+    ],
+    "currentReleaseId": "GARPA-PUBLICATION-0001-R1",
+    "currentReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "createdAt": "2026-08-22T18:00:00Z",
+    "updatedAt": "2026-08-22T19:00:00Z"
+  },
+  "candidateRelease": {
+    "schemaVersion": 1,
+    "releaseId": "GARPA-PUBLICATION-0001-R2",
+    "caseId": "GARPA-PUBLICATION-0001",
+    "releaseNumber": 2,
+    "publicationPackageDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "publicationGateReceiptDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "priorReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "supersedesReleaseId": "GARPA-PUBLICATION-0001-R1",
+    "createdAt": "2026-08-23T03:00:00Z",
+    "state": "current",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "byteLength": 640,
+        "mediaType": "text/markdown",
+        "role": "release_metadata"
+      },
+      {
+        "path": "public-dossier.md",
+        "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+        "byteLength": 4352,
+        "mediaType": "text/markdown",
+        "role": "public_dossier"
+      },
+      {
+        "path": "receipts/supersession.json",
+        "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "byteLength": 1024,
+        "mediaType": "application/json",
+        "role": "gate_receipt"
+      }
+    ],
+    "manifestDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+  },
+  "releaseVerificationState": "current_valid",
+  "expectedCurrentReleaseId": "GARPA-PUBLICATION-0001-R1",
+  "expectedCurrentReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "identityPatch": {
+    "canonicalSubject": "Synthetic Observation Composition",
+    "aliasesAdded": [],
+    "claimant": "GARPA synthetic fixture",
+    "organization": "GARPA synthetic fixture",
+    "offering": "Synthetic Observation Composition",
+    "versionsAdded": [],
+    "lineageLinksAdded": [],
+    "domainTagsAdded": [],
+    "capabilityTagsAdded": [],
+    "domainTagsAdded": [],
+    "capabilityTagsAdded": []
+  },
+  "candidateCaseState": "publication_ready",
+  "candidateDisposition": "compose",
+  "updatedAt": "2026-08-23T03:05:00Z"
+}
