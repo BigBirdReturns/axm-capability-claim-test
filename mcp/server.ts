@@ -31,6 +31,8 @@ import { registerGarpaCapabilityTools } from "./garpaCapabilityTools.ts";
 import { registerGarpaSubstitutionTools } from "./garpaSubstitutionTools.ts";
 import { registerGarpaArchitectureTools } from "./garpaArchitectureTools.ts";
 import { registerGarpaQualificationTools } from "./garpaQualificationTools.ts";
+import { registerGarpaBuildManifestTools } from "./garpaBuildManifestTools.ts";
+import { registerGarpaExecutionTools } from "./garpaExecutionTools.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -40,7 +42,6 @@ const server = new McpServer({
 const OBJECT_TYPE_ENUM = z.enum(
   OBJECT_TYPE_OPTIONS as [string, ...string[]],
 );
-
 const JSON_INPUT = z.union([z.string(), z.record(z.any())]);
 
 function text(content: string) {
@@ -52,7 +53,7 @@ server.registerTool(
   {
     title: "Generate neutral retrieval prompt",
     description:
-      "Retrieval layer. Returns a neutral, mechanical, object-scoped prompt the calling model should use to collect a sourced ledger. No verdict language.",
+      "Retrieval layer. Returns a neutral, mechanical, object-scoped prompt for collecting a sourced ledger. No verdict language.",
     inputSchema: {
       objectType: OBJECT_TYPE_ENUM,
       targetName: z.string().describe("Public object name."),
@@ -214,7 +215,7 @@ server.registerTool(
           {
             ok: false,
             errors: [
-              `Object gate: frontier replication requires frontier_model, got "${result.ledger.objectType}".`,
+              `Object gate: replication plans apply to frontier_model objects only (got "${result.ledger.objectType}").`,
             ],
           },
           null,
@@ -256,10 +257,12 @@ server.registerTool(
   {
     title: "Validate a GARPA claim packet",
     description:
-      "Validates the source-addressable GARPA claim packet and an optional candidate mission outcome.",
+      "Validates the source-addressable GARPA claim packet and optional candidate mission outcome.",
     inputSchema: {
-      claimPacket: JSON_INPUT,
-      missionOutcome: JSON_INPUT.optional(),
+      claimPacket: JSON_INPUT.describe("GARPA claim packet object or JSON string."),
+      missionOutcome: JSON_INPUT.optional().describe(
+        "Optional GARPA mission outcome object or JSON string.",
+      ),
     },
   },
   async ({ claimPacket, missionOutcome }) => {
@@ -288,10 +291,10 @@ server.registerTool(
   {
     title: "Run GARPA offering and goal admission",
     description:
-      "Runs the GARPA offering-evidence and mission-goal gates and returns the highest admissible state, pull-lists, and bounded reality brief. It emits no architecture.",
+      "Runs the offering-evidence and mission-goal gates, returns exact pull-lists and a bounded reality brief, and never emits architecture for a blocked case.",
     inputSchema: {
-      claimPacket: JSON_INPUT,
-      missionOutcome: JSON_INPUT,
+      claimPacket: JSON_INPUT.describe("GARPA claim packet object or JSON string."),
+      missionOutcome: JSON_INPUT.describe("GARPA mission outcome object or JSON string."),
     },
   },
   async ({ claimPacket, missionOutcome }) => {
@@ -339,6 +342,8 @@ registerGarpaCapabilityTools(server);
 registerGarpaSubstitutionTools(server);
 registerGarpaArchitectureTools(server);
 registerGarpaQualificationTools(server);
+registerGarpaBuildManifestTools(server);
+registerGarpaExecutionTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
