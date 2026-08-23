@@ -42,7 +42,7 @@ function label(field: string): string {
     deployment_record: "Deployment record",
     independent_verification: "Independent verification",
   };
-  return labels[field] ?? field.replaceAll("_", " ");
+  return labels[field] ?? field.replace(/_/g, " ");
 }
 
 function dedupe(values: string[]): string[] {
