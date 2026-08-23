@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-substitution-request.schema.json",
+  "title": "GARPA Commons-Seeded Substitution Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "projectionRequest",
+    "expectedProjectionResultDigest",
+    "plan",
+    "assembledAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "projectionRequest": { "type": "object" },
+    "expectedProjectionResultDigest": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "plan": { "type": "object" },
+    "assembledAt": { "type": "string", "minLength": 1 }
+  }
+}
