@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTHETIC-OBSERVATION-1",
+  "missionOutcomeDigest": "sha256:synthetic-observation-mission-v1",
+  "capabilityGraphDigest": "sha256:synthetic-observation-graph-v1",
+  "candidateArchitectureDigest": "sha256:synthetic-observation-architecture-v1",
+  "scenarios": [
+    {
+      "id": "scenario-nominal",
+      "name": "Controlled nominal boundary approach",
+      "purpose": "Measure detection and presentation timing for one known synthetic object in the frozen passive fixture.",
+      "venueClass": "bench",
+      "protectedOrAffectedObject": "Controlled test boundary",
+      "inputOrThreatProfile": ["One known synthetic object approaching on the frozen path"],
+      "environment": {
+        "site": "Fixed controlled fixture",
+        "network": "Isolated local network",
+        "clock_policy": "One monotonic run clock"
+      },
+      "duration": "One hour maximum per campaign session",
+      "coverageGeometry": "Frozen path and boundary coordinates from fixture synthetic-observation-v1",
+      "loadProfile": "Ten scored single-object passes",
+      "concurrencyProfile": "One object at a time",
+      "operatorConditions": {
+        "staffing": "One trained operator",
+        "training": "Fixture orientation and acknowledgement procedure",
+        "priorKnowledge": "Operator knows the target class but not the exact presentation timestamp",
+        "permittedIntervention": ["Acknowledge presented alerts", "Abort the run for safety or fixture failure"]
+      },
+      "degradedConditions": ["One recorded replay with delayed observation delivery for diagnostic analysis"],
+      "excludedConditions": ["Concurrent targets", "Active response", "Uncontrolled weather", "Operational deployment"],
+      "fixtureIds": ["fixture-synthetic-observation-v1"],
+      "metricIds": ["q-detection", "q-latency"],
+      "instrumentationIds": ["instrument-run-clock", "instrument-event-recorder"],
+      "authorizationId": "authorization-bench-passive",
+      "activeEffect": false,
+      "evidenceCellIds": ["e3", "e4", "e5"],
+      "assumptions": ["The exact candidate architecture configuration is loaded before each scored run."]
+    }
+  ],
+  "metrics": [
+    {
+      "id": "q-detection",
+      "missionMetricIds": ["m1"],
+      "riskIds": ["risk-detection"],
+      "residualIds": ["residual-target-class"],
+      "name": "Detection before boundary crossing",
+      "criticality": "essential",
+      "quantity": "Whether the detection event occurs before the frozen boundary-crossing timestamp",
+      "direction": "boolean",
+      "threshold": true,
+      "baseline": false,
+      "measurementMethod": "Compare the first valid detection-event timestamp with the ground-truth boundary-crossing timestamp for each scored pass.",
+      "instrumentationIds": ["instrument-run-clock", "instrument-event-recorder"],
+      "samplingMethod": "Ten scored single-object passes using the frozen path and target profile",
+      "requiredRuns": 10,
+      "aggregation": "all_runs",
+      "allowedUncertainty": "Timestamp uncertainty must remain below 10 milliseconds; otherwise the run is inconclusive.",
+      "failureCondition": "Any valid scored pass lacks a detection before boundary crossing.",
+      "evidenceCellIds": ["e3", "e-sensor-perf", "e-detector-perf"],
+      "limitations": ["Known synthetic target class and frozen geometry only."]
+    },
+    {
+      "id": "q-latency",
+      "missionMetricIds": ["m2"],
+      "riskIds": ["risk-latency"],
+      "residualIds": [],
+      "name": "Observation-to-presentation latency",
+      "criticality": "essential",
+      "quantity": "Elapsed time between first qualifying observation and operator presentation",
+      "unit": "seconds",
+      "direction": "lower_is_better",
+      "threshold": 2,
+      "baseline": 10,
+      "measurementMethod": "Subtract the first qualifying observation timestamp from the corresponding presentation timestamp under the shared run clock.",
+      "instrumentationIds": ["instrument-run-clock", "instrument-event-recorder"],
+      "samplingMethod": "Measure one latency value for each of ten valid scored passes",
+      "requiredRuns": 10,
+      "aggregation": "percentile",
+      "aggregationParameter": 95,
+      "allowedUncertainty": "Combined timestamp uncertainty must remain below 10 milliseconds.",
+      "failureCondition": "The 95th percentile latency exceeds 2 seconds or any required event lacks a valid timestamp.",
+      "evidenceCellIds": ["e3", "e-ui-perf", "e-compat-observation", "e-compat-detection"],
+      "limitations": ["Single-object and single-operator fixture only."]
+    }
+  ],
+  "instrumentation": [
+    {
+      "id": "instrument-run-clock",
+      "name": "Qualification run clock",
+      "modelOrVersion": "monotonic-clock-policy-v1",
+      "quantitiesMeasured": ["Observation timestamps", "Detection timestamps", "Presentation timestamps", "Boundary-crossing timestamps"],
+      "samplingRate": "Event-driven with one millisecond resolution",
+      "accuracy": "Better than 10 milliseconds across the bounded run",
+      "clockSource": "One host monotonic clock distributed through the event recorder",
+      "calibrationState": "not_required",
+      "calibrationEvidenceIds": ["e5"],
+      "dataFormat": "RFC3339 wall time plus monotonic nanoseconds in JSON Lines",
+      "storagePath": "runs/<run-id>/clock-events.jsonl"
+    },
+    {
+      "id": "instrument-event-recorder",
+      "name": "Immutable event and intervention recorder",
+      "modelOrVersion": "event-recorder-v1",
+      "quantitiesMeasured": ["Event order", "Event payload digest", "Operator acknowledgement", "Manual intervention"],
+      "samplingRate": "Every event",
+      "accuracy": "Lossless for valid fixture events",
+      "clockSource": "instrument-run-clock",
+      "calibrationState": "current",
+      "calibrationEvidenceIds": ["e-compat-observation", "e-compat-detection"],
+      "dataFormat": "Append-only JSON Lines with per-record digest",
+      "storagePath": "runs/<run-id>/events.jsonl"
+    }
+  ],
+  "comparators": [
+    {
+      "id": "comparator-customer-requirement",
+      "type": "customer_requirement",
+      "name": "Frozen synthetic operator requirement",
+      "version": "1.0",
+      "scenarioIds": ["scenario-nominal"],
+      "metricIds": ["q-detection", "q-latency"],
+      "resultEvidenceCellIds": ["e3"],
+      "comparability": "same_fixture",
+      "limitations": ["This comparator establishes mission adequacy only; it is not a vendor-system baseline."]
+    }
+  ],
+  "accountingBoundary": {
+    "currency": "USD",
+    "evaluationPeriod": "Acquisition, integration, and one bounded qualification campaign",
+    "includedCategories": ["hardware", "software", "integration_labor", "operator_labor", "qualification", "contingency"],
+    "excludedCategories": ["active_response", "operational_field_deployment"],
+    "missionDenominator": "One integrated candidate and ten valid scored passes in the frozen scenario"
+  },
+  "authorizations": [
+    {
+      "id": "authorization-bench-passive",
+      "venueClass": "bench",
+      "ownerOrController": "GARPA synthetic fixture owner",
+      "permittedActivities": ["Passive replay", "Local compute", "Operator presentation", "Append-only logging"],
+      "prohibitedActivities": ["Active transmission outside the isolated fixture", "Interference", "Physical effect delivery"],
+      "requiredAuthorizations": [],
+      "receivedAuthorizationRefs": [],
+      "abortAuthority": ["Qualification operator", "Fixture owner"],
+      "timeBoundary": "During the bounded qualification session only",
+      "evidenceCellIds": ["e5"],
+      "state": "not_required",
+      "rationale": "The fixture is passive, isolated, and contains no regulated active effect."
+    }
+  ],
+  "acceptanceRule": {
+    "allEssentialMustPass": true,
+    "allowInconclusiveEssential": false,
+    "minimumValidRunsPerMetric": 10,
+    "missingDataDisposition": "inconclusive",
+    "invalidRunDisposition": "exclude_with_receipt",
+    "secondaryMetricsCanOffsetEssentialFailure": false
+  },
+  "frozenAt": "2026-08-23T02:00:00Z",
+  "state": "frozen"
+}
