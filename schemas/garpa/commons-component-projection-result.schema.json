@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-component-projection-result.schema.json",
+  "title": "GARPA Commons Component Projection Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["passed", "state", "findings"],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": { "type": "string", "minLength": 1 },
+    "readiness": { "enum": ["component_candidate", "substitution_ready"] },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "projected": { "type": "object" }
+  }
+}
