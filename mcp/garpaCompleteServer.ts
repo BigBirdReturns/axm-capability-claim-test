@@ -15,11 +15,12 @@ import { registerGarpaReleaseTools } from "./garpaReleaseTools.ts";
 import { registerGarpaRegistryTools } from "./garpaRegistryTools.ts";
 import { registerGarpaCommonsTools } from "./garpaCommonsTools.ts";
 import { registerGarpaCommonsCatalogTools } from "./garpaCommonsCatalogTools.ts";
+import { registerGarpaCommonsTransferTools } from "./garpaCommonsTransferTools.ts";
 import { registerGarpaMethodTools } from "./garpaMethodTools.ts";
 
 const server = new McpServer({
   name: "garpa-complete",
-  version: "0.2.0",
+  version: "0.3.0",
 });
 
 registerGarpaMethodTools(server);
@@ -37,6 +38,7 @@ registerGarpaReleaseTools(server);
 registerGarpaRegistryTools(server);
 registerGarpaCommonsTools(server);
 registerGarpaCommonsCatalogTools(server);
+registerGarpaCommonsTransferTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);

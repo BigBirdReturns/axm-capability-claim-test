@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-transfer-request.schema.json",
+  "title": "GARPA Commons Case Transfer Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "catalog",
+    "expectedCatalogDigest",
+    "targetCapabilityGraph",
+    "targetCapabilityGraphDigest",
+    "targetGraphAdmissionReceipt",
+    "retrievalPlan",
+    "targetEnvironment",
+    "allowHistoricalResearch",
+    "nominations",
+    "createdAt"
+  ],
+  "$defs": {
+    "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+    "stringArray": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "executionClass": {
+      "enum": [
+        "E0_analysis_only",
+        "E1_simulation_or_replay",
+        "E2_bench_passive",
+        "E3_controlled_field_inert",
+        "E4_regulated_active",
+        "E5_operational_environment"
+      ]
+    },
+    "objectType": {
+      "enum": ["primitive", "component_observation", "architecture_pattern"]
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "catalog": { "$ref": "commons-catalog.schema.json" },
+    "expectedCatalogDigest": { "$ref": "#/$defs/sha256" },
+    "targetCapabilityGraph": { "$ref": "capability-graph.schema.json" },
+    "targetCapabilityGraphDigest": { "$ref": "#/$defs/sha256" },
+    "targetGraphAdmissionReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["receiptId", "capabilityGraphDigest", "passed", "state", "receiptDigest"],
+      "properties": {
+        "receiptId": { "type": "string", "minLength": 1 },
+        "capabilityGraphDigest": { "$ref": "#/$defs/sha256" },
+        "passed": { "type": "boolean" },
+        "state": {
+          "enum": [
+            "goal_not_admitted",
+            "mission_digest_mismatch",
+            "mission_trace_incomplete",
+            "essential_function_unresolved",
+            "interface_graph_incomplete",
+            "human_role_missing",
+            "constraint_envelope_incomplete",
+            "authorization_boundary_missing",
+            "vendor_architecture_leakage",
+            "admitted_for_substitution"
+          ]
+        },
+        "receiptDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "retrievalPlan": { "$ref": "commons-retrieval-plan.schema.json" },
+    "targetEnvironment": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "targetExecutionClass": { "$ref": "#/$defs/executionClass" },
+    "allowHistoricalResearch": { "type": "boolean" },
+    "nominations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "nominationId",
+          "objectType",
+          "catalogObjectId",
+          "revisionId",
+          "objectDigest",
+          "retrievalTaskIds",
+          "requestedUse",
+          "targetFunctionIds",
+          "targetInterfaceIds",
+          "mappingRationale",
+          "declaredEnvironmentComparison",
+          "declaredExecutionComparison",
+          "knownMismatches",
+          "acknowledgedResiduals",
+          "acknowledgedLimitations",
+          "acknowledgedFalsificationConditions",
+          "acknowledgedFailureModes",
+          "requiredEvidencePulls",
+          "requiredQualificationTests"
+        ],
+        "properties": {
+          "nominationId": { "type": "string", "minLength": 1 },
+          "objectType": { "$ref": "#/$defs/objectType" },
+          "catalogObjectId": { "type": "string", "minLength": 1 },
+          "revisionId": { "type": "string", "minLength": 1 },
+          "objectDigest": { "$ref": "#/$defs/sha256" },
+          "retrievalTaskIds": { "$ref": "#/$defs/stringArray" },
+          "requestedUse": {
+            "enum": [
+              "capability_decomposition_hint",
+              "component_retrieval_lead",
+              "architecture_pattern_hint"
+            ]
+          },
+          "targetFunctionIds": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "targetInterfaceIds": { "$ref": "#/$defs/stringArray" },
+          "mappingRationale": { "type": "string", "minLength": 1 },
+          "declaredEnvironmentComparison": {
+            "enum": ["same", "partial_overlap", "different", "unknown"]
+          },
+          "declaredExecutionComparison": {
+            "enum": ["source_same_or_stronger", "target_more_demanding", "unknown"]
+          },
+          "knownMismatches": { "$ref": "#/$defs/stringArray" },
+          "acknowledgedResiduals": { "$ref": "#/$defs/stringArray" },
+          "acknowledgedLimitations": { "$ref": "#/$defs/stringArray" },
+          "acknowledgedFalsificationConditions": { "$ref": "#/$defs/stringArray" },
+          "acknowledgedFailureModes": { "$ref": "#/$defs/stringArray" },
+          "requiredEvidencePulls": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "requiredQualificationTests": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" }
+  }
+}

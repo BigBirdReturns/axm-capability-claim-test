@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-transfer-result.schema.json",
+  "title": "GARPA Commons Case Transfer Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "admittedNominationIds",
+    "candidateInputNominationIds",
+    "researchLeadNominationIds",
+    "blockedNominationIds",
+    "findings",
+    "nominations",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "$defs": {
+    "stringArray": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "objectType": { "enum": ["primitive", "component_observation", "architecture_pattern"] },
+    "findingState": {
+      "enum": [
+        "catalog_invalid",
+        "catalog_digest_mismatch",
+        "capability_graph_invalid",
+        "graph_digest_mismatch",
+        "graph_admission_receipt_invalid",
+        "graph_not_admitted",
+        "retrieval_plan_mismatch",
+        "catalog_revision_missing",
+        "object_digest_mismatch",
+        "historical_revision_not_permitted",
+        "withdrawn_revision",
+        "transfer_use_mismatch",
+        "retrieval_task_mismatch",
+        "target_function_invalid",
+        "target_interface_invalid",
+        "target_mapping_invalid",
+        "residual_acknowledgement_incomplete",
+        "limitation_acknowledgement_incomplete",
+        "falsification_acknowledgement_incomplete",
+        "failure_mode_acknowledgement_incomplete",
+        "environment_comparison_mismatch",
+        "execution_comparison_mismatch",
+        "transfer_scope_mismatch",
+        "requalification_plan_missing"
+      ]
+    }
+  },
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": ["transfer_blocked", "transfer_partially_admitted", "transfer_admitted"]
+    },
+    "admittedNominationIds": { "$ref": "#/$defs/stringArray" },
+    "candidateInputNominationIds": { "$ref": "#/$defs/stringArray" },
+    "researchLeadNominationIds": { "$ref": "#/$defs/stringArray" },
+    "blockedNominationIds": { "$ref": "#/$defs/stringArray" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["state", "reason", "requiredAction"],
+        "properties": {
+          "state": { "$ref": "#/$defs/findingState" },
+          "nominationId": { "type": "string" },
+          "objectType": { "$ref": "#/$defs/objectType" },
+          "catalogObjectId": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 },
+          "requiredAction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "nominations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "nominationId",
+          "disposition",
+          "requestedUse",
+          "targetFunctionIds",
+          "targetInterfaceIds",
+          "source",
+          "environmentComparison",
+          "executionComparison",
+          "knownMismatches",
+          "requiredEvidencePulls",
+          "requiredQualificationTests"
+        ],
+        "properties": {
+          "nominationId": { "type": "string", "minLength": 1 },
+          "disposition": { "enum": ["candidate_input", "research_lead"] },
+          "requestedUse": {
+            "enum": [
+              "capability_decomposition_hint",
+              "component_retrieval_lead",
+              "architecture_pattern_hint"
+            ]
+          },
+          "targetFunctionIds": { "$ref": "#/$defs/stringArray" },
+          "targetInterfaceIds": { "$ref": "#/$defs/stringArray" },
+          "source": { "type": "object" },
+          "environmentComparison": {
+            "enum": ["same", "partial_overlap", "different", "unknown"]
+          },
+          "executionComparison": {
+            "enum": ["source_same_or_stronger", "target_more_demanding", "unknown"]
+          },
+          "knownMismatches": { "$ref": "#/$defs/stringArray" },
+          "requiredEvidencePulls": { "$ref": "#/$defs/stringArray" },
+          "requiredQualificationTests": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  }
+}

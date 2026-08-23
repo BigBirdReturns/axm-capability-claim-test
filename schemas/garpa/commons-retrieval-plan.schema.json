@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-retrieval-plan.schema.json",
+  "title": "GARPA Commons Retrieval Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "planId",
+    "catalogId",
+    "catalogDigest",
+    "caseId",
+    "capabilityGraphDigest",
+    "graphAdmissionReceiptId",
+    "tasks",
+    "prohibitedTransitions",
+    "planDigest"
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "objectType": {
+      "enum": ["primitive", "component_observation", "architecture_pattern"]
+    },
+    "searchQuery": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "text": { "type": "string" },
+        "objectTypes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/objectType" }
+        },
+        "sourceCaseIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "sourceReleaseIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "functionIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "interfaceIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "executionClasses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "E0_analysis_only",
+              "E1_simulation_or_replay",
+              "E2_bench_passive",
+              "E3_controlled_field_inert",
+              "E4_regulated_active",
+              "E5_operational_environment"
+            ]
+          }
+        },
+        "primitiveMaturities": {
+          "type": "array",
+          "items": { "enum": ["concept", "candidate", "bench_observed", "field_observed", "repeated"] }
+        },
+        "componentStates": {
+          "type": "array",
+          "items": { "enum": ["vendor_claimed", "externally_reported", "locally_observed", "locally_qualified"] }
+        },
+        "includeSuperseded": { "type": "boolean" },
+        "includeWithdrawn": { "type": "boolean" },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 500 }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "planId": { "type": "string", "minLength": 1 },
+    "catalogId": { "type": "string", "minLength": 1 },
+    "catalogDigest": { "$ref": "#/$defs/sha256" },
+    "caseId": { "type": "string", "minLength": 1 },
+    "capabilityGraphDigest": { "$ref": "#/$defs/sha256" },
+    "graphAdmissionReceiptId": { "type": "string", "minLength": 1 },
+    "tasks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "taskId",
+          "targetKind",
+          "targetId",
+          "targetLabel",
+          "searchTerms",
+          "permittedObjectTypes",
+          "queries"
+        ],
+        "properties": {
+          "taskId": { "type": "string", "minLength": 1 },
+          "targetKind": { "enum": ["function", "interface"] },
+          "targetId": { "type": "string", "minLength": 1 },
+          "targetLabel": { "type": "string", "minLength": 1 },
+          "searchTerms": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "permittedObjectTypes": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/$defs/objectType" }
+          },
+          "queries": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "#/$defs/searchQuery" }
+          }
+        }
+      }
+    },
+    "prohibitedTransitions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "planDigest": { "$ref": "#/$defs/sha256" }
+  }
+}
