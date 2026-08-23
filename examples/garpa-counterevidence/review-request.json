@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "packet": {
+    "schemaVersion": 1,
+    "packetId": "counterevidence-0001",
+    "targetCaseId": "GARPA-PUBLICATION-0001",
+    "targetReleaseId": "GARPA-PUBLICATION-0001-R1",
+    "targetReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "targetClaimIds": ["pub-parity-1"],
+    "submitter": {
+      "name": "Independent repeat researcher",
+      "organization": "Synthetic Repeat Cell",
+      "relationshipToSubject": "researcher"
+    },
+    "artifactIds": ["repeat-run-artifact-2"],
+    "evidenceCellIds": ["ce-latency-2"],
+    "requestedCorrection": "Revise the parity claim because a valid independent same-fixture repeat measured latency outside the admitted tolerance.",
+    "submittedAt": "2026-08-23T01:00:00Z"
+  },
+  "currentReleaseId": "GARPA-PUBLICATION-0001-R1",
+  "currentReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "currentReleaseNumber": 1,
+  "currentReleaseState": "current",
+  "knownClaimIds": ["pub-mission-1", "pub-residual-1", "pub-parity-1"],
+  "validatedEvidenceCellIds": ["ce-latency-2"],
+  "duplicateEvidenceCellIds": [],
+  "rejectedEvidenceCellIds": [],
+  "claimAssessments": [
+    {
+      "claimId": "pub-parity-1",
+      "effect": "contradicts",
+      "evidenceCellIds": ["ce-latency-2"],
+      "reason": "The repeat uses the same fixture and method but misses the published latency tolerance."
+    }
+  ],
+  "reviewedAt": "2026-08-23T02:00:00Z",
+  "reviewer": "counterevidence-reviewer-1"
+}
