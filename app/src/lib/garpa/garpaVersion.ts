@@ -1,1 +1,1 @@
-export const GARPA_METHOD_VERSION = "0.3.0-commons-case-transfer";
+export const GARPA_METHOD_VERSION = "0.4.0-commons-component-projection";

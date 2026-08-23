@@ -1,0 +1,73 @@
+name: garpa-commons-projection-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsProjection.ts"
+      - "app/src/lib/garpa/commonsComponentProjectionDigest.ts"
+      - "app/src/lib/garpa/validateCommonsComponentProjection.ts"
+      - "app/src/lib/garpa/runCommonsComponentProjectionGate.ts"
+      - "app/src/lib/garpa/renderCommonsComponentProjection.ts"
+      - "tests/lib/garpaCommonsComponentProjection.test.ts"
+      - "examples/garpa-commons-component-projection/**"
+      - "schemas/garpa/commons-component-projection-*.schema.json"
+      - "docs/garpa-commons-component-projection.md"
+      - "mcp/garpaCommonsProjectionTools.ts"
+      - "mcp/garpa-commons-projection-server.ts"
+      - "mcp/tsconfig.commons-projection.json"
+      - "tsconfig.commons-projection.json"
+      - ".github/workflows/garpa-commons-projection-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-component-projection-v1"
+    paths:
+      - "app/src/types/garpaCommonsProjection.ts"
+      - "app/src/lib/garpa/commonsComponentProjectionDigest.ts"
+      - "app/src/lib/garpa/validateCommonsComponentProjection.ts"
+      - "app/src/lib/garpa/runCommonsComponentProjectionGate.ts"
+      - "app/src/lib/garpa/renderCommonsComponentProjection.ts"
+      - "tests/lib/garpaCommonsComponentProjection.test.ts"
+      - "examples/garpa-commons-component-projection/**"
+      - "schemas/garpa/commons-component-projection-*.schema.json"
+      - "docs/garpa-commons-component-projection.md"
+      - "mcp/garpaCommonsProjectionTools.ts"
+      - "mcp/garpa-commons-projection-server.ts"
+      - "mcp/tsconfig.commons-projection.json"
+      - "tsconfig.commons-projection.json"
+      - ".github/workflows/garpa-commons-projection-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  projection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA Commons component-projection tests
+        run: npx vitest run tests/lib/garpaCommonsComponentProjection.test.ts
+
+      - name: Typecheck GARPA Commons component-projection surface
+        run: npx tsc --noEmit -p tsconfig.commons-projection.json
+
+      - name: Build static workbench bundle
+        run: npx vite build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA Commons component-projection MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-projection.json
+        working-directory: mcp

@@ -1,7 +1,7 @@
 # GARPA method version
 
-Current branch method version: `0.3.0-commons-case-transfer`.
+Current branch method version: `0.4.0-commons-component-projection`.
 
-The highest governed stage is target-case nomination from the content-addressed Capability Commons. The ordered method now covers claim intake, mission reconstruction, functional decomposition, substitution, architecture, qualification, build and test custody, mission evaluation, vendor parity, publication, release verification, correction and registry history, Commons admission, revision-preserving catalog search, deterministic target-function retrieval, and source-bound case nomination.
+The highest governed stage is target-case component projection from an admitted Capability Commons nomination. The ordered method now covers claim intake, mission reconstruction, functional decomposition, substitution, architecture, qualification, build and test custody, mission evaluation, vendor parity, publication, release verification, correction and registry history, Commons admission, revision-preserving catalog search, deterministic target-function retrieval, source-bound case nomination, and exact-version target component projection.
 
-Automatic physical execution is not implemented or authorized. Commons transfer cannot establish target-case evidence, compatibility, function coverage, architecture, qualification, procurement, testing, deployment, publication, or equivalence. Those states remain under the target case's existing gates.
+Automatic physical execution is not implemented or authorized. Commons projection does not transfer source-case performance, price, availability, licensing, qualification, compatibility, function coverage, architecture, procurement, testing, deployment, publication, or equivalence. The target case must supply its own evidence and pass its existing gates.
