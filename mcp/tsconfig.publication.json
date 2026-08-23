@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-publication-server.ts",
+    "garpaPublicationTools.ts",
+    "../app/src/lib/garpa/validatePublicationCompilationInput.ts",
+    "../app/src/lib/garpa/compilePublicationClaims.ts",
+    "../app/src/lib/garpa/validatePublicationPackage.ts",
+    "../app/src/lib/garpa/runPublicationGate.ts",
+    "../app/src/lib/garpa/renderPublicDossier.ts",
+    "../app/src/types/garpaPublication.ts",
+    "../app/src/types/garpaExecution.ts",
+    "../app/src/types/garpaParity.ts",
+    "../app/src/types/garpa.ts"
+  ]
+}
