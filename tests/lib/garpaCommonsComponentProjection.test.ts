@@ -151,10 +151,20 @@ function primitiveNomination(catalog: CommonsCatalog): CommonsTransferNomination
     catalogObjectId: catalog.primitiveEntries[0]!.catalogObjectId,
     revisionId: source.primitiveRevision.revisionId,
     objectDigest: source.primitiveRevision.objectDigest,
-    retrievalTaskIds: ["function:f-detect-target", "function:f-present-target"],
+    retrievalTaskIds: [
+      "function:f-detect-target",
+      "function:f-present-target",
+      "interface:i-observation-target",
+      "interface:i-detection-target",
+      "interface:i-alert-target",
+    ],
     requestedUse: "capability_decomposition_hint",
     targetFunctionIds: ["f-detect-target", "f-present-target"],
-    targetInterfaceIds: ["i-detection-target", "i-alert-target"],
+    targetInterfaceIds: [
+      "i-observation-target",
+      "i-detection-target",
+      "i-alert-target",
+    ],
     mappingRationale: "The primitive is retained as decomposition context only.",
     declaredEnvironmentComparison: "unknown",
     declaredExecutionComparison: "source_same_or_stronger",
@@ -349,7 +359,11 @@ describe("GARPA Commons component projection", () => {
         ...candidate(),
         id: "component-invalid-primitive-projection",
         functionIds: ["f-detect-target", "f-present-target"],
-        interfaceIds: ["i-detection-target", "i-alert-target"],
+        interfaceIds: [
+          "i-observation-target",
+          "i-detection-target",
+          "i-alert-target",
+        ],
       },
     });
     const result = runCommonsComponentProjectionGate(request);
