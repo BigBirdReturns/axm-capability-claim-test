@@ -1,0 +1,54 @@
+{
+  "gate": {
+    "passed": true,
+    "state": "registry_update_admitted",
+    "findings": [],
+    "nextReleaseNumber": 2
+  },
+  "entry": {
+    "schemaVersion": 1,
+    "caseId": "GARPA-PUBLICATION-0001",
+    "canonicalSubject": "Synthetic Observation Composition",
+    "aliases": [],
+    "claimant": "GARPA synthetic fixture",
+    "organization": "GARPA synthetic fixture",
+    "offering": "Synthetic Observation Composition",
+    "versions": [
+      {
+        "versionId": "synthetic-observation-v1",
+        "label": "Synthetic Observation Composition v1",
+        "exactVersion": "1.0.0",
+        "firstSeenAt": "2026-08-22T18:00:00Z",
+        "sourceArtifactIds": ["identity-artifact-v1"],
+        "state": "current"
+      }
+    ],
+    "lineage": [],
+    "domainTags": ["synthetic-fixture"],
+    "capabilityTags": ["passive-observation", "operator-presentation"],
+    "currentState": "publication_ready",
+    "currentDisposition": "compose",
+    "releases": [
+      {
+        "releaseId": "GARPA-PUBLICATION-0001-R1",
+        "releaseNumber": 1,
+        "manifestDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "state": "superseded",
+        "createdAt": "2026-08-22T19:00:00Z"
+      },
+      {
+        "releaseId": "GARPA-PUBLICATION-0001-R2",
+        "releaseNumber": 2,
+        "manifestDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "state": "current",
+        "priorReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+        "supersedesReleaseId": "GARPA-PUBLICATION-0001-R1",
+        "createdAt": "2026-08-23T03:00:00Z"
+      }
+    ],
+    "currentReleaseId": "GARPA-PUBLICATION-0001-R2",
+    "currentReleaseDigest": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+    "createdAt": "2026-08-22T18:00:00Z",
+    "updatedAt": "2026-08-23T03:05:00Z"
+  }
+}
