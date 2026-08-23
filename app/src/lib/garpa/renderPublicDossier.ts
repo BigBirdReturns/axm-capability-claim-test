@@ -77,6 +77,20 @@ export function renderPublicDossier(
   const admitted = pkg.claims.filter((claim) =>
     gate.admittedClaimIds.includes(claim.id),
   );
+  const upstream = pkg.upstream;
+  const claimReportDigest =
+    upstream?.claimReportDigest ??
+    pkg.upstreamDigests.claimReport ??
+    pkg.upstreamDigests.claim_report ??
+    pkg.caseIndexDigest;
+  const missionEvaluationDigest =
+    upstream?.missionEvaluationDigest ??
+    pkg.upstreamDigests.missionEvaluation ??
+    pkg.upstreamDigests.mission_evaluation;
+  const vendorParityDigest =
+    upstream?.vendorParityDigest ??
+    pkg.upstreamDigests.vendorParity ??
+    pkg.upstreamDigests.vendor_parity;
 
   return [
     `# GARPA Public Dossier — ${pkg.subject}`,
@@ -85,21 +99,21 @@ export function renderPublicDossier(
     `- Case: ${pkg.caseId}`,
     `- Disposition: ${pkg.disposition}`,
     `- Audience: ${pkg.audience}`,
-    `- Claim report: ${pkg.upstream.claimReportDigest}`,
-    `- Mission evaluation: ${pkg.upstream.missionEvaluationDigest ?? "Not available"}`,
-    `- Mission state: ${pkg.upstream.missionEvaluationState ?? "Not available"}`,
-    `- Vendor parity evaluation: ${pkg.upstream.vendorParityDigest ?? "Not available"}`,
-    `- Vendor parity state: ${pkg.upstream.vendorParityState ?? "Not available"}`,
+    `- Claim report: ${claimReportDigest}`,
+    `- Mission evaluation: ${missionEvaluationDigest ?? "Not available"}`,
+    `- Mission state: ${upstream?.missionEvaluationState ?? "Not available"}`,
+    `- Vendor parity evaluation: ${vendorParityDigest ?? "Not available"}`,
+    `- Vendor parity state: ${upstream?.vendorParityState ?? pkg.vendorParityState}`,
     ``,
     `## Admitted claims`,
     ``,
     ...admitted.flatMap(claimBlock),
     `## Failure and contradiction history`,
     `Disclosed failures:`,
-    ...bullets(pkg.disclosedFailureIds, "None recorded."),
+    ...bullets(pkg.disclosedFailureIds ?? [], "None recorded."),
     ``,
     `Disclosed contradictions:`,
-    ...bullets(pkg.disclosedContradictionIds, "None recorded."),
+    ...bullets(pkg.disclosedContradictionIds ?? [], "None recorded."),
     ``,
     `## Rights and safety`,
     `- Rights review: ${pkg.rightsReview.state}`,
@@ -108,7 +122,7 @@ export function renderPublicDossier(
     ``,
     `Artifact release forms:`,
     ...bullets(
-      pkg.artifactReleaseDecisions.map(
+      (pkg.artifactReleaseDecisions ?? []).map(
         (decision) =>
           `${decision.artifactId}: ${decision.releaseForm}. ${decision.rationale}`,
       ),
@@ -116,7 +130,7 @@ export function renderPublicDossier(
     ),
     ``,
     `## Corrections`,
-    `Counterevidence and correction requests: ${pkg.correctionContact}`,
+    `Counterevidence and correction requests: ${pkg.correctionContact ?? "No correction contact supplied."}`,
     ``,
     `## Control boundary`,
     `This dossier contains only claims admitted by the publication gate. Blocked, superseded, unsupported, stale, unsafe, or rights-incompatible claims are excluded rather than softened into prose.`,
