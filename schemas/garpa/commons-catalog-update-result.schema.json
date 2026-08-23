@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-catalog-update-result.schema.json",
+  "title": "GARPA Capability Commons Catalog Update Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gate", "appliedOperationIds", "noopOperationIds"],
+  "properties": {
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "state",
+        "findings",
+        "admittedOperationIds",
+        "noopOperationIds"
+      ],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "state": {
+          "enum": [
+            "catalog_digest_mismatch",
+            "catalog_history_invalid",
+            "admission_result_mismatch",
+            "operation_coverage_incomplete",
+            "blocked_object_targeted",
+            "operation_target_conflict",
+            "catalog_identity_conflict",
+            "catalog_object_missing",
+            "current_revision_conflict",
+            "invalid_supersession",
+            "invalid_noop",
+            "timestamp_regression",
+            "catalog_noop",
+            "catalog_update_admitted"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["state", "reason", "requiredAction"],
+            "properties": {
+              "state": { "type": "string", "minLength": 1 },
+              "operationId": { "type": "string", "minLength": 1 },
+              "objectType": {
+                "enum": ["primitive", "component_observation", "architecture_pattern"]
+              },
+              "incomingObjectId": { "type": "string", "minLength": 1 },
+              "catalogObjectId": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string", "minLength": 1 },
+              "requiredAction": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "admittedOperationIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "noopOperationIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "catalog": { "$ref": "commons-catalog.schema.json" },
+    "receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "receiptId",
+        "catalogId",
+        "priorCatalogRevision",
+        "resultingCatalogRevision",
+        "priorCatalogDigest",
+        "resultingCatalogDigest",
+        "sourceCaseId",
+        "sourceReleaseId",
+        "sourceReleaseDigest",
+        "actor",
+        "updatedAt",
+        "appliedOperationIds",
+        "noopOperationIds"
+      ],
+      "properties": {
+        "receiptId": { "type": "string", "minLength": 1 },
+        "catalogId": { "type": "string", "minLength": 1 },
+        "priorCatalogRevision": { "type": "integer", "minimum": 0 },
+        "resultingCatalogRevision": { "type": "integer", "minimum": 0 },
+        "priorCatalogDigest": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+        "resultingCatalogDigest": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+        "sourceCaseId": { "type": "string", "minLength": 1 },
+        "sourceReleaseId": { "type": "string", "minLength": 1 },
+        "sourceReleaseDigest": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+        "actor": { "type": "string", "minLength": 1 },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "appliedOperationIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "noopOperationIds": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "appliedOperationIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "noopOperationIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
