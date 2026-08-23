@@ -21,6 +21,7 @@ export const IMPLEMENTED_GARPA_STAGES = [
   "commons_retrieval_plan",
   "commons_case_nomination",
   "commons_component_projection",
+  "commons_seeded_substitution",
 ] as const;
 
 export type ImplementedGarpaStage = (typeof IMPLEMENTED_GARPA_STAGES)[number];
