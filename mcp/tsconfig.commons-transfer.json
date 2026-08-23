@@ -1,0 +1,27 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-commons-transfer-server.ts",
+    "garpaCommonsTransferTools.ts",
+    "../app/src/types/garpa.ts",
+    "../app/src/types/garpaExecution.ts",
+    "../app/src/types/garpaCapability.ts",
+    "../app/src/types/garpaCommons.ts",
+    "../app/src/types/garpaCommonsCatalog.ts",
+    "../app/src/types/garpaCommonsTransfer.ts",
+    "../app/src/lib/garpa/canonicalJson.ts",
+    "../app/src/lib/garpa/sha256.ts",
+    "../app/src/lib/garpa/commonsCatalogDigest.ts",
+    "../app/src/lib/garpa/commonsCatalogIdentity.ts",
+    "../app/src/lib/garpa/validateCommonsAdmission.ts",
+    "../app/src/lib/garpa/runCommonsAdmissionGate.ts",
+    "../app/src/lib/garpa/validateCommonsCatalog.ts",
+    "../app/src/lib/garpa/searchCommonsCatalog.ts",
+    "../app/src/lib/garpa/validateCapabilityGraph.ts",
+    "../app/src/lib/garpa/commonsCaseTransferDigest.ts",
+    "../app/src/lib/garpa/validateCommonsTransfer.ts",
+    "../app/src/lib/garpa/buildCommonsRetrievalPlan.ts",
+    "../app/src/lib/garpa/runCommonsTransferGate.ts",
+    "../app/src/lib/garpa/renderCommonsTransfer.ts"
+  ]
+}

@@ -1,0 +1,75 @@
+name: garpa-commons-transfer-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsTransfer.ts"
+      - "app/src/lib/garpa/commonsCaseTransferDigest.ts"
+      - "app/src/lib/garpa/validateCommonsTransfer.ts"
+      - "app/src/lib/garpa/buildCommonsRetrievalPlan.ts"
+      - "app/src/lib/garpa/runCommonsTransferGate.ts"
+      - "app/src/lib/garpa/renderCommonsTransfer.ts"
+      - "tests/lib/garpaCommonsTransfer.test.ts"
+      - "examples/garpa-commons-transfer/**"
+      - "schemas/garpa/commons-*.schema.json"
+      - "docs/garpa-commons-case-transfer.md"
+      - "mcp/garpaCommonsTransferTools.ts"
+      - "mcp/garpa-commons-transfer-server.ts"
+      - "mcp/tsconfig.commons-transfer.json"
+      - "tsconfig.commons-transfer.json"
+      - ".github/workflows/garpa-commons-transfer-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-case-transfer-v1"
+    paths:
+      - "app/src/types/garpaCommonsTransfer.ts"
+      - "app/src/lib/garpa/commonsCaseTransferDigest.ts"
+      - "app/src/lib/garpa/validateCommonsTransfer.ts"
+      - "app/src/lib/garpa/buildCommonsRetrievalPlan.ts"
+      - "app/src/lib/garpa/runCommonsTransferGate.ts"
+      - "app/src/lib/garpa/renderCommonsTransfer.ts"
+      - "tests/lib/garpaCommonsTransfer.test.ts"
+      - "examples/garpa-commons-transfer/**"
+      - "schemas/garpa/commons-*.schema.json"
+      - "docs/garpa-commons-case-transfer.md"
+      - "mcp/garpaCommonsTransferTools.ts"
+      - "mcp/garpa-commons-transfer-server.ts"
+      - "mcp/tsconfig.commons-transfer.json"
+      - "tsconfig.commons-transfer.json"
+      - ".github/workflows/garpa-commons-transfer-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  transfer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA commons transfer tests
+        run: npx vitest run tests/lib/garpaCommonsTransfer.test.ts
+
+      - name: Typecheck GARPA commons transfer workbench surface
+        run: npx tsc --noEmit -p tsconfig.commons-transfer.json
+
+      - name: Build static workbench bundle
+        run: npx vite build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA commons transfer MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-transfer.json
+        working-directory: mcp
