@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTH-OBS-001",
+  "qualificationContractDigest": "qualification:synthetic-observation:v1",
+  "evaluatedBuildDigest": "build:synthetic-observation:v1",
+  "state": "bounded_match",
+  "scenarioResults": [
+    {
+      "scenarioId": "scenario-controlled-entry",
+      "validRunIds": ["RUN-001"],
+      "excludedRunIds": [],
+      "state": "covered",
+      "note": "At least one comparable valid run covers this required scenario."
+    }
+  ],
+  "essentialMetricResults": [
+    {
+      "metricId": "metric-detect-before-boundary",
+      "criticality": "essential",
+      "state": "pass",
+      "runIds": ["RUN-001"],
+      "observedThresholdResults": ["pass"],
+      "note": "Every admitted observation of this metric passed the frozen threshold."
+    }
+  ],
+  "secondaryMetricResults": [],
+  "admittedRunIds": ["RUN-001"],
+  "excludedRunIds": [],
+  "failures": [],
+  "residuals": [
+    "Evaluation covers a bounded mission slice: Controlled observation and simulated response only."
+  ],
+  "incomparableDimensions": [],
+  "boundaryDescription": "Controlled observation and simulated response only.",
+  "falsificationLine": "Repeat the frozen scenarios with the same build and qualification contract. Any essential-metric failure or inability to reproduce the valid runs overturns the match."
+}
