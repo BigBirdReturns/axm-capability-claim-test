@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/preflight-receipt.schema.json",
+  "title": "GARPA Preflight Receipt",
+  "description": "Receipt proving that a named run passed the current build, qualification, readiness, authority, hazard, and custody gates before execution began.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "runId",
+    "buildId",
+    "buildDigest",
+    "manifestDigest",
+    "qualificationContractDigest",
+    "readiness",
+    "gate",
+    "evaluatedAt",
+    "preflightDigest"
+  ],
+  "$defs": {
+    "readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fixtureReady",
+        "instrumentationReady",
+        "calibrationReady",
+        "storageReady",
+        "clocksReady",
+        "authorityReady",
+        "hazardControlsReady",
+        "abortPathReady",
+        "operatorRolesReady",
+        "runIdReserved"
+      ],
+      "properties": {
+        "fixtureReady": { "type": "boolean" },
+        "instrumentationReady": { "type": "boolean" },
+        "calibrationReady": { "type": "boolean" },
+        "storageReady": { "type": "boolean" },
+        "clocksReady": { "type": "boolean" },
+        "authorityReady": { "type": "boolean" },
+        "hazardControlsReady": { "type": "boolean" },
+        "abortPathReady": { "type": "boolean" },
+        "operatorRolesReady": { "type": "boolean" },
+        "runIdReserved": { "type": "boolean" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "buildId": { "type": "string", "minLength": 1 },
+    "buildDigest": { "type": "string", "minLength": 1 },
+    "manifestDigest": { "type": "string", "minLength": 1 },
+    "qualificationContractDigest": { "type": "string", "minLength": 1 },
+    "readiness": { "$ref": "#/$defs/readiness" },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "manifestCurrent",
+        "qualificationContractCurrent",
+        "buildStateAdmissible",
+        "materialDeviationsClosed",
+        "readiness",
+        "blockingReasons"
+      ],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "manifestCurrent": { "type": "boolean" },
+        "qualificationContractCurrent": { "type": "boolean" },
+        "buildStateAdmissible": { "type": "boolean" },
+        "materialDeviationsClosed": { "type": "boolean" },
+        "readiness": { "$ref": "#/$defs/readiness" },
+        "blockingReasons": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evaluatedAt": { "type": "string", "minLength": 1 },
+    "preflightDigest": { "type": "string", "minLength": 1 }
+  }
+}
