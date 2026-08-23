@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-registry-server.ts",
+    "garpaRegistryTools.ts",
+    "../app/src/lib/garpa/validateCaseRegistry.ts",
+    "../app/src/lib/garpa/runRegistryUpdateGate.ts",
+    "../app/src/lib/garpa/renderRegistryUpdate.ts",
+    "../app/src/lib/garpa/validateReleaseManifest.ts",
+    "../app/src/types/garpaRegistry.ts",
+    "../app/src/types/garpaRelease.ts",
+    "../app/src/types/garpaPublication.ts",
+    "../app/src/types/garpa.ts"
+  ]
+}
