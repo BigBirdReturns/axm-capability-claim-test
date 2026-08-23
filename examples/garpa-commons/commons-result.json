@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "admittedPrimitiveIds": [
+    "primitive-detect-before-boundary"
+  ],
+  "admittedComponentObservationIds": [
+    "observation-sensor-v1-controlled-fixture"
+  ],
+  "admittedArchitecturePatternIds": [
+    "pattern-observe-detect-present"
+  ],
+  "blockedObjectIds": [],
+  "findings": []
+}
