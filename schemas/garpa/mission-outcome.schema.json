@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/mission-outcome.schema.json",
+  "title": "GARPA Mission Outcome",
+  "description": "Implementation-neutral customer outcome. The goal gate requires evidence-bound fields, falsifiable metrics, and baselines before decomposition.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "operator", "protectedOrAffectedObject", "problemOrThreat", "desiredStateChange", "operatingEnvironment", "timeAndCoverageRequirement", "successMetrics", "exclusions"],
+  "$defs": {
+    "basis": {
+      "enum": ["explicitly_stated", "externally_supported", "derived", "analyst_hypothesis", "open"]
+    },
+    "boundValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["basis", "evidenceCellIds", "limitations"],
+      "properties": {
+        "value": { "type": "string" },
+        "basis": { "$ref": "#/$defs/basis" },
+        "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+        "limitations": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "operator": { "$ref": "#/$defs/boundValue" },
+    "protectedOrAffectedObject": { "$ref": "#/$defs/boundValue" },
+    "problemOrThreat": { "$ref": "#/$defs/boundValue" },
+    "desiredStateChange": { "$ref": "#/$defs/boundValue" },
+    "operatingEnvironment": { "$ref": "#/$defs/boundValue" },
+    "timeAndCoverageRequirement": { "$ref": "#/$defs/boundValue" },
+    "successMetrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "comparator", "basis", "evidenceCellIds", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "unit": { "type": "string" },
+          "comparator": { "enum": ["gte", "lte", "range", "boolean", "categorical"] },
+          "threshold": { "type": ["number", "string", "boolean"] },
+          "lowerBound": { "type": "number" },
+          "upperBound": { "type": "number" },
+          "baseline": { "type": ["number", "string", "boolean"] },
+          "basis": { "$ref": "#/$defs/basis" },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "economicConstraint": { "$ref": "#/$defs/boundValue" },
+    "exclusions": { "type": "array", "items": { "type": "string" } }
+  }
+}

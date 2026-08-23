@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "operator": {
+    "value": "Fixed-site operator",
+    "basis": "derived",
+    "evidenceCellIds": ["e2"],
+    "limitations": ["No named customer or operator is identified."]
+  },
+  "protectedOrAffectedObject": {
+    "value": "High-value fixed site",
+    "basis": "explicitly_stated",
+    "evidenceCellIds": ["e2"],
+    "limitations": ["Site class, geometry, and protected assets are unspecified."]
+  },
+  "problemOrThreat": {
+    "value": "Drone attack",
+    "basis": "explicitly_stated",
+    "evidenceCellIds": ["e2"],
+    "limitations": ["Threat type, speed, altitude, navigation mode, and concurrency are unspecified."]
+  },
+  "desiredStateChange": {
+    "value": "Reduce or prevent successful drone attacks against the protected site",
+    "basis": "derived",
+    "evidenceCellIds": ["e2"],
+    "limitations": ["The post does not define what counts as successful protection."]
+  },
+  "operatingEnvironment": {
+    "basis": "open",
+    "evidenceCellIds": [],
+    "limitations": ["Weather, terrain, electromagnetic conditions, and airspace are unresolved."]
+  },
+  "timeAndCoverageRequirement": {
+    "basis": "open",
+    "evidenceCellIds": [],
+    "limitations": ["Coverage radius, response time, duration, availability, and target capacity are unresolved."]
+  },
+  "successMetrics": [],
+  "economicConstraint": {
+    "value": "Lower total cost than legacy air-defense systems",
+    "basis": "explicitly_stated",
+    "evidenceCellIds": ["e4"],
+    "limitations": ["No numerical baseline or aligned accounting boundary is available."]
+  },
+  "exclusions": [
+    "No active radio-frequency interference is authorized by this fixture.",
+    "No physical defeat or operational air-defense equivalence is assessed."
+  ]
+}

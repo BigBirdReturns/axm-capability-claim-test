@@ -27,6 +27,11 @@ import { REPLICATION_STRATEGIES } from "../app/src/data/replicationStrategies.ts
 import { runReplicationPlan } from "../app/src/lib/runReplicationPlan.ts";
 import { runSourcingGate } from "../app/src/lib/runSourcingGate.ts";
 import { buildPullList } from "../app/src/lib/renderReport.ts";
+import {
+  validateClaimPacket,
+  validateMissionOutcome,
+} from "../app/src/lib/garpa/validateClaimPacket.ts";
+import { runGarpaAdmission } from "../app/src/lib/garpa/runGarpaAdmission.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -36,6 +41,8 @@ const server = new McpServer({
 const OBJECT_TYPE_ENUM = z.enum(
   OBJECT_TYPE_OPTIONS as [string, ...string[]],
 );
+
+const JSON_INPUT = z.union([z.string(), z.record(z.any())]);
 
 function text(content: string) {
   return { content: [{ type: "text" as const, text: content }] };
@@ -125,9 +132,7 @@ server.registerTool(
     description:
       "Validates pasted/produced ledger JSON against the schema. Returns ok + errors. The schema is the mating surface.",
     inputSchema: {
-      ledger: z
-        .union([z.string(), z.record(z.any())])
-        .describe("Ledger object or JSON string."),
+      ledger: JSON_INPUT.describe("Ledger object or JSON string."),
     },
   },
   async ({ ledger }) => {
@@ -146,9 +151,7 @@ server.registerTool(
     description:
       "Validates the ledger, runs the object gate and sourcing gate, and — only if at least three load-bearing fields are sourced — renders contamination as a bucket and the verdict with its falsification line. Below threshold it REFUSES TO VERDICT and returns object type, route, known evidence, missing fields, and a neutral pull-list. Output is a structural assessment, not an allegation of wrongdoing.",
     inputSchema: {
-      ledger: z
-        .union([z.string(), z.record(z.any())])
-        .describe("Ledger object or JSON string matching ledger.schema.json."),
+      ledger: JSON_INPUT.describe("Ledger object or JSON string matching ledger.schema.json."),
     },
   },
   async ({ ledger }) => {
@@ -200,9 +203,7 @@ server.registerTool(
     description:
       "Frontier route analysis. Takes a frontier_model ledger and — only if the sourcing gate passes — prices each SOURCED capability delta with open/lesser compositions (residuals carried verbatim), names sourced axes with no pricing-grade composition as the frontier residual, and REFUSES TO PRICE axes whose delta is unsourced. Below three sourced axes it returns the pull-list instead. The plan prices only sourced deltas — it never turns a launch claim into an engineering roadmap.",
     inputSchema: {
-      ledger: z
-        .union([z.string(), z.record(z.any())])
-        .describe("Ledger object or JSON string with objectType 'frontier_model'."),
+      ledger: JSON_INPUT.describe("Ledger object or JSON string with objectType 'frontier_model'."),
     },
   },
   async ({ ledger }) => {
@@ -217,8 +218,6 @@ server.registerTool(
       );
     }
     if (result.ledger.objectType !== "frontier_model") {
-      // Object gate: wrong object, wrong test — a company cannot be pushed
-      // through the replication instrument.
       return text(
         JSON.stringify(
           {
@@ -250,6 +249,79 @@ server.registerTool(
     return text(
       JSON.stringify(
         { ok: true, planBlocked: false, plan: runReplicationPlan(result.ledger) },
+        null,
+        2,
+      ),
+    );
+  },
+);
+
+// 5. GARPA ADMISSION ---------------------------------------------------------
+// This is the first executable bridge from arbitrary hype artifacts to a
+// governed engineering case. It stops before architecture: no admitted goal,
+// no decomposition; no measured evidence, no performance or cost promotion.
+server.registerTool(
+  "validate_garpa_claim_packet",
+  {
+    title: "Validate a GARPA claim packet",
+    description:
+      "Validates the source-addressable GARPA claim packet and, when supplied, its candidate mission outcome. Checks unique ids, resolving artifact/evidence/claim references, and local-result fixture requirements.",
+    inputSchema: {
+      claimPacket: JSON_INPUT.describe("GARPA claim packet object or JSON string."),
+      missionOutcome: JSON_INPUT.optional().describe(
+        "Optional GARPA mission outcome object or JSON string.",
+      ),
+    },
+  },
+  async ({ claimPacket, missionOutcome }) => {
+    const packet = validateClaimPacket(claimPacket);
+    const outcome = missionOutcome === undefined
+      ? undefined
+      : validateMissionOutcome(missionOutcome, packet.value);
+    return text(
+      JSON.stringify(
+        {
+          ok: packet.ok && (outcome?.ok ?? true),
+          claimPacket: { ok: packet.ok, errors: packet.errors },
+          missionOutcome: outcome
+            ? { ok: outcome.ok, errors: outcome.errors }
+            : undefined,
+        },
+        null,
+        2,
+      ),
+    );
+  },
+);
+
+server.registerTool(
+  "run_garpa_admission",
+  {
+    title: "Run GARPA offering and goal admission",
+    description:
+      "Runs the GARPA offering-evidence and mission-goal gates. Claimant publications can establish that a claim was made, but cannot self-establish measured performance, observed cost, or independent verification. Returns the highest admissible state and exact pull-lists. It never emits an architecture.",
+    inputSchema: {
+      claimPacket: JSON_INPUT.describe("GARPA claim packet object or JSON string."),
+      missionOutcome: JSON_INPUT.describe("GARPA mission outcome object or JSON string."),
+    },
+  },
+  async ({ claimPacket, missionOutcome }) => {
+    const packet = validateClaimPacket(claimPacket);
+    if (!packet.ok || !packet.value) {
+      return text(JSON.stringify({ ok: false, stage: "claim_packet", errors: packet.errors }, null, 2));
+    }
+    const outcome = validateMissionOutcome(missionOutcome, packet.value);
+    if (!outcome.ok || !outcome.value) {
+      return text(JSON.stringify({ ok: false, stage: "mission_outcome", errors: outcome.errors }, null, 2));
+    }
+    const admission = runGarpaAdmission(packet.value, outcome.value);
+    return text(
+      JSON.stringify(
+        {
+          ok: true,
+          admissionBlocked: !admission.passed,
+          admission,
+        },
         null,
         2,
       ),
