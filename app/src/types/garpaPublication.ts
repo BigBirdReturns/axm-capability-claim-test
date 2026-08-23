@@ -128,9 +128,9 @@ export interface PublicationSafetyReview {
   state: PublicationSafetyState;
   findings: Array<{
     id: string;
-    affectedClaimIds?: string[];
-    affectedArtifactIds?: string[];
-    risk?: string;
+    affectedClaimIds: string[];
+    affectedArtifactIds: string[];
+    risk: string;
     requiredAction: string;
   }>;
   reviewedAt: string;
