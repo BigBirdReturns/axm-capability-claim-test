@@ -164,8 +164,11 @@ function revisionSemanticErrors<T extends CapabilityPrimitive | ComponentObserva
     if (index < sorted.length - 1 && revision.state !== "superseded") {
       errors.push(`${entry.catalogObjectId} non-latest revision ${revision.revisionId} must be superseded.`);
     }
-    if (index === sorted.length - 1 && !["current", "withdrawn"].includes(revision.state)) {
-      errors.push(`${entry.catalogObjectId} latest revision must be current or withdrawn.`);
+    if (
+      index === sorted.length - 1 &&
+      !["current", "superseded", "withdrawn"].includes(revision.state)
+    ) {
+      errors.push(`${entry.catalogObjectId} latest revision must be current, superseded, or withdrawn.`);
     }
     if (computeCommonsObjectDigest(revision.value) !== revision.objectDigest) {
       errors.push(`${entry.catalogObjectId} revision ${revision.revisionId} object digest does not match its value.`);
@@ -198,8 +201,11 @@ function revisionSemanticErrors<T extends CapabilityPrimitive | ComponentObserva
     if (entry.currentRevisionId !== current[0]!.revisionId) {
       errors.push(`${entry.catalogObjectId} currentRevisionId does not match the current revision.`);
     }
-  } else if (latest.state !== "withdrawn" || entry.currentRevisionId !== undefined) {
-    errors.push(`${entry.catalogObjectId} without a current revision must end in a withdrawn revision and omit currentRevisionId.`);
+  } else if (
+    !["superseded", "withdrawn"].includes(latest.state) ||
+    entry.currentRevisionId !== undefined
+  ) {
+    errors.push(`${entry.catalogObjectId} without a current revision must end in a superseded or withdrawn revision and omit currentRevisionId.`);
   }
   for (const revision of entry.revisions) {
     if (revision.state !== "current" && revision.revisionId === entry.currentRevisionId) {
