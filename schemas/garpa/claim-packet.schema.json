@@ -17,9 +17,7 @@
         "organization": { "type": "string" },
         "offering": { "type": "string", "minLength": 1 },
         "offeringVersion": { "type": "string" },
-        "offeringType": {
-          "enum": ["product", "service", "system", "platform", "program", "architecture"]
-        }
+        "offeringType": { "enum": ["product", "service", "system", "platform", "program", "architecture"] }
       }
     },
     "artifacts": {
@@ -31,9 +29,7 @@
         "required": ["id", "kind", "title", "capturedAt"],
         "properties": {
           "id": { "type": "string", "minLength": 1 },
-          "kind": {
-            "enum": ["social_post", "web_page", "article", "pitch_deck", "datasheet", "procurement_record", "contract_record", "patent", "paper", "benchmark", "video", "transcript", "image", "local_test", "other"]
-          },
+          "kind": { "enum": ["social_post", "web_page", "article", "pitch_deck", "datasheet", "procurement_record", "contract_record", "patent", "paper", "benchmark", "video", "transcript", "image", "local_test", "other"] },
           "title": { "type": "string", "minLength": 1 },
           "uri": { "type": "string" },
           "publisher": { "type": "string" },
@@ -54,15 +50,9 @@
         "required": ["id", "target", "venue", "control", "locator", "supports", "limitations"],
         "properties": {
           "id": { "type": "string", "minLength": 1 },
-          "target": {
-            "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "other"]
-          },
-          "venue": {
-            "enum": ["claimant_publication", "customer_publication", "government_record", "independent_test", "published_benchmark", "journalistic_report", "community_report", "local_reproduction", "analyst_derivation"]
-          },
-          "control": {
-            "enum": ["claimant_controlled", "commercially_related", "externally_attributed", "independent", "local_measured", "unknown"]
-          },
+          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "other"] },
+          "venue": { "enum": ["claimant_publication", "customer_publication", "government_record", "independent_test", "published_benchmark", "journalistic_report", "community_report", "local_reproduction", "analyst_derivation"] },
+          "control": { "enum": ["claimant_controlled", "commercially_related", "externally_attributed", "independent", "local_measured", "unknown"] },
           "locator": {
             "type": "object",
             "additionalProperties": false,
@@ -84,6 +74,7 @@
           "environment": { "type": "string" },
           "metric": { "type": "string" },
           "method": { "type": "string" },
+          "scopeCompleteness": { "enum": ["complete", "partial", "unknown"] },
           "supports": { "type": "array", "items": { "type": "string" } },
           "limitations": { "type": "array", "items": { "type": "string" } },
           "conflictsWith": { "type": "array", "items": { "type": "string" } }
@@ -100,9 +91,7 @@
           "id": { "type": "string", "minLength": 1 },
           "field": { "type": "string", "minLength": 1 },
           "statement": { "type": "string", "minLength": 1 },
-          "target": {
-            "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "other"]
-          },
+          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "other"] },
           "evidenceClass": { "enum": ["confirmed", "reported", "derived", "judgment", "open"] },
           "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
           "scope": { "type": "string" },

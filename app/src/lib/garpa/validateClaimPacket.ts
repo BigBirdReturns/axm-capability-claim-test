@@ -119,6 +119,7 @@ const EvidenceCellSchema = z
     environment: z.string().optional(),
     metric: z.string().optional(),
     method: z.string().optional(),
+    scopeCompleteness: z.enum(["complete", "partial", "unknown"]).optional(),
     supports: z.array(z.string()).default([]),
     limitations: z.array(z.string()).default([]),
     conflictsWith: z.array(z.string()).optional(),

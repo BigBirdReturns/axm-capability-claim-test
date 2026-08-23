@@ -37,10 +37,15 @@ function hasTargetedEvidence(
   ids: string[],
   cells: ReadonlyMap<string, EvidenceCell>,
   targets: ReadonlySet<EvidenceTarget>,
+  requireExternal: boolean,
 ): boolean {
   return ids.some((id) => {
     const cell = cells.get(id);
-    return Boolean(cell && targets.has(cell.target));
+    if (!cell || !targets.has(cell.target)) return false;
+    if (!requireExternal) return true;
+    return ["externally_attributed", "independent", "local_measured"].includes(
+      cell.control,
+    );
   });
 }
 
@@ -51,7 +56,12 @@ function valueAdmitted(
 ): boolean {
   if (!value.value?.trim()) return false;
   if (value.basis === "open" || value.basis === "analyst_hypothesis") return false;
-  return hasTargetedEvidence(value.evidenceCellIds, cells, TARGETS[field]!);
+  return hasTargetedEvidence(
+    value.evidenceCellIds,
+    cells,
+    TARGETS[field]!,
+    value.basis === "externally_supported",
+  );
 }
 
 function metricHasThreshold(metric: OutcomeMetric): boolean {
@@ -69,7 +79,12 @@ function metricAdmitted(
   if (!metricHasThreshold(metric)) return false;
   if (VAGUE_LANGUAGE.test(metric.name)) return false;
   if (typeof metric.threshold === "string" && VAGUE_LANGUAGE.test(metric.threshold)) return false;
-  return hasTargetedEvidence(metric.evidenceCellIds, cells, TARGETS.success_metrics!);
+  return hasTargetedEvidence(
+    metric.evidenceCellIds,
+    cells,
+    TARGETS.success_metrics!,
+    metric.basis === "externally_supported",
+  );
 }
 
 function pullFor(field: string): string {

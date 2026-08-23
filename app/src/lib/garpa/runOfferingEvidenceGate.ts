@@ -46,6 +46,18 @@ function fieldHasEvidence(
   );
 }
 
+function fieldHasCompleteScope(
+  packet: ClaimPacket,
+  field: string,
+  targets: ReadonlySet<EvidenceTarget>,
+): boolean {
+  return claimsForField(packet, field).some((claim) =>
+    cellsForClaim(packet, claim).some(
+      (cell) => targets.has(cell.target) && cell.scopeCompleteness === "complete",
+    ),
+  );
+}
+
 function versionResolved(packet: ClaimPacket): boolean {
   if (packet.subject.offeringVersion?.trim()) return true;
   return packet.evidence.some(
@@ -107,9 +119,9 @@ function pullFor(field: string): string {
     advertised_outcome:
       "Recover the exact advertised customer outcome and its source locator.",
     operating_environment:
-      "Recover the stated or observed operating environment, including material constraints.",
+      "Recover a complete stated or observed operating environment, including material constraints.",
     system_boundary:
-      "Recover the system boundary, including equipment, software, services, operators, infrastructure, and sustainment.",
+      "Recover a complete system boundary, including equipment, software, services, operators, infrastructure, and sustainment.",
   };
   return pulls[field] ?? `Recover admissible evidence for ${field}.`;
 }
@@ -137,14 +149,14 @@ export function runOfferingEvidenceGate(packet: ClaimPacket): OfferingEvidenceGa
   );
   (outcome ? admittedFields : missingFields).push("advertised_outcome");
 
-  const environment = fieldHasEvidence(
+  const environment = fieldHasCompleteScope(
     packet,
     "operating_environment",
     new Set(["operating_environment"]),
   );
   (environment ? admittedFields : missingFields).push("operating_environment");
 
-  const boundary = fieldHasEvidence(
+  const boundary = fieldHasCompleteScope(
     packet,
     "system_boundary",
     new Set(["system_boundary"]),

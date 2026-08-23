@@ -89,6 +89,7 @@ export interface EvidenceCell {
   environment?: string;
   metric?: string;
   method?: string;
+  scopeCompleteness?: "complete" | "partial" | "unknown";
   supports: string[];
   limitations: string[];
   conflictsWith?: string[];

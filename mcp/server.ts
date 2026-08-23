@@ -32,6 +32,7 @@ import {
   validateMissionOutcome,
 } from "../app/src/lib/garpa/validateClaimPacket.ts";
 import { runGarpaAdmission } from "../app/src/lib/garpa/runGarpaAdmission.ts";
+import { renderGarpaRealityBrief } from "../app/src/lib/garpa/renderRealityBrief.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -315,12 +316,18 @@ server.registerTool(
       return text(JSON.stringify({ ok: false, stage: "mission_outcome", errors: outcome.errors }, null, 2));
     }
     const admission = runGarpaAdmission(packet.value, outcome.value);
+    const realityBrief = renderGarpaRealityBrief(
+      packet.value,
+      outcome.value,
+      admission,
+    );
     return text(
       JSON.stringify(
         {
           ok: true,
           admissionBlocked: !admission.passed,
           admission,
+          realityBrief,
         },
         null,
         2,

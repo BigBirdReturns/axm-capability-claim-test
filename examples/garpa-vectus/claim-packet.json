@@ -78,7 +78,8 @@
         "description": "The post describes a managed service integrating systems and operational delivery."
       },
       "supports": ["c5"],
-      "limitations": ["Staffing, communications, sustainment, reload, and external infrastructure are not enumerated."]
+      "limitations": ["Staffing, communications, sustainment, reload, and external infrastructure are not enumerated."],
+      "scopeCompleteness": "partial"
     }
   ],
   "claims": [
