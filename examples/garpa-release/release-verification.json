@@ -1,0 +1,95 @@
+{
+  "manifest": {
+    "schemaVersion": 1,
+    "releaseId": "GARPA-PUBLICATION-0001-R1",
+    "caseId": "GARPA-PUBLICATION-0001",
+    "releaseNumber": 1,
+    "publicationPackageDigest": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "publicationGateReceiptDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "createdAt": "2026-08-22T19:00:00Z",
+    "state": "current",
+    "files": [
+      {
+        "path": "README.md",
+        "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+        "byteLength": 512,
+        "mediaType": "text/markdown",
+        "role": "release_metadata"
+      },
+      {
+        "path": "public-dossier.md",
+        "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+        "byteLength": 4096,
+        "mediaType": "text/markdown",
+        "role": "public_dossier"
+      },
+      {
+        "path": "claims/publication-claims.json",
+        "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+        "byteLength": 2048,
+        "mediaType": "application/json",
+        "role": "publication_claims"
+      },
+      {
+        "path": "results/mission-evaluation.json",
+        "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+        "byteLength": 1536,
+        "mediaType": "application/json",
+        "role": "mission_evaluation"
+      },
+      {
+        "path": "receipts/publication-gate.json",
+        "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+        "byteLength": 1024,
+        "mediaType": "application/json",
+        "role": "gate_receipt"
+      }
+    ],
+    "manifestDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  },
+  "computedManifestDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "observedFiles": [
+    {
+      "path": "README.md",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "byteLength": 512,
+      "mediaType": "text/markdown",
+      "role": "release_metadata"
+    },
+    {
+      "path": "public-dossier.md",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "byteLength": 4096,
+      "mediaType": "text/markdown",
+      "role": "public_dossier"
+    },
+    {
+      "path": "claims/publication-claims.json",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "byteLength": 2048,
+      "mediaType": "application/json",
+      "role": "publication_claims"
+    },
+    {
+      "path": "results/mission-evaluation.json",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "byteLength": 1536,
+      "mediaType": "application/json",
+      "role": "mission_evaluation"
+    },
+    {
+      "path": "receipts/publication-gate.json",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "byteLength": 1024,
+      "mediaType": "application/json",
+      "role": "gate_receipt"
+    }
+  ],
+  "registry": {
+    "caseId": "GARPA-PUBLICATION-0001",
+    "currentReleaseId": "GARPA-PUBLICATION-0001-R1",
+    "currentReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+    "supersededReleaseIds": [],
+    "withdrawnReleaseIds": []
+  }
+}

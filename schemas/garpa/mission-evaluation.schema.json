@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/mission-evaluation.schema.json",
+  "title": "GARPA Mission Evaluation",
+  "description": "Outcome evaluation derived from current valid test-run receipts. Essential metrics are non-compensatory.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "qualificationContractDigest",
+    "evaluatedBuildDigest",
+    "state",
+    "scenarioResults",
+    "essentialMetricResults",
+    "secondaryMetricResults",
+    "admittedRunIds",
+    "excludedRunIds",
+    "failures",
+    "residuals",
+    "incomparableDimensions",
+    "boundaryDescription",
+    "falsificationLine"
+  ],
+  "$defs": {
+    "metricEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metricId", "criticality", "state", "runIds", "observedThresholdResults", "note"],
+      "properties": {
+        "metricId": { "type": "string", "minLength": 1 },
+        "criticality": { "enum": ["essential", "secondary"] },
+        "state": { "enum": ["pass", "fail", "inconclusive", "missing"] },
+        "runIds": { "type": "array", "items": { "type": "string" } },
+        "observedThresholdResults": { "type": "array", "items": { "enum": ["pass", "fail", "inconclusive", "not_measured"] } },
+        "note": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "qualificationContractDigest": { "type": "string", "minLength": 1 },
+    "evaluatedBuildDigest": { "type": "string", "minLength": 1 },
+    "state": { "enum": ["matched", "bounded_match", "partial", "failed", "incomparable", "unassessed"] },
+    "scenarioResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scenarioId", "validRunIds", "excludedRunIds", "state", "note"],
+        "properties": {
+          "scenarioId": { "type": "string", "minLength": 1 },
+          "validRunIds": { "type": "array", "items": { "type": "string" } },
+          "excludedRunIds": { "type": "array", "items": { "type": "string" } },
+          "state": { "enum": ["covered", "missing", "incomparable"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "essentialMetricResults": { "type": "array", "items": { "$ref": "#/$defs/metricEvaluation" } },
+    "secondaryMetricResults": { "type": "array", "items": { "$ref": "#/$defs/metricEvaluation" } },
+    "admittedRunIds": { "type": "array", "items": { "type": "string" } },
+    "excludedRunIds": { "type": "array", "items": { "type": "string" } },
+    "failures": { "type": "array", "items": { "type": "string" } },
+    "residuals": { "type": "array", "items": { "type": "string" } },
+    "incomparableDimensions": { "type": "array", "items": { "type": "string" } },
+    "boundaryDescription": { "type": "string" },
+    "falsificationLine": { "type": "string", "minLength": 1 }
+  }
+}

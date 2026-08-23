@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/counterevidence-review-result.schema.json",
+  "title": "GARPA Counterevidence Review Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "packetId",
+    "targetCaseId",
+    "targetReleaseId",
+    "disposition",
+    "action",
+    "accepted",
+    "supersessionRequired",
+    "affectedClaimIds",
+    "validatedEvidenceCellIds",
+    "duplicateEvidenceCellIds",
+    "rejectedEvidenceCellIds",
+    "preserveTargetRelease",
+    "requiredActions",
+    "controlQuestion"
+  ],
+  "properties": {
+    "packetId": { "type": "string", "minLength": 1 },
+    "targetCaseId": { "type": "string", "minLength": 1 },
+    "targetReleaseId": { "type": "string", "minLength": 1 },
+    "disposition": {
+      "enum": [
+        "target_release_stale",
+        "insufficient",
+        "duplicative",
+        "supports_current_release",
+        "narrows_current_release",
+        "contradicts_current_release",
+        "requires_requalification",
+        "requires_new_case_version"
+      ]
+    },
+    "action": {
+      "enum": [
+        "resolve_current_release",
+        "no_change",
+        "record_support",
+        "prepare_superseding_release",
+        "reopen_qualification",
+        "open_new_case_version"
+      ]
+    },
+    "accepted": { "type": "boolean" },
+    "supersessionRequired": { "type": "boolean" },
+    "affectedClaimIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "validatedEvidenceCellIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "duplicateEvidenceCellIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "rejectedEvidenceCellIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "preserveTargetRelease": { "const": true },
+    "requiredActions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "controlQuestion": { "type": "string", "minLength": 1 }
+  }
+}

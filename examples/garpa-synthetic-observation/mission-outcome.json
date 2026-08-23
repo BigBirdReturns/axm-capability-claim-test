@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "operator": {
+    "value": "Trained fixed-site operator",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "protectedOrAffectedObject": {
+    "value": "Controlled test boundary",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "problemOrThreat": {
+    "value": "A known test object approaching the boundary",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": ["No unrestricted object class is included."]
+  },
+  "desiredStateChange": {
+    "value": "Detect the object and present an alert before boundary crossing",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "operatingEnvironment": {
+    "value": "Fixed, controlled outdoor site with known geometry",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e4"],
+    "limitations": ["No unrestricted weather claim is included."]
+  },
+  "timeAndCoverageRequirement": {
+    "value": "Continuous observation during a one-hour test window",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "successMetrics": [
+    {
+      "id": "m1",
+      "name": "Detection before boundary crossing",
+      "comparator": "boolean",
+      "threshold": true,
+      "baseline": false,
+      "basis": "externally_supported",
+      "evidenceCellIds": ["e3"],
+      "limitations": []
+    },
+    {
+      "id": "m2",
+      "name": "Observation-to-presentation latency",
+      "unit": "seconds",
+      "comparator": "lte",
+      "threshold": 2,
+      "baseline": 10,
+      "basis": "externally_supported",
+      "evidenceCellIds": ["e3"],
+      "limitations": ["Measured only inside the controlled fixture."]
+    }
+  ],
+  "exclusions": [
+    "No active response or interference mechanism.",
+    "No operational deployment claim."
+  ]
+}

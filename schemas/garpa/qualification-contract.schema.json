@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/qualification-contract.schema.json",
+  "title": "GARPA Qualification Contract",
+  "description": "Frozen scenarios, metrics, instrumentation, comparators, accounting boundary, venue authority, and non-compensatory acceptance rules. The contract fixes what same-goal means before scored execution.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "caseId", "missionOutcomeDigest", "capabilityGraphDigest", "candidateArchitectureDigest", "scenarios", "metrics", "instrumentation", "comparators", "accountingBoundary", "authorizations", "acceptanceRule", "frozenAt", "state"],
+  "$defs": {
+    "stringArray": { "type": "array", "items": { "type": "string" } },
+    "venueClass": { "enum": ["simulation", "recorded_replay", "bench", "controlled_field", "operational"] },
+    "instrumentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "modelOrVersion", "quantitiesMeasured", "clockSource", "calibrationState", "calibrationEvidenceIds", "dataFormat", "storagePath"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "modelOrVersion": { "type": "string", "minLength": 1 },
+        "quantitiesMeasured": { "$ref": "#/$defs/stringArray" },
+        "samplingRate": { "type": "string" },
+        "accuracy": { "type": "string" },
+        "clockSource": { "type": "string", "minLength": 1 },
+        "calibrationState": { "enum": ["current", "expired", "not_required", "unknown"] },
+        "calibrationEvidenceIds": { "$ref": "#/$defs/stringArray" },
+        "dataFormat": { "type": "string", "minLength": 1 },
+        "storagePath": { "type": "string", "minLength": 1 }
+      }
+    },
+    "scenario": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "purpose", "venueClass", "protectedOrAffectedObject", "inputOrThreatProfile", "environment", "duration", "coverageGeometry", "loadProfile", "concurrencyProfile", "operatorConditions", "degradedConditions", "excludedConditions", "fixtureIds", "metricIds", "instrumentationIds", "activeEffect", "evidenceCellIds", "assumptions"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "name": { "type": "string", "minLength": 1 },
+        "purpose": { "type": "string", "minLength": 1 },
+        "venueClass": { "$ref": "#/$defs/venueClass" },
+        "protectedOrAffectedObject": { "type": "string", "minLength": 1 },
+        "inputOrThreatProfile": { "$ref": "#/$defs/stringArray" },
+        "environment": { "type": "object", "additionalProperties": { "type": "string" } },
+        "duration": { "type": "string", "minLength": 1 },
+        "coverageGeometry": { "type": "string", "minLength": 1 },
+        "loadProfile": { "type": "string", "minLength": 1 },
+        "concurrencyProfile": { "type": "string", "minLength": 1 },
+        "operatorConditions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["staffing", "training", "priorKnowledge", "permittedIntervention"],
+          "properties": {
+            "staffing": { "type": "string", "minLength": 1 },
+            "training": { "type": "string", "minLength": 1 },
+            "priorKnowledge": { "type": "string", "minLength": 1 },
+            "permittedIntervention": { "$ref": "#/$defs/stringArray" }
+          }
+        },
+        "degradedConditions": { "$ref": "#/$defs/stringArray" },
+        "excludedConditions": { "$ref": "#/$defs/stringArray" },
+        "fixtureIds": { "$ref": "#/$defs/stringArray" },
+        "metricIds": { "$ref": "#/$defs/stringArray" },
+        "instrumentationIds": { "$ref": "#/$defs/stringArray" },
+        "authorizationId": { "type": "string" },
+        "activeEffect": { "type": "boolean" },
+        "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+        "assumptions": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "missionMetricIds", "riskIds", "residualIds", "name", "criticality", "quantity", "direction", "measurementMethod", "instrumentationIds", "samplingMethod", "requiredRuns", "aggregation", "allowedUncertainty", "failureCondition", "evidenceCellIds", "limitations"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "missionMetricIds": { "$ref": "#/$defs/stringArray" },
+        "riskIds": { "$ref": "#/$defs/stringArray" },
+        "residualIds": { "$ref": "#/$defs/stringArray" },
+        "name": { "type": "string", "minLength": 1 },
+        "criticality": { "enum": ["essential", "secondary", "diagnostic"] },
+        "quantity": { "type": "string", "minLength": 1 },
+        "unit": { "type": "string" },
+        "direction": { "enum": ["higher_is_better", "lower_is_better", "inside_range", "boolean", "categorical"] },
+        "threshold": { "type": ["number", "string", "boolean"] },
+        "lowerBound": { "type": "number" },
+        "upperBound": { "type": "number" },
+        "baseline": { "type": ["number", "string", "boolean"] },
+        "measurementMethod": { "type": "string", "minLength": 1 },
+        "instrumentationIds": { "$ref": "#/$defs/stringArray" },
+        "samplingMethod": { "type": "string", "minLength": 1 },
+        "requiredRuns": { "type": "integer", "minimum": 1 },
+        "aggregation": { "enum": ["all_runs", "minimum", "maximum", "mean", "median", "percentile", "proportion"] },
+        "aggregationParameter": { "type": "number" },
+        "allowedUncertainty": { "type": "string", "minLength": 1 },
+        "failureCondition": { "type": "string", "minLength": 1 },
+        "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+        "limitations": { "$ref": "#/$defs/stringArray" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "missionOutcomeDigest": { "type": "string", "minLength": 1 },
+    "capabilityGraphDigest": { "type": "string", "minLength": 1 },
+    "candidateArchitectureDigest": { "type": "string", "minLength": 1 },
+    "scenarios": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/scenario" } },
+    "metrics": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/metric" } },
+    "instrumentation": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/instrumentation" } },
+    "comparators": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "type", "name", "scenarioIds", "metricIds", "resultEvidenceCellIds", "comparability", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["no_system", "current_manual_process", "incumbent_system", "vendor_offering", "customer_requirement", "prior_garpa_build"] },
+          "name": { "type": "string", "minLength": 1 },
+          "version": { "type": "string" },
+          "scenarioIds": { "$ref": "#/$defs/stringArray" },
+          "metricIds": { "$ref": "#/$defs/stringArray" },
+          "resultEvidenceCellIds": { "$ref": "#/$defs/stringArray" },
+          "comparability": { "enum": ["same_fixture", "normalized", "reported_only", "not_comparable"] },
+          "limitations": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "accountingBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currency", "evaluationPeriod", "includedCategories", "excludedCategories", "missionDenominator"],
+      "properties": {
+        "currency": { "type": "string", "minLength": 1 },
+        "evaluationPeriod": { "type": "string", "minLength": 1 },
+        "includedCategories": { "$ref": "#/$defs/stringArray" },
+        "excludedCategories": { "$ref": "#/$defs/stringArray" },
+        "missionDenominator": { "type": "string", "minLength": 1 }
+      }
+    },
+    "authorizations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "venueClass", "ownerOrController", "permittedActivities", "prohibitedActivities", "requiredAuthorizations", "receivedAuthorizationRefs", "abortAuthority", "evidenceCellIds", "state", "rationale"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "venueClass": { "$ref": "#/$defs/venueClass" },
+          "ownerOrController": { "type": "string", "minLength": 1 },
+          "permittedActivities": { "$ref": "#/$defs/stringArray" },
+          "prohibitedActivities": { "$ref": "#/$defs/stringArray" },
+          "requiredAuthorizations": { "$ref": "#/$defs/stringArray" },
+          "receivedAuthorizationRefs": { "$ref": "#/$defs/stringArray" },
+          "abortAuthority": { "$ref": "#/$defs/stringArray" },
+          "geographicBoundary": { "type": "string" },
+          "timeBoundary": { "type": "string" },
+          "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+          "state": { "enum": ["admitted", "not_required", "blocked", "unresolved"] },
+          "rationale": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "acceptanceRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["allEssentialMustPass", "allowInconclusiveEssential", "minimumValidRunsPerMetric", "missingDataDisposition", "invalidRunDisposition", "secondaryMetricsCanOffsetEssentialFailure"],
+      "properties": {
+        "allEssentialMustPass": { "type": "boolean" },
+        "allowInconclusiveEssential": { "type": "boolean" },
+        "minimumValidRunsPerMetric": { "type": "integer", "minimum": 1 },
+        "missingDataDisposition": { "enum": ["fail", "inconclusive"] },
+        "invalidRunDisposition": { "enum": ["exclude_with_receipt", "fail"] },
+        "secondaryMetricsCanOffsetEssentialFailure": { "type": "boolean" }
+      }
+    },
+    "frozenAt": { "type": "string", "minLength": 1 },
+    "supersedesDigest": { "type": "string" },
+    "state": { "enum": ["candidate", "frozen", "superseded"] }
+  }
+}

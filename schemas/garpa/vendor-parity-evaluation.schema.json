@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/vendor-parity-evaluation.schema.json",
+  "title": "GARPA Vendor Parity Evaluation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "caseId",
+    "vendorOffering",
+    "garpaBuildReceiptDigest",
+    "garpaQualificationContractDigest",
+    "state",
+    "metricResults",
+    "matchedMetricIds",
+    "missedMetricIds",
+    "incomparableMetricIds",
+    "supportedParityClaims",
+    "unsupportedParityClaims",
+    "largestGap",
+    "whatWouldResolveIt",
+    "scopeBoundary",
+    "falsificationLine"
+  ],
+  "properties": {
+    "caseId": { "type": "string", "minLength": 1 },
+    "vendorOffering": { "type": "string", "minLength": 1 },
+    "vendorVersion": { "type": "string" },
+    "garpaBuildReceiptDigest": { "type": "string", "minLength": 1 },
+    "garpaQualificationContractDigest": { "type": "string", "minLength": 1 },
+    "state": {
+      "enum": [
+        "same_fixture_match",
+        "same_fixture_miss",
+        "evidence_only_comparison",
+        "vendor_baseline_missing",
+        "scenario_mismatch",
+        "accounting_boundary_mismatch",
+        "incomparable",
+        "not_attempted"
+      ]
+    },
+    "metricResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metricId", "label", "essential", "state", "reason"],
+        "properties": {
+          "metricId": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "essential": { "type": "boolean" },
+          "state": { "enum": ["match", "miss", "missing", "incomparable"] },
+          "garpaObservationId": { "type": "string" },
+          "vendorObservationId": { "type": "string" },
+          "garpaValue": { "type": ["number", "string", "boolean"] },
+          "vendorValue": { "type": ["number", "string", "boolean"] },
+          "unit": { "type": "string" },
+          "allowedTolerance": { "type": "number", "minimum": 0 },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "matchedMetricIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "missedMetricIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "incomparableMetricIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "supportedParityClaims": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "unsupportedParityClaims": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "largestGap": { "type": "string", "minLength": 1 },
+    "whatWouldResolveIt": { "type": "string", "minLength": 1 },
+    "scopeBoundary": { "type": "string", "minLength": 1 },
+    "falsificationLine": { "type": "string", "minLength": 1 }
+  }
+}

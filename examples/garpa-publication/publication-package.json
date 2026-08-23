@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-PUBLICATION-0001",
+  "subject": "Synthetic Observation Composition",
+  "disposition": "compose",
+  "audience": "public",
+  "upstream": {
+    "claimReportDigest": "claim-report-digest-1",
+    "currentClaimReportDigest": "claim-report-digest-1",
+    "missionEvaluationDigest": "mission-evaluation-digest-1",
+    "currentMissionEvaluationDigest": "mission-evaluation-digest-1",
+    "missionEvaluationState": "bounded_match",
+    "vendorParityDigest": "vendor-parity-digest-1",
+    "currentVendorParityDigest": "vendor-parity-digest-1",
+    "vendorParityState": "same_fixture_match",
+    "accountingComparability": "not_supplied"
+  },
+  "claims": [
+    {
+      "id": "pub-mission-1",
+      "caseId": "GARPA-PUBLICATION-0001",
+      "text": "Under the frozen bounded scenarios and metrics, GARPA build build-receipt-digest-1 satisfied the evaluated mission slice.",
+      "claimClass": "mission_evaluation",
+      "subject": "Synthetic Observation Composition",
+      "scope": {
+        "buildDigest": "build-receipt-digest-1",
+        "scenarioIds": ["scenario-passive-observation"],
+        "metricIds": ["m-detection", "m-latency-ms"],
+        "environment": "Isolated passive bench fixture"
+      },
+      "supportRefs": [
+        {
+          "relation": "evaluated_by",
+          "evaluationDigest": "mission-evaluation-digest-1",
+          "note": "Frozen bounded mission evaluation."
+        },
+        {
+          "relation": "measured_by",
+          "runReceiptId": "run-valid-1",
+          "note": "Admitted test-run receipt."
+        }
+      ],
+      "limitations": [
+        "The result covers passive observation, tracking, operator presentation, logging, and replay only."
+      ],
+      "prohibitedGeneralizations": [
+        "Do not claim operational mitigation, regulated active effects, full-mission equivalence, or unrestricted field performance."
+      ],
+      "state": "candidate"
+    },
+    {
+      "id": "pub-residual-1",
+      "caseId": "GARPA-PUBLICATION-0001",
+      "text": "The result applies only to the frozen evaluated boundary and does not establish full-mission or vendor-system equivalence.",
+      "claimClass": "residual",
+      "subject": "Synthetic Observation Composition",
+      "scope": {
+        "buildDigest": "build-receipt-digest-1",
+        "scenarioIds": ["scenario-passive-observation"],
+        "metricIds": ["m-detection", "m-latency-ms"]
+      },
+      "supportRefs": [
+        {
+          "relation": "limited_by",
+          "evaluationDigest": "mission-evaluation-digest-1",
+          "note": "Residual carried from the bounded mission evaluation."
+        }
+      ],
+      "limitations": [],
+      "prohibitedGeneralizations": [
+        "Do not omit this residual from a release carrying the mission claim."
+      ],
+      "state": "candidate"
+    },
+    {
+      "id": "pub-parity-1",
+      "caseId": "GARPA-PUBLICATION-0001",
+      "text": "Against Synthetic Vendor Reference System version reference-1.0.0, GARPA matched detection and operator-presentation latency under the same frozen fixture and measurement method.",
+      "claimClass": "vendor_parity",
+      "subject": "Synthetic Vendor Reference System",
+      "scope": {
+        "offeringVersion": "reference-1.0.0",
+        "buildDigest": "build-receipt-digest-1",
+        "scenarioIds": ["scenario-passive-observation"],
+        "metricIds": ["m-detection", "m-latency-ms"]
+      },
+      "supportRefs": [
+        {
+          "relation": "evaluated_by",
+          "evaluationDigest": "vendor-parity-digest-1",
+          "note": "Exact-version same-fixture parity evaluation."
+        }
+      ],
+      "limitations": [
+        "The vendor reference result is a synthetic regression fixture and the comparison is confined to the bounded metric set."
+      ],
+      "prohibitedGeneralizations": [
+        "Do not claim unrestricted full-system, field, operational, lifecycle, or real-vendor equivalence."
+      ],
+      "state": "candidate"
+    }
+  ],
+  "artifactRights": [
+    {
+      "artifactId": "garpa-run-receipt-1",
+      "rightsClass": "redistributable",
+      "license": "GARPA-authored",
+      "rightsHolder": "GARPA fixture author",
+      "permittedUses": ["full public release"],
+      "prohibitedUses": [],
+      "evidenceArtifactIds": ["rights-note-1"]
+    },
+    {
+      "artifactId": "vendor-independent-run-1",
+      "rightsClass": "citation_only",
+      "rightsHolder": "Synthetic fixture publisher",
+      "permittedUses": ["citation"],
+      "prohibitedUses": ["redistribute source bytes"],
+      "evidenceArtifactIds": ["rights-note-2"]
+    }
+  ],
+  "artifactReleaseDecisions": [
+    {
+      "artifactId": "garpa-run-receipt-1",
+      "releaseForm": "full",
+      "rationale": "GARPA-authored synthetic receipt is redistributable."
+    },
+    {
+      "artifactId": "vendor-independent-run-1",
+      "releaseForm": "citation",
+      "rationale": "The source is represented by citation and digest only."
+    }
+  ],
+  "redactions": [],
+  "safetyReview": {
+    "state": "clear",
+    "findings": [],
+    "reviewedAt": "2026-08-22T18:00:00Z",
+    "reviewer": "publication-reviewer-1"
+  },
+  "rightsReview": {
+    "state": "clear_with_restrictions",
+    "findings": [
+      {
+        "id": "rights-finding-1",
+        "artifactId": "vendor-independent-run-1",
+        "finding": "Source bytes are citation-only.",
+        "requiredAction": "Release citation and digest rather than source bytes."
+      }
+    ],
+    "reviewedAt": "2026-08-22T18:00:00Z",
+    "reviewer": "rights-reviewer-1"
+  },
+  "knownFailureIds": ["run-aborted-1"],
+  "disclosedFailureIds": ["run-aborted-1"],
+  "knownContradictionIds": [],
+  "disclosedContradictionIds": [],
+  "correctionContact": "GARPA-PUBLICATION-0001 counterevidence intake",
+  "preparedAt": "2026-08-22T18:30:00Z",
+  "preparedBy": "publication-author-1"
+}

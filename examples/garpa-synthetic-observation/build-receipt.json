@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTH-OBS-001",
+  "buildId": "BUILD-001",
+  "manifestDigest": "manifest:synthetic-observation:v1",
+  "architectureDigest": "architecture:synthetic-observation:v1",
+  "qualificationContractDigest": "qualification:synthetic-observation:v1",
+  "startedAt": "2026-08-23T02:00:00Z",
+  "completedAt": "2026-08-23T04:30:00Z",
+  "installedHardware": [
+    {
+      "id": "installed-camera-1",
+      "manifestItemId": "camera-1",
+      "manufacturer": "Example",
+      "model": "USB Camera",
+      "revision": "A",
+      "serialOrLot": "SYNTH-0001",
+      "firmwareVersion": "1.0.0",
+      "quantity": 1,
+      "functionIds": ["observe-environment"]
+    }
+  ],
+  "installedSoftware": [
+    {
+      "id": "installed-tracker-1",
+      "manifestItemId": "tracker-1",
+      "name": "Synthetic Tracker",
+      "version": "0.1.0",
+      "packageOrImageDigest": "sha256:tracker",
+      "configurationDigest": "sha256:tracker-config",
+      "functionIds": ["maintain-track", "record-result"]
+    }
+  ],
+  "codeCommits": [
+    {
+      "repository": "BigBirdReturns/axm-capability-claim-test",
+      "commit": "synthetic-fixture",
+      "dirty": false,
+      "purpose": "Synthetic observation fixture"
+    }
+  ],
+  "substitutions": [],
+  "deviations": [],
+  "actualCostLines": [
+    {
+      "id": "cost-camera",
+      "category": "hardware",
+      "description": "USB camera",
+      "amount": 45,
+      "currency": "USD",
+      "incurredAt": "2026-08-23T02:00:00Z",
+      "evidenceArtifactIds": ["invoice-1"]
+    }
+  ],
+  "actualLabor": [
+    {
+      "id": "labor-integration",
+      "actor": "GARPA fixture operator",
+      "category": "integration",
+      "hours": 2.5,
+      "startedAt": "2026-08-23T02:00:00Z",
+      "endedAt": "2026-08-23T04:30:00Z",
+      "notes": "Assembled and configured the synthetic observation fixture."
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "invoice-1",
+      "kind": "other",
+      "title": "Synthetic camera purchase record",
+      "capturedAt": "2026-08-23T02:00:00Z"
+    },
+    {
+      "id": "build-photo-1",
+      "kind": "image",
+      "title": "Synthetic build photograph",
+      "capturedAt": "2026-08-23T04:30:00Z"
+    }
+  ],
+  "buildDigest": "build:synthetic-observation:v1",
+  "state": "assembled"
+}

@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/release-verification-result.schema.json",
+  "title": "GARPA Release Verification Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "releaseId",
+    "caseId",
+    "findings",
+    "verifiedFileCount",
+    "releaseState"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "current_valid",
+        "superseded_valid",
+        "withdrawn_valid",
+        "manifest_digest_mismatch",
+        "file_missing",
+        "unexpected_file",
+        "file_digest_mismatch",
+        "file_length_mismatch",
+        "duplicate_path",
+        "unsafe_path",
+        "registry_mismatch"
+      ]
+    },
+    "releaseId": { "type": "string", "minLength": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["state", "reason"],
+        "properties": {
+          "state": {
+            "enum": [
+              "manifest_digest_mismatch",
+              "file_missing",
+              "unexpected_file",
+              "file_digest_mismatch",
+              "file_length_mismatch",
+              "duplicate_path",
+              "unsafe_path",
+              "registry_mismatch"
+            ]
+          },
+          "path": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "verifiedFileCount": { "type": "integer", "minimum": 0 },
+    "releaseState": { "enum": ["current", "superseded", "withdrawn"] }
+  }
+}

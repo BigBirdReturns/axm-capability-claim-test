@@ -1,0 +1,20 @@
+{
+  "caseId": "GARPA-SYNTH-OBS-001",
+  "runId": "RUN-001",
+  "expectedManifestDigest": "manifest:synthetic-observation:v1",
+  "expectedQualificationContractDigest": "qualification:synthetic-observation:v1",
+  "readiness": {
+    "fixtureReady": true,
+    "instrumentationReady": true,
+    "calibrationReady": true,
+    "storageReady": true,
+    "clocksReady": true,
+    "authorityReady": true,
+    "hazardControlsReady": true,
+    "abortPathReady": true,
+    "operatorRolesReady": true,
+    "runIdReserved": true
+  },
+  "evaluatedAt": "2026-08-23T04:55:00Z",
+  "preflightDigest": "preflight:synthetic-observation:run-001"
+}

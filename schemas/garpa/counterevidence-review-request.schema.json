@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/counterevidence-review-request.schema.json",
+  "title": "GARPA Counterevidence Review Request",
+  "description": "A governed review of one counterevidence packet against the current release and claim set. Evidence cells are partitioned into validated, duplicate, or rejected sets before claim effects are assessed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packet",
+    "currentReleaseId",
+    "currentReleaseDigest",
+    "currentReleaseNumber",
+    "currentReleaseState",
+    "knownClaimIds",
+    "validatedEvidenceCellIds",
+    "duplicateEvidenceCellIds",
+    "rejectedEvidenceCellIds",
+    "claimAssessments",
+    "reviewedAt",
+    "reviewer"
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "claimAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimId", "effect", "evidenceCellIds", "reason"],
+      "properties": {
+        "claimId": { "type": "string", "minLength": 1 },
+        "effect": {
+          "enum": [
+            "supports",
+            "narrows",
+            "contradicts",
+            "requires_requalification",
+            "new_offering_version",
+            "no_effect"
+          ]
+        },
+        "evidenceCellIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "packet": { "$ref": "counterevidence-packet.schema.json" },
+    "currentReleaseId": { "type": "string", "minLength": 1 },
+    "currentReleaseDigest": { "$ref": "#/$defs/sha256" },
+    "currentReleaseNumber": { "type": "integer", "minimum": 1 },
+    "currentReleaseState": { "enum": ["current", "superseded", "withdrawn"] },
+    "knownClaimIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "validatedEvidenceCellIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "duplicateEvidenceCellIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "rejectedEvidenceCellIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "claimAssessments": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/claimAssessment" }
+    },
+    "reviewedAt": { "type": "string", "minLength": 1 },
+    "reviewer": { "type": "string", "minLength": 1 }
+  }
+}

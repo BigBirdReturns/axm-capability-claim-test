@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/claim-packet.schema.json",
+  "title": "GARPA Claim Packet",
+  "description": "Source-addressable offering and component claims. A source may prove that a claim was made without proving the claimed capability.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "subject", "artifacts", "evidence", "claims", "conflicts", "capturedAt"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claimant", "offering", "offeringType"],
+      "properties": {
+        "claimant": { "type": "string", "minLength": 1 },
+        "organization": { "type": "string" },
+        "offering": { "type": "string", "minLength": 1 },
+        "offeringVersion": { "type": "string" },
+        "offeringType": { "enum": ["product", "service", "system", "platform", "program", "architecture"] }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "title", "capturedAt"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": { "enum": ["social_post", "web_page", "article", "pitch_deck", "datasheet", "procurement_record", "contract_record", "patent", "paper", "benchmark", "video", "transcript", "image", "local_test", "other"] },
+          "title": { "type": "string", "minLength": 1 },
+          "uri": { "type": "string" },
+          "publisher": { "type": "string" },
+          "author": { "type": "string" },
+          "publishedAt": { "type": "string" },
+          "capturedAt": { "type": "string", "minLength": 1 },
+          "contentDigest": { "type": "string" },
+          "exactVersion": { "type": "string" },
+          "notes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "target", "venue", "control", "locator", "supports", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "component_identity", "component_performance", "component_compatibility", "component_price", "component_availability", "component_license", "other"] },
+          "venue": { "enum": ["claimant_publication", "customer_publication", "government_record", "independent_test", "published_benchmark", "journalistic_report", "community_report", "local_reproduction", "analyst_derivation"] },
+          "control": { "enum": ["claimant_controlled", "commercially_related", "externally_attributed", "independent", "local_measured", "unknown"] },
+          "locator": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["artifactId"],
+            "properties": {
+              "artifactId": { "type": "string", "minLength": 1 },
+              "page": { "type": "integer", "minimum": 1 },
+              "timestampStart": { "type": "string" },
+              "timestampEnd": { "type": "string" },
+              "section": { "type": "string" },
+              "quotedText": { "type": "string" },
+              "description": { "type": "string" }
+            }
+          },
+          "subjectVersion": { "type": "string" },
+          "hardware": { "type": "array", "items": { "type": "string" } },
+          "software": { "type": "array", "items": { "type": "string" } },
+          "fixture": { "type": "string" },
+          "environment": { "type": "string" },
+          "metric": { "type": "string" },
+          "method": { "type": "string" },
+          "scopeCompleteness": { "enum": ["complete", "partial", "unknown"] },
+          "supports": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "array", "items": { "type": "string" } },
+          "conflictsWith": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "field", "statement", "target", "evidenceClass", "evidenceCellIds", "lifecycle", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "field": { "type": "string", "minLength": 1 },
+          "statement": { "type": "string", "minLength": 1 },
+          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "component_identity", "component_performance", "component_compatibility", "component_price", "component_availability", "component_license", "other"] },
+          "evidenceClass": { "enum": ["confirmed", "reported", "derived", "judgment", "open"] },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+          "scope": { "type": "string" },
+          "lifecycle": { "enum": ["active", "superseded", "withdrawn", "conflicted", "unknown"] },
+          "limitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "claimIds", "description"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "claimIds": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+          "description": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "capturedAt": { "type": "string", "minLength": 1 }
+  }
+}

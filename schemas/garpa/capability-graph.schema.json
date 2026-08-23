@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/capability-graph.schema.json",
+  "title": "GARPA Capability Graph",
+  "description": "Implementation-neutral functional decomposition downstream of an admitted mission outcome.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "caseId", "missionOutcomeDigest", "functions", "interfaces", "traces", "humanRoles", "externalDependencies", "constraintEnvelope", "exclusions"],
+  "$defs": {
+    "constraintSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "items"],
+      "properties": {
+        "state": { "enum": ["defined", "not_applicable", "unresolved"] },
+        "items": { "type": "array", "items": { "type": "string" } },
+        "note": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "missionOutcomeDigest": { "type": "string", "minLength": 1 },
+    "functions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "purpose", "functionClass", "state", "origin", "inputInterfaceIds", "outputInterfaceIds", "requirementKeys", "metricIds", "dependencyFunctionIds", "humanRoleIds", "automationLevel", "requiresAuthorizationBoundary", "operatingConstraints", "failureModes", "evidenceCellIds", "assumptions", "residualQuestions"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "purpose": { "type": "string", "minLength": 1 },
+          "functionClass": { "enum": ["essential", "enabling", "coordination", "sustainment", "assurance", "vendor_specific"] },
+          "state": { "enum": ["required", "optional", "excluded", "unresolved"] },
+          "origin": { "enum": ["mission_derived", "evidence_derived", "vendor_specific"] },
+          "inputInterfaceIds": { "type": "array", "items": { "type": "string" } },
+          "outputInterfaceIds": { "type": "array", "items": { "type": "string" } },
+          "requirementKeys": { "type": "array", "items": { "type": "string" } },
+          "metricIds": { "type": "array", "items": { "type": "string" } },
+          "dependencyFunctionIds": { "type": "array", "items": { "type": "string" } },
+          "humanRoleIds": { "type": "array", "items": { "type": "string" } },
+          "automationLevel": { "enum": ["manual", "decision_support", "supervised_automation", "bounded_autonomy", "unresolved"] },
+          "requiresAuthorizationBoundary": { "type": "boolean" },
+          "authorizationBoundary": { "type": "string" },
+          "operatingConstraints": { "type": "array", "items": { "type": "string" } },
+          "failureModes": { "type": "array", "items": { "type": "string" } },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+          "assumptions": { "type": "array", "items": { "type": "string" } },
+          "residualQuestions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "interfaceType", "producerFunctionIds", "consumerFunctionIds", "evidenceCellIds", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "interfaceType": { "enum": ["data", "power", "mechanical", "network", "human", "environmental", "organizational"] },
+          "producerFunctionIds": { "type": "array", "items": { "type": "string" } },
+          "consumerFunctionIds": { "type": "array", "items": { "type": "string" } },
+          "externalSource": { "type": "string" },
+          "terminalPurpose": { "type": "string" },
+          "formatOrProtocol": { "type": "string" },
+          "rateOrCapacity": { "type": "string" },
+          "latencyConstraint": { "type": "string" },
+          "securityConstraint": { "type": "string" },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "traces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["requirementKey", "functionIds", "metricIds", "evidenceCellIds"],
+        "properties": {
+          "requirementKey": { "type": "string", "minLength": 1 },
+          "functionIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "metricIds": { "type": "array", "items": { "type": "string" } },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "humanRoles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "functionIds", "responsibilities", "evidenceCellIds"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "functionIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "responsibilities": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "authorityBoundary": { "type": "string" },
+          "training": { "type": "array", "items": { "type": "string" } },
+          "staffingAssumption": { "type": "string" },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "externalDependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "dependencyType", "requiredByFunctionIds", "evidenceCellIds", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "dependencyType": { "enum": ["infrastructure", "service", "data_source", "supplier", "authority", "other"] },
+          "requiredByFunctionIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
+          "limitations": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "constraintEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment", "deployment", "resources", "governance", "economic"],
+      "properties": {
+        "environment": { "$ref": "#/$defs/constraintSet" },
+        "deployment": { "$ref": "#/$defs/constraintSet" },
+        "resources": { "$ref": "#/$defs/constraintSet" },
+        "governance": { "$ref": "#/$defs/constraintSet" },
+        "economic": { "$ref": "#/$defs/constraintSet" }
+      }
+    },
+    "exclusions": { "type": "array", "items": { "type": "string" } }
+  }
+}

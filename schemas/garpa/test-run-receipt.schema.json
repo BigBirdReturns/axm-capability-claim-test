@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/test-run-receipt.schema.json",
+  "title": "GARPA Test Run Receipt",
+  "description": "Immutable record of one execution against a frozen build and qualification contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "runId",
+    "buildDigest",
+    "qualificationContractDigest",
+    "scenarioId",
+    "testId",
+    "startedAt",
+    "endedAt",
+    "operators",
+    "observers",
+    "configurationDigest",
+    "fixtureState",
+    "environmentObserved",
+    "rawDataArtifactIds",
+    "logArtifactIds",
+    "observationArtifactIds",
+    "metricResults",
+    "interventions",
+    "anomalies",
+    "aborts",
+    "resultDigest",
+    "state"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "buildDigest": { "type": "string", "minLength": 1 },
+    "qualificationContractDigest": { "type": "string", "minLength": 1 },
+    "scenarioId": { "type": "string", "minLength": 1 },
+    "testId": { "type": "string", "minLength": 1 },
+    "startedAt": { "type": "string", "minLength": 1 },
+    "endedAt": { "type": "string", "minLength": 1 },
+    "operators": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "observers": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "configurationDigest": { "type": "string", "minLength": 1 },
+    "fixtureState": { "type": "object", "additionalProperties": { "type": "string" } },
+    "environmentObserved": { "type": "object", "additionalProperties": { "type": "string" } },
+    "rawDataArtifactIds": { "type": "array", "items": { "type": "string" } },
+    "logArtifactIds": { "type": "array", "items": { "type": "string" } },
+    "observationArtifactIds": { "type": "array", "items": { "type": "string" } },
+    "metricResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metricId", "rawSampleArtifactIds", "calculationMethod", "sampleCount", "excludedSamples", "thresholdResult", "analystNotes"],
+        "properties": {
+          "metricId": { "type": "string", "minLength": 1 },
+          "rawSampleArtifactIds": { "type": "array", "items": { "type": "string" } },
+          "calculationMethod": { "type": "string", "minLength": 1 },
+          "codeDigest": { "type": "string" },
+          "sampleCount": { "type": "integer", "minimum": 0 },
+          "excludedSamples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["sampleRef", "reason"],
+              "properties": {
+                "sampleRef": { "type": "string", "minLength": 1 },
+                "reason": { "type": "string", "minLength": 1 }
+              }
+            }
+          },
+          "value": { "type": ["number", "string", "boolean"] },
+          "uncertainty": { "type": "string" },
+          "thresholdResult": { "enum": ["pass", "fail", "inconclusive", "not_measured"] },
+          "analystNotes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "interventions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "occurredAt", "actor", "description", "affectedMetricIds", "authorized"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "occurredAt": { "type": "string", "minLength": 1 },
+          "actor": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "affectedMetricIds": { "type": "array", "items": { "type": "string" } },
+          "authorized": { "type": "boolean" }
+        }
+      }
+    },
+    "anomalies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "occurredAt", "description", "affectedMetricIds", "disposition"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "occurredAt": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "affectedMetricIds": { "type": "array", "items": { "type": "string" } },
+          "disposition": { "enum": ["open", "accepted", "invalidates_run", "closed"] }
+        }
+      }
+    },
+    "aborts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "occurredAt", "authority", "reason"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "occurredAt": { "type": "string", "minLength": 1 },
+          "authority": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "resultDigest": { "type": "string", "minLength": 1 },
+    "state": { "enum": ["valid", "invalidated", "aborted", "incomplete"] }
+  }
+}

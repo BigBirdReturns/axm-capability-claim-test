@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/publication-package.schema.json",
+  "title": "GARPA Publication Package",
+  "description": "Typed public claims, support edges, release scope, rights, safety, and redaction decisions.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "releaseCandidateId",
+    "subject",
+    "caseIndexDigest",
+    "upstreamDigests",
+    "disposition",
+    "vendorParityState",
+    "claims",
+    "audience",
+    "rightsReview",
+    "safetyReview",
+    "redactions",
+    "preparedAt",
+    "preparedBy"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "releaseCandidateId": { "type": "string", "minLength": 1 },
+    "subject": { "type": "string", "minLength": 1 },
+    "caseIndexDigest": { "type": "string", "minLength": 1 },
+    "upstreamDigests": { "type": "object", "additionalProperties": { "type": "string" } },
+    "disposition": { "enum": ["acquire", "compose", "develop", "experiment", "wait_for_evidence", "decline", "unresolved"] },
+    "vendorParityState": { "enum": ["same_fixture_match", "same_fixture_miss", "evidence_only_comparison", "vendor_baseline_missing", "scenario_mismatch", "incomparable", "not_attempted"] },
+    "claims": { "type": "array" },
+    "audience": { "enum": ["public", "research", "controlled", "internal"] },
+    "rightsReview": { "type": "object" },
+    "safetyReview": { "type": "object" },
+    "redactions": { "type": "array" },
+    "preparedAt": { "type": "string", "minLength": 1 },
+    "preparedBy": { "type": "string", "minLength": 1 }
+  }
+}

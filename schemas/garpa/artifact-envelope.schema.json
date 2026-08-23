@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/artifact-envelope.schema.json",
+  "title": "GARPA Artifact Envelope",
+  "description": "Immutable source-byte identity plus extraction and passive-content state.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "artifactId",
+    "storedFilename",
+    "kind",
+    "byteLength",
+    "sha256",
+    "capturedAt",
+    "extractionState",
+    "safetyState",
+    "notes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "artifactId": { "type": "string", "minLength": 1 },
+    "originalFilename": { "type": "string" },
+    "storedFilename": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["plain_text", "markdown", "html", "web_snapshot", "pdf", "image", "audio", "video", "transcript", "presentation", "spreadsheet", "source_repository", "archive", "other"] },
+    "mimeType": { "type": "string" },
+    "byteLength": { "type": "integer", "minimum": 0 },
+    "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+    "sourceUri": { "type": "string" },
+    "capturedAt": { "type": "string", "minLength": 1 },
+    "declaredTitle": { "type": "string" },
+    "declaredAuthor": { "type": "string" },
+    "declaredPublisher": { "type": "string" },
+    "declaredDate": { "type": "string" },
+    "extractionState": { "enum": ["not_started", "complete", "partial", "failed", "unsupported"] },
+    "safetyState": { "enum": ["not_inspected", "passive_content", "active_content_removed", "quarantined"] },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

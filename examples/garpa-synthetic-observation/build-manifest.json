@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTHETIC-OBSERVATION-1",
+  "candidateArchitectureDigest": "sha256:synthetic-observation-architecture-v1",
+  "qualificationContractDigest": "sha256:synthetic-observation-qualification-v1",
+  "components": [
+    {
+      "componentId": "component-sensor",
+      "kind": "hardware",
+      "exactModelOrVersion": "sensor-v1",
+      "quantity": 1,
+      "supplierOrSource": "Synthetic Hardware Co. fixture stock",
+      "acquisitionState": "existing",
+      "unitCost": 250,
+      "currency": "USD",
+      "configurationDigest": "sha256:sensor-v1-fixed-fixture-config",
+      "firmwareOrRuntimeVersion": "sensor-runtime-1.0",
+      "serialOrLotPolicy": "record_each",
+      "functionIds": ["f-observe"],
+      "interfaceIds": ["i-world", "i-observation"],
+      "calibrationRequired": true
+    },
+    {
+      "componentId": "component-detector",
+      "kind": "software",
+      "exactModelOrVersion": "detector-1.0",
+      "quantity": 1,
+      "supplierOrSource": "Versioned synthetic source snapshot",
+      "acquisitionState": "existing",
+      "unitCost": 0,
+      "currency": "USD",
+      "configurationDigest": "sha256:detector-1.0-synthetic-profile-config",
+      "firmwareOrRuntimeVersion": "runtime-lock-v1",
+      "license": "MIT",
+      "serialOrLotPolicy": "not_applicable",
+      "functionIds": ["f-detect"],
+      "interfaceIds": ["i-observation", "i-detection"],
+      "calibrationRequired": false
+    },
+    {
+      "componentId": "component-ui",
+      "kind": "software",
+      "exactModelOrVersion": "ui-1.0",
+      "quantity": 1,
+      "supplierOrSource": "Versioned synthetic source snapshot",
+      "acquisitionState": "existing",
+      "unitCost": 0,
+      "currency": "USD",
+      "configurationDigest": "sha256:ui-1.0-single-operator-config",
+      "firmwareOrRuntimeVersion": "browser-runtime-lock-v1",
+      "license": "Apache-2.0",
+      "serialOrLotPolicy": "not_applicable",
+      "functionIds": ["f-present"],
+      "interfaceIds": ["i-detection", "i-alert"],
+      "calibrationRequired": false
+    }
+  ],
+  "customCode": [],
+  "compatibilityEdges": [
+    {
+      "compatibilityEdgeId": "compat-observation",
+      "interfaceId": "i-observation",
+      "producerComponentIds": ["component-sensor"],
+      "consumerComponentIds": ["component-detector"],
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "acceptanceTestIds": ["q-detection", "q-latency"]
+    },
+    {
+      "compatibilityEdgeId": "compat-detection",
+      "interfaceId": "i-detection",
+      "producerComponentIds": ["component-detector"],
+      "consumerComponentIds": ["component-ui"],
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "acceptanceTestIds": ["q-latency"]
+    }
+  ],
+  "humanRoles": [
+    {
+      "humanRoleId": "role-operator",
+      "staffing": "One trained operator for setup and the bounded qualification window",
+      "requiredTraining": [
+        "Fixture orientation",
+        "Alert acknowledgement",
+        "Abort procedure"
+      ],
+      "responsibilities": [
+        "Monitor presentation",
+        "Acknowledge alerts",
+        "Record interventions"
+      ],
+      "authorityBoundary": "May acknowledge or abort; may not initiate any active response."
+    }
+  ],
+  "dependencies": [],
+  "instrumentation": [
+    {
+      "instrumentationId": "instrument-run-clock",
+      "exactModelOrVersion": "monotonic-clock-policy-v1",
+      "configurationDigest": "sha256:monotonic-clock-policy-v1-config",
+      "calibrationState": "not_required",
+      "calibrationEvidenceIds": ["e5"],
+      "storagePath": "runs/<run-id>/clock-events.jsonl"
+    },
+    {
+      "instrumentationId": "instrument-event-recorder",
+      "exactModelOrVersion": "event-recorder-v1",
+      "configurationDigest": "sha256:event-recorder-v1-config",
+      "calibrationState": "current",
+      "calibrationEvidenceIds": [
+        "e-compat-observation",
+        "e-compat-detection"
+      ],
+      "storagePath": "runs/<run-id>/events.jsonl"
+    }
+  ],
+  "calibrationPlan": [
+    {
+      "id": "calibrate-sensor",
+      "subjectId": "component-sensor",
+      "method": "Run the frozen observation fixture and compare emitted timestamps and records against the known fixture sequence.",
+      "acceptanceCondition": "Every expected observation is emitted with a usable timestamp and matching record digest.",
+      "evidenceArtifactPattern": "build/<build-id>/calibration/sensor-v1/*.jsonl",
+      "owner": "Build owner"
+    },
+    {
+      "id": "verify-event-recorder",
+      "subjectId": "instrument-event-recorder",
+      "method": "Replay the versioned compatibility fixture through the recorder and verify event count, order, timestamp fields, and record digests.",
+      "acceptanceCondition": "The recorder preserves every fixture event without semantic or ordering loss.",
+      "evidenceArtifactPattern": "build/<build-id>/calibration/event-recorder-v1/*.jsonl",
+      "owner": "Qualification owner"
+    }
+  ],
+  "substitutionPolicies": [
+    {
+      "componentId": "component-sensor",
+      "policy": "architecture_review",
+      "equivalenceCriteria": [
+        "Same observation contract",
+        "Equal or better timestamp accuracy",
+        "Same controlled-environment envelope"
+      ],
+      "requiredRegressionTestIds": ["q-detection", "q-latency"],
+      "prohibitedSubstitutions": [
+        "Unversioned sensor",
+        "Sensor without serial or lot custody"
+      ]
+    },
+    {
+      "componentId": "component-detector",
+      "policy": "no_substitution",
+      "equivalenceCriteria": [],
+      "requiredRegressionTestIds": ["q-detection", "q-latency"],
+      "prohibitedSubstitutions": ["Any package other than detector-1.0"]
+    },
+    {
+      "componentId": "component-ui",
+      "policy": "equivalent_with_retest",
+      "equivalenceCriteria": [
+        "Same detection-event contract",
+        "Same timestamp custody",
+        "Same operator acknowledgement receipt"
+      ],
+      "requiredRegressionTestIds": ["q-latency"],
+      "prohibitedSubstitutions": ["UI without event logging"]
+    }
+  ],
+  "assemblySteps": [
+    {
+      "id": "step-inventory",
+      "predecessorIds": [],
+      "componentIds": [
+        "component-sensor",
+        "component-detector",
+        "component-ui"
+      ],
+      "customCodeIds": [],
+      "compatibilityEdgeIds": [],
+      "procedure": [
+        "Verify exact versions",
+        "Record sensor serial",
+        "Verify licenses and configuration digests"
+      ],
+      "acceptanceCondition": "All manifest identities, versions, quantities, and digests are present and match.",
+      "rollbackProcedure": [
+        "Quarantine any mismatched item",
+        "Return the manifest to architecture review"
+      ],
+      "owner": "Evidence custodian"
+    },
+    {
+      "id": "step-calibrate",
+      "predecessorIds": ["step-inventory"],
+      "componentIds": ["component-sensor"],
+      "customCodeIds": [],
+      "compatibilityEdgeIds": [],
+      "procedure": [
+        "Execute calibrate-sensor",
+        "Execute verify-event-recorder",
+        "Store calibration artifacts"
+      ],
+      "acceptanceCondition": "Both calibration-plan items pass and their artifacts resolve.",
+      "rollbackProcedure": [
+        "Restore the previous configuration",
+        "Quarantine the failing subject"
+      ],
+      "owner": "Qualification owner"
+    },
+    {
+      "id": "step-integrate",
+      "predecessorIds": ["step-calibrate"],
+      "componentIds": [
+        "component-sensor",
+        "component-detector",
+        "component-ui"
+      ],
+      "customCodeIds": [],
+      "compatibilityEdgeIds": [
+        "compat-observation",
+        "compat-detection"
+      ],
+      "procedure": [
+        "Connect the observation contract",
+        "Connect the detection-event contract",
+        "Run both compatibility falsification tests"
+      ],
+      "acceptanceCondition": "Both internal compatibility edges pass with complete receipts.",
+      "rollbackProcedure": [
+        "Disconnect the failing edge",
+        "Restore the last admitted component configuration"
+      ],
+      "owner": "Integration owner"
+    }
+  ],
+  "expectedCostLineIds": [
+    "cost-hardware",
+    "cost-software",
+    "cost-integration",
+    "cost-operator",
+    "cost-qualification",
+    "cost-contingency"
+  ],
+  "expectedScheduleLineIds": [
+    "schedule-procurement",
+    "schedule-integration",
+    "schedule-qualification"
+  ],
+  "manifestDigest": "sha256:synthetic-observation-build-manifest-v1",
+  "frozenAt": "2026-08-23T03:00:00Z",
+  "state": "frozen"
+}

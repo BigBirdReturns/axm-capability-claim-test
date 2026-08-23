@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-execution-server.ts",
+    "garpaExecutionTools.ts",
+    "../app/src/lib/garpa/validateExecutionReceipts.ts",
+    "../app/src/lib/garpa/validatePreflightRequest.ts",
+    "../app/src/lib/garpa/runPreflightGate.ts",
+    "../app/src/lib/garpa/runMissionEvaluation.ts",
+    "../app/src/types/garpaExecution.ts",
+    "../app/src/types/garpa.ts"
+  ]
+}

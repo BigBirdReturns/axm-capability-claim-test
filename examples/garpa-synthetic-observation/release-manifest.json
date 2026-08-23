@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "GARPA-SYNTH-OBS-001-R1",
+  "caseId": "GARPA-SYNTH-OBS-001",
+  "releaseNumber": 1,
+  "publicationPackageDigest": "publication:synthetic-observation:v1",
+  "publicationGateReceiptDigest": "publication-gate:synthetic-observation:v1",
+  "files": [
+    {
+      "path": "release.json",
+      "sha256": "1111111111111111111111111111111111111111111111111111111111111111",
+      "byteLength": 100,
+      "mediaType": "application/json",
+      "required": true
+    },
+    {
+      "path": "README.md",
+      "sha256": "2222222222222222222222222222222222222222222222222222222222222222",
+      "byteLength": 200,
+      "mediaType": "text/markdown",
+      "required": true
+    },
+    {
+      "path": "reality-brief.md",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "byteLength": 300,
+      "mediaType": "text/markdown",
+      "required": true
+    },
+    {
+      "path": "public-dossier.md",
+      "sha256": "4444444444444444444444444444444444444444444444444444444444444444",
+      "byteLength": 400,
+      "mediaType": "text/markdown",
+      "required": true
+    },
+    {
+      "path": "claims/publication-claims.json",
+      "sha256": "5555555555555555555555555555555555555555555555555555555555555555",
+      "byteLength": 500,
+      "mediaType": "application/json",
+      "required": true
+    },
+    {
+      "path": "claims/support-graph.json",
+      "sha256": "6666666666666666666666666666666666666666666666666666666666666666",
+      "byteLength": 600,
+      "mediaType": "application/json",
+      "required": true
+    },
+    {
+      "path": "receipts/publication-gate.json",
+      "sha256": "7777777777777777777777777777777777777777777777777777777777777777",
+      "byteLength": 700,
+      "mediaType": "application/json",
+      "required": true
+    }
+  ],
+  "manifestDigest": "release-manifest:synthetic-observation:v1",
+  "createdAt": "2026-08-23T06:30:00Z",
+  "state": "current"
+}

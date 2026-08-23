@@ -1,0 +1,139 @@
+{
+  "schemaVersion": 1,
+  "subject": {
+    "claimant": "Swarmer",
+    "organization": "Swarmer",
+    "offering": "Vectus Air Defense Systems",
+    "offeringType": "service"
+  },
+  "artifacts": [
+    {
+      "id": "post-1",
+      "kind": "social_post",
+      "title": "Swarmer post introducing Vectus Air Defense Systems",
+      "publisher": "Swarmer",
+      "capturedAt": "2026-08-22T19:00:00Z",
+      "notes": [
+        "The supporting article was not included in the fixture.",
+        "This artifact establishes public claims, not operating performance."
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e1",
+      "target": "offering_identity",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "post-1",
+        "description": "The post names Vectus Air Defense Systems as Swarmer's new air-defense company."
+      },
+      "supports": ["c1"],
+      "limitations": ["No exact product, service, or system version is identified."]
+    },
+    {
+      "id": "e2",
+      "target": "claim_was_made",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "post-1",
+        "quotedText": "Countering drone attacks on high-value fixed sites"
+      },
+      "supports": ["c2"],
+      "limitations": ["The post does not define threat classes, geometry, duration, or success metrics."]
+    },
+    {
+      "id": "e3",
+      "target": "claim_was_made",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "post-1",
+        "description": "The post describes detection systems, electronic warfare, and interceptors integrated into one solution."
+      },
+      "supports": ["c3"],
+      "limitations": ["The post provides no configuration, interface, or test record."]
+    },
+    {
+      "id": "e4",
+      "target": "claim_was_made",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "post-1",
+        "quotedText": "at a fraction of the cost of legacy air defence systems"
+      },
+      "supports": ["c4"],
+      "limitations": ["No numerical comparator, accounting boundary, period, or staffing model is supplied."]
+    },
+    {
+      "id": "e5",
+      "target": "system_boundary",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "post-1",
+        "description": "The post describes a managed service integrating systems and operational delivery."
+      },
+      "supports": ["c5"],
+      "limitations": ["Staffing, communications, sustainment, reload, and external infrastructure are not enumerated."],
+      "scopeCompleteness": "partial"
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "field": "offering_identity",
+      "statement": "Swarmer identifies the offering as Vectus Air Defense Systems.",
+      "target": "offering_identity",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e1"],
+      "lifecycle": "active",
+      "limitations": ["Version unresolved."]
+    },
+    {
+      "id": "c2",
+      "field": "advertised_outcome",
+      "statement": "Swarmer states that Vectus is intended to counter drone attacks on high-value fixed sites.",
+      "target": "claim_was_made",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e2"],
+      "lifecycle": "active",
+      "limitations": ["This proves the advertised outcome, not outcome achievement."]
+    },
+    {
+      "id": "c3",
+      "field": "claimed_mechanism",
+      "statement": "Swarmer states that Vectus combines detection, electronic warfare, interceptors, and managed operation.",
+      "target": "claim_was_made",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e3"],
+      "lifecycle": "active",
+      "limitations": ["No operating configuration or integration result is supplied."]
+    },
+    {
+      "id": "c4",
+      "field": "economic_baseline",
+      "statement": "Swarmer claims that the offering costs a fraction of legacy air-defense systems.",
+      "target": "cost_observed",
+      "evidenceClass": "reported",
+      "evidenceCellIds": ["e4"],
+      "lifecycle": "active",
+      "limitations": ["The evidence cell proves that the claim was made, not the claimed cost relationship."]
+    },
+    {
+      "id": "c5",
+      "field": "system_boundary",
+      "statement": "Swarmer describes Vectus as an integrated managed service rather than a standalone component.",
+      "target": "system_boundary",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e5"],
+      "lifecycle": "active",
+      "limitations": ["The complete service boundary remains unresolved."]
+    }
+  ],
+  "conflicts": [],
+  "capturedAt": "2026-08-22T19:00:00Z"
+}

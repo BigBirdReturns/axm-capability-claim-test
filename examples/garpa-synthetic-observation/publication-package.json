@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTH-OBS-001",
+  "releaseCandidateId": "GARPA-SYNTH-OBS-001-R1-CANDIDATE",
+  "subject": "Synthetic observation build",
+  "caseIndexDigest": "case:synthetic-observation:v1",
+  "upstreamDigests": {
+    "missionEvaluation": "evaluation:synthetic-observation:v1",
+    "build": "build:synthetic-observation:v1",
+    "qualification": "qualification:synthetic-observation:v1"
+  },
+  "disposition": "compose",
+  "vendorParityState": "vendor_baseline_missing",
+  "claims": [
+    {
+      "id": "mission-evaluation",
+      "caseId": "GARPA-SYNTH-OBS-001",
+      "text": "Under the frozen scenarios and bounded mission slice, the synthetic observation build satisfied every required scenario and essential metric.",
+      "claimClass": "mission_evaluation",
+      "subject": "Synthetic observation build",
+      "scope": {
+        "buildDigest": "build:synthetic-observation:v1",
+        "scenarioIds": ["scenario-controlled-entry"],
+        "metricIds": ["metric-detect-before-boundary"],
+        "environment": "Controlled observation and simulated response only."
+      },
+      "supportRefs": [
+        {
+          "relation": "evaluated_by",
+          "evaluationDigest": "evaluation:synthetic-observation:v1",
+          "note": "Mission evaluation produced from the custodied RUN-001 receipt."
+        }
+      ],
+      "limitations": [
+        "Evaluation covers a bounded mission slice: controlled observation and simulated response only."
+      ],
+      "prohibitedGeneralizations": [
+        "Does not establish physical mitigation.",
+        "Does not establish operational field equivalence.",
+        "Does not establish vendor-system parity."
+      ],
+      "state": "supported"
+    }
+  ],
+  "audience": "public",
+  "rightsReview": {
+    "state": "clear",
+    "artifactDecisions": [],
+    "reviewedAt": "2026-08-23T06:00:00Z",
+    "reviewer": "GARPA publication reviewer"
+  },
+  "safetyReview": {
+    "state": "clear",
+    "findings": [],
+    "reviewedAt": "2026-08-23T06:05:00Z",
+    "reviewer": "GARPA safety reviewer"
+  },
+  "redactions": [],
+  "preparedAt": "2026-08-23T06:10:00Z",
+  "preparedBy": "GARPA case owner"
+}

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/publication-gate-result.schema.json",
+  "title": "GARPA Publication Gate Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "admittedClaimIds",
+    "blockedClaimIds",
+    "narrowedClaimIds",
+    "findings",
+    "requiredActions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "claim_support_incomplete",
+        "scope_overstated",
+        "contradiction_omitted",
+        "failure_history_incomplete",
+        "cost_boundary_misaligned",
+        "rights_unresolved",
+        "safety_review_blocked",
+        "redaction_invalidates_claim",
+        "upstream_receipt_stale",
+        "publication_ready"
+      ]
+    },
+    "admittedClaimIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "blockedClaimIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "narrowedClaimIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["state", "reason", "requiredAction"],
+        "properties": {
+          "state": {
+            "enum": [
+              "claim_support_incomplete",
+              "scope_overstated",
+              "contradiction_omitted",
+              "failure_history_incomplete",
+              "cost_boundary_misaligned",
+              "rights_unresolved",
+              "safety_review_blocked",
+              "redaction_invalidates_claim",
+              "upstream_receipt_stale"
+            ]
+          },
+          "claimId": { "type": "string" },
+          "artifactId": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 },
+          "requiredAction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "requiredActions": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
