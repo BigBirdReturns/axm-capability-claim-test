@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/execution-authority.schema.json",
+  "title": "GARPA Execution Authority",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "authorityId",
+    "executionClass",
+    "venueId",
+    "permittedActivities",
+    "prohibitedActivities",
+    "requiredAuthorizationRefs",
+    "receivedAuthorizationRefs",
+    "abortAuthority",
+    "evidenceArtifactIds"
+  ],
+  "properties": {
+    "authorityId": { "type": "string", "minLength": 1 },
+    "executionClass": {
+      "enum": [
+        "E0_analysis_only",
+        "E1_simulation_or_replay",
+        "E2_bench_passive",
+        "E3_controlled_field_inert",
+        "E4_regulated_active",
+        "E5_operational_environment"
+      ]
+    },
+    "venueId": { "type": "string", "minLength": 1 },
+    "permittedActivities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "prohibitedActivities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "requiredAuthorizationRefs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "receivedAuthorizationRefs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "abortAuthority": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "validFrom": { "type": "string" },
+    "expiresAt": { "type": "string" },
+    "evidenceArtifactIds": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  }
+}
