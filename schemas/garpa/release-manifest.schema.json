@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/release-manifest.schema.json",
+  "title": "GARPA Release Manifest",
+  "description": "Content-addressed immutable public release with publication-gate custody.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "releaseId",
+    "caseId",
+    "releaseNumber",
+    "publicationPackageDigest",
+    "publicationGateReceiptDigest",
+    "files",
+    "manifestDigest",
+    "createdAt",
+    "state"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "releaseId": { "type": "string", "minLength": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "releaseNumber": { "type": "integer", "minimum": 1 },
+    "publicationPackageDigest": { "type": "string", "minLength": 1 },
+    "publicationGateReceiptDigest": { "type": "string", "minLength": 1 },
+    "priorReleaseDigest": { "type": "string" },
+    "supersedesReleaseId": { "type": "string" },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256", "byteLength", "required"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "byteLength": { "type": "integer", "minimum": 0 },
+          "mediaType": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "manifestDigest": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "state": { "enum": ["current", "superseded", "withdrawn"] }
+  }
+}
