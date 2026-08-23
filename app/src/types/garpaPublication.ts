@@ -67,27 +67,52 @@ export type CaseDisposition =
 
 export type ReleaseAudience = "public" | "research" | "controlled" | "internal";
 
+export type RightsClass =
+  | "redistributable"
+  | "public_domain"
+  | "open_license"
+  | "quotation_only"
+  | "citation_only"
+  | "permission_required"
+  | "restricted"
+  | "unknown";
+
+export interface ArtifactRights {
+  artifactId: string;
+  rightsClass: RightsClass;
+  license?: string;
+  rightsHolder?: string;
+  permittedUses: string[];
+  prohibitedUses: string[];
+  evidenceArtifactIds: string[];
+}
+
+export interface ArtifactReleaseDecision {
+  artifactId: string;
+  releaseForm: "full" | "excerpt" | "citation" | "digest_only" | "withheld";
+  rationale: string;
+}
+
 export type RightsReviewState =
   | "clear"
   | "clear_with_citation_only"
+  | "clear_with_restrictions"
   | "permission_required"
   | "blocked";
 
 export interface RightsReview {
   state: RightsReviewState;
-  artifactDecisions: Array<{
+  artifactDecisions?: Array<{
     artifactId: string;
-    rightsClass:
-      | "redistributable"
-      | "public_domain"
-      | "open_license"
-      | "quotation_only"
-      | "citation_only"
-      | "permission_required"
-      | "restricted"
-      | "unknown";
+    rightsClass: RightsClass;
     includedInRelease: boolean;
     note: string;
+  }>;
+  findings?: Array<{
+    id: string;
+    artifactId?: string;
+    finding: string;
+    requiredAction: string;
   }>;
   reviewedAt: string;
   reviewer: string;
@@ -103,9 +128,9 @@ export interface PublicationSafetyReview {
   state: PublicationSafetyState;
   findings: Array<{
     id: string;
-    affectedClaimIds: string[];
-    affectedArtifactIds: string[];
-    risk: string;
+    affectedClaimIds?: string[];
+    affectedArtifactIds?: string[];
+    risk?: string;
     requiredAction: string;
   }>;
   reviewedAt: string;
@@ -142,8 +167,31 @@ export type VendorParityState =
   | "evidence_only_comparison"
   | "vendor_baseline_missing"
   | "scenario_mismatch"
+  | "accounting_boundary_mismatch"
   | "incomparable"
   | "not_attempted";
+
+export interface PublicationUpstream {
+  claimReportDigest: string;
+  currentClaimReportDigest?: string;
+  missionEvaluationDigest?: string;
+  currentMissionEvaluationDigest?: string;
+  missionEvaluationState?:
+    | "matched"
+    | "bounded_match"
+    | "partial"
+    | "failed"
+    | "incomparable"
+    | "unassessed";
+  vendorParityDigest?: string;
+  currentVendorParityDigest?: string;
+  vendorParityState?: VendorParityState;
+  accountingComparability?:
+    | "aligned"
+    | "partially_aligned"
+    | "misaligned"
+    | "not_supplied";
+}
 
 export interface PublicationPackage {
   schemaVersion: 1;
@@ -161,6 +209,39 @@ export interface PublicationPackage {
   redactions: RedactionDecision[];
   preparedAt: string;
   preparedBy: string;
+  upstream?: PublicationUpstream;
+  artifactRights?: ArtifactRights[];
+  artifactReleaseDecisions?: ArtifactReleaseDecision[];
+  knownFailureIds?: string[];
+  disclosedFailureIds?: string[];
+  knownContradictionIds?: string[];
+  disclosedContradictionIds?: string[];
+  correctionContact?: string;
+}
+
+export interface PublicationCompilationInput {
+  caseId: string;
+  subject: string;
+  offeringVersion?: string;
+  missionEvaluationDigest: string;
+  missionEvaluationState:
+    | "matched"
+    | "bounded_match"
+    | "partial"
+    | "failed"
+    | "incomparable"
+    | "unassessed";
+  missionBuildDigest: string;
+  missionScenarioIds: string[];
+  missionMetricIds: string[];
+  missionResiduals: string[];
+  missionRunReceiptIds: string[];
+  vendorParityDigest?: string;
+  vendorParityState?: VendorParityState;
+  vendorOffering?: string;
+  vendorVersion?: string;
+  matchedParityMetricIds?: string[];
+  parityScopeBoundary?: string;
 }
 
 export type PublicationGateState =
