@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-commons-server.ts",
+    "garpaCommonsTools.ts",
+    "../app/src/lib/garpa/validateCommonsAdmission.ts",
+    "../app/src/lib/garpa/runCommonsAdmissionGate.ts",
+    "../app/src/lib/garpa/renderCommonsAdmission.ts",
+    "../app/src/types/garpaCommons.ts",
+    "../app/src/types/garpaExecution.ts",
+    "../app/src/types/garpa.ts"
+  ]
+}
