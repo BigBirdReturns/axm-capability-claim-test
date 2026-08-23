@@ -44,6 +44,7 @@ export type CommonsSeededQualificationFindingState =
   | "mission_outcome_digest_mismatch"
   | "qualification_case_mismatch"
   | "architecture_digest_mismatch"
+  | "qualification_freeze_time_mismatch"
   | "seeded_component_binding_missing"
   | "seeded_component_binding_unexpected"
   | "seeded_source_mismatch"
