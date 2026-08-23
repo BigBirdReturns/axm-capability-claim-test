@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-admission-result.schema.json",
+  "title": "GARPA Capability Commons Admission Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "admittedPrimitiveIds",
+    "admittedComponentObservationIds",
+    "admittedArchitecturePatternIds",
+    "blockedObjectIds",
+    "findings"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "admittedPrimitiveIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "admittedComponentObservationIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "admittedArchitecturePatternIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "blockedObjectIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["state", "objectType", "objectId", "reason", "requiredAction"],
+        "properties": {
+          "state": {
+            "enum": [
+              "release_not_admissible",
+              "source_scope_mismatch",
+              "primitive_maturity_unearned",
+              "primitive_residual_missing",
+              "component_identity_incomplete",
+              "component_scope_incomplete",
+              "component_state_unearned",
+              "pattern_support_incomplete",
+              "duplicate_commons_identity"
+            ]
+          },
+          "objectType": { "enum": ["primitive", "component_observation", "architecture_pattern", "request"] },
+          "objectId": { "type": "string", "minLength": 1 },
+          "reason": { "type": "string", "minLength": 1 },
+          "requiredAction": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

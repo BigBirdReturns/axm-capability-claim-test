@@ -1,4 +1,12 @@
-import type { ExecutionClass, MetricResult } from "./garpaExecution";
+import type { MetricResult } from "./garpaExecution";
+
+export type ExecutionClass =
+  | "E0_analysis_only"
+  | "E1_simulation_or_replay"
+  | "E2_bench_passive"
+  | "E3_controlled_field_inert"
+  | "E4_regulated_active"
+  | "E5_operational_environment";
 
 export type PrimitiveFunctionClass =
   | "essential"
@@ -152,7 +160,11 @@ export type CommonsFindingState =
 
 export interface CommonsAdmissionFinding {
   state: CommonsFindingState;
-  objectType: "primitive" | "component_observation" | "architecture_pattern" | "request";
+  objectType:
+    | "primitive"
+    | "component_observation"
+    | "architecture_pattern"
+    | "request";
   objectId: string;
   reason: string;
   requiredAction: string;

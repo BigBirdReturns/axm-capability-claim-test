@@ -1,0 +1,73 @@
+name: garpa-commons-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommons.ts"
+      - "app/src/lib/garpa/validateCommonsAdmission.ts"
+      - "app/src/lib/garpa/runCommonsAdmissionGate.ts"
+      - "app/src/lib/garpa/renderCommonsAdmission.ts"
+      - "tests/lib/garpaCommons.test.ts"
+      - "examples/garpa-commons/**"
+      - "schemas/garpa/commons-admission-request.schema.json"
+      - "schemas/garpa/commons-admission-result.schema.json"
+      - "docs/garpa-capability-commons.md"
+      - "mcp/garpaCommonsTools.ts"
+      - "mcp/garpa-commons-server.ts"
+      - "mcp/tsconfig.commons.json"
+      - "mcp/README-GARPA-COMMONS.md"
+      - ".github/workflows/garpa-commons-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-admission-v1"
+    paths:
+      - "app/src/types/garpaCommons.ts"
+      - "app/src/lib/garpa/validateCommonsAdmission.ts"
+      - "app/src/lib/garpa/runCommonsAdmissionGate.ts"
+      - "app/src/lib/garpa/renderCommonsAdmission.ts"
+      - "tests/lib/garpaCommons.test.ts"
+      - "examples/garpa-commons/**"
+      - "schemas/garpa/commons-admission-request.schema.json"
+      - "schemas/garpa/commons-admission-result.schema.json"
+      - "docs/garpa-capability-commons.md"
+      - "mcp/garpaCommonsTools.ts"
+      - "mcp/garpa-commons-server.ts"
+      - "mcp/tsconfig.commons.json"
+      - "mcp/README-GARPA-COMMONS.md"
+      - ".github/workflows/garpa-commons-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  commons:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA commons tests
+        run: npx vitest run tests/lib/garpaCommons.test.ts
+
+      - name: Typecheck workbench
+        run: npm run typecheck
+
+      - name: Build workbench
+        run: npm run build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA commons MCP server
+        run: npx tsc --noEmit -p tsconfig.commons.json
+        working-directory: mcp

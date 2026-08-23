@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "sourceCaseId": "GARPA-PUBLICATION-0001",
+  "sourceReleaseId": "GARPA-PUBLICATION-0001-R1",
+  "sourceReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "releaseVerificationState": "current_valid",
+  "primitives": [
+    {
+      "primitiveId": "primitive-detect-before-boundary",
+      "name": "Detect and notify before a defined boundary crossing",
+      "purpose": "Convert a ground-truthed observation stream into a time-stamped operator notification before a defined boundary crossing.",
+      "functionClass": "essential",
+      "inputInterfacePatterns": [
+        {
+          "name": "Ground-truthed observation stream",
+          "interfaceType": "data",
+          "direction": "input",
+          "protocolOrFormat": "observation-record-v1",
+          "constraints": [
+            "Clock aligned to the qualification fixture",
+            "Restricted to the admitted target class"
+          ]
+        }
+      ],
+      "outputInterfacePatterns": [
+        {
+          "name": "Operator notification event",
+          "interfaceType": "human",
+          "direction": "output",
+          "protocolOrFormat": "detection-event-v1",
+          "constraints": [
+            "Time stamped",
+            "Presented before the frozen boundary-crossing event"
+          ]
+        }
+      ],
+      "operatingConstraints": [
+        "Controlled fixture",
+        "One trained operator",
+        "No active response channel"
+      ],
+      "humanRoles": [
+        "One trained operator receives and acknowledges the notification"
+      ],
+      "observedImplementations": [
+        {
+          "caseId": "GARPA-PUBLICATION-0001",
+          "releaseId": "GARPA-PUBLICATION-0001-R1",
+          "buildReceiptDigest": "build:synthetic-observation:v1",
+          "componentIds": [
+            "component-sensor",
+            "component-detector",
+            "component-ui"
+          ],
+          "architecturePatternIds": [
+            "pattern-observe-detect-present"
+          ],
+          "note": "Synthetic controlled-fixture implementation released with R1."
+        }
+      ],
+      "qualificationRefs": [
+        {
+          "caseId": "GARPA-PUBLICATION-0001",
+          "releaseId": "GARPA-PUBLICATION-0001-R1",
+          "qualificationContractDigest": "qualification:synthetic-observation:v1",
+          "runReceiptIds": [
+            "RUN-001"
+          ],
+          "scenarioIds": [
+            "scenario-controlled-entry"
+          ],
+          "metricIds": [
+            "metric-detect-before-boundary"
+          ],
+          "executionClass": "E2_bench_passive",
+          "state": "bench_observed",
+          "limitations": [
+            "Controlled observation and simulated response only"
+          ]
+        }
+      ],
+      "maturity": "bench_observed",
+      "residuals": [
+        "The primitive is not qualified for unrestricted target classes, uncontrolled environments, concurrent targets, or active response."
+      ],
+      "falsificationConditions": [
+        "A valid repeat under the frozen fixture in which the notification occurs after boundary crossing overturns the bench-observed state."
+      ],
+      "sourceCaseIds": [
+        "GARPA-PUBLICATION-0001"
+      ],
+      "sourceReleaseIds": [
+        "GARPA-PUBLICATION-0001-R1"
+      ]
+    }
+  ],
+  "componentObservations": [
+    {
+      "observationId": "observation-sensor-v1-controlled-fixture",
+      "componentIdentity": {
+        "manufacturer": "GARPA Synthetic Fixtures",
+        "product": "Synthetic Fixture Sensor",
+        "exactModelOrVersion": "sensor-v1",
+        "firmwareOrSoftwareVersion": "1.0.0"
+      },
+      "functionIds": [
+        "f-observe"
+      ],
+      "interfaceIds": [
+        "i-world",
+        "i-observation"
+      ],
+      "fixture": "Controlled indoor boundary-crossing fixture v1",
+      "environment": {
+        "location": "controlled indoor fixture",
+        "lighting": "constant",
+        "background": "static",
+        "target_class": "synthetic-known-object-v1"
+      },
+      "executionClass": "E2_bench_passive",
+      "metricResults": [
+        {
+          "metricId": "metric-detect-before-boundary",
+          "rawSampleArtifactIds": [
+            "raw-video-1",
+            "raw-events-1"
+          ],
+          "calculationMethod": "Compare first detection timestamp with ground-truth boundary crossing timestamp.",
+          "codeDigest": "sha256:metric-code",
+          "sampleCount": 10,
+          "excludedSamples": [],
+          "value": true,
+          "thresholdResult": "pass",
+          "analystNotes": [
+            "All ten controlled trials produced a detection before crossing."
+          ]
+        }
+      ],
+      "runReceiptIds": [
+        "RUN-001"
+      ],
+      "costObservation": {
+        "amount": 250,
+        "currency": "USD",
+        "capturedAt": "2026-08-22T19:00:00Z",
+        "accountingBoundary": "One exact sensor-v1 unit only; integration, operator, fixture, and qualification costs excluded.",
+        "evidenceArtifactIds": [
+          "synthetic-sensor-invoice-1"
+        ]
+      },
+      "state": "locally_qualified",
+      "limitations": [
+        "Qualification is restricted to the released fixture, environment, target class, and metric."
+      ],
+      "residuals": [
+        "No observation exists for adverse weather, unrestricted backgrounds, alternate target classes, or field deployment."
+      ],
+      "sourceCaseId": "GARPA-PUBLICATION-0001",
+      "sourceReleaseId": "GARPA-PUBLICATION-0001-R1",
+      "sourceReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    }
+  ],
+  "architecturePatterns": [
+    {
+      "patternId": "pattern-observe-detect-present",
+      "name": "Observe, detect, present, and receipt",
+      "problemShape": "A bounded environment must be observed continuously, a defined event detected, an operator notified, and the timing chain preserved for replay.",
+      "functionRoles": [
+        "observation producer",
+        "bounded detector",
+        "operator presentation",
+        "event recorder"
+      ],
+      "interfaceRoles": [
+        "ground-truthed scene input",
+        "timestamped observation stream",
+        "detection event",
+        "operator notice",
+        "replay record"
+      ],
+      "knownImplementationRefs": [
+        {
+          "caseId": "GARPA-PUBLICATION-0001",
+          "releaseId": "GARPA-PUBLICATION-0001-R1",
+          "buildReceiptDigest": "build:synthetic-observation:v1",
+          "componentIds": [
+            "component-sensor",
+            "component-detector",
+            "component-ui"
+          ],
+          "architecturePatternIds": [],
+          "note": "Released synthetic implementation under a controlled passive fixture."
+        }
+      ],
+      "qualificationRefs": [
+        {
+          "caseId": "GARPA-PUBLICATION-0001",
+          "releaseId": "GARPA-PUBLICATION-0001-R1",
+          "qualificationContractDigest": "qualification:synthetic-observation:v1",
+          "runReceiptIds": [
+            "RUN-001"
+          ],
+          "scenarioIds": [
+            "scenario-controlled-entry"
+          ],
+          "metricIds": [
+            "metric-detect-before-boundary"
+          ],
+          "executionClass": "E2_bench_passive",
+          "state": "bench_observed",
+          "limitations": [
+            "The pattern was observed only in the frozen controlled fixture."
+          ]
+        }
+      ],
+      "applicableConstraints": [
+        "Clock-aligned inputs",
+        "Defined target class",
+        "One trained operator",
+        "Passive or simulated response"
+      ],
+      "failureModes": [
+        "Observation loss",
+        "Late or missed detection",
+        "Operator notice delay",
+        "Incomplete replay custody"
+      ],
+      "residuals": [
+        "Pattern reuse does not qualify any new component, target class, environment, operator load, or active response channel."
+      ],
+      "sourceCaseIds": [
+        "GARPA-PUBLICATION-0001"
+      ],
+      "sourceReleaseIds": [
+        "GARPA-PUBLICATION-0001-R1"
+      ]
+    }
+  ]
+}
