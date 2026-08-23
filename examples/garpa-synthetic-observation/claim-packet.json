@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "subject": {
+    "claimant": "Synthetic Fixture Author",
+    "organization": "GARPA Regression Fixtures",
+    "offering": "Bounded Observation Service",
+    "offeringVersion": "1.0",
+    "offeringType": "system"
+  },
+  "artifacts": [
+    {
+      "id": "a1",
+      "kind": "contract_record",
+      "title": "Synthetic bounded observation requirement",
+      "publisher": "Synthetic Site Operator",
+      "capturedAt": "2026-08-23T01:00:00Z",
+      "exactVersion": "1.0",
+      "notes": ["Synthetic regression fixture. Not a claim about a real vendor or deployment."]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e1",
+      "target": "offering_identity",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "a1",
+        "description": "The fixture names the Bounded Observation Service."
+      },
+      "supports": ["c1"],
+      "limitations": []
+    },
+    {
+      "id": "e2",
+      "target": "offering_version",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "a1",
+        "description": "The fixture identifies version 1.0."
+      },
+      "subjectVersion": "1.0",
+      "supports": ["c2"],
+      "limitations": []
+    },
+    {
+      "id": "e3",
+      "target": "operator_need",
+      "venue": "customer_publication",
+      "control": "externally_attributed",
+      "locator": {
+        "artifactId": "a1",
+        "description": "The operator requires detection and presentation before a test object crosses the boundary."
+      },
+      "scopeCompleteness": "complete",
+      "supports": ["c3"],
+      "limitations": ["Applies only to the controlled synthetic fixture."]
+    },
+    {
+      "id": "e4",
+      "target": "operating_environment",
+      "venue": "customer_publication",
+      "control": "externally_attributed",
+      "locator": {
+        "artifactId": "a1",
+        "description": "The test environment is a fixed, controlled outdoor site with known geometry."
+      },
+      "scopeCompleteness": "complete",
+      "supports": ["c4"],
+      "limitations": ["No unrestricted weather or background-traffic claim is made."]
+    },
+    {
+      "id": "e5",
+      "target": "system_boundary",
+      "venue": "customer_publication",
+      "control": "externally_attributed",
+      "locator": {
+        "artifactId": "a1",
+        "description": "The boundary includes passive sensing, local compute, operator presentation, isolated networking, logging, and one trained operator."
+      },
+      "scopeCompleteness": "complete",
+      "supports": ["c5"],
+      "limitations": ["No active response mechanism is included."]
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1",
+      "field": "offering_identity",
+      "statement": "The synthetic offering is the Bounded Observation Service.",
+      "target": "offering_identity",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e1"],
+      "lifecycle": "active",
+      "limitations": []
+    },
+    {
+      "id": "c2",
+      "field": "offering_version",
+      "statement": "The evaluated synthetic offering version is 1.0.",
+      "target": "offering_version",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e2"],
+      "lifecycle": "active",
+      "limitations": []
+    },
+    {
+      "id": "c3",
+      "field": "advertised_outcome",
+      "statement": "The operator requires a test object to be detected and presented before boundary crossing.",
+      "target": "operator_need",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e3"],
+      "lifecycle": "active",
+      "limitations": ["Controlled synthetic fixture only."]
+    },
+    {
+      "id": "c4",
+      "field": "operating_environment",
+      "statement": "The outcome applies to a fixed, controlled outdoor site with known geometry.",
+      "target": "operating_environment",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e4"],
+      "lifecycle": "active",
+      "limitations": []
+    },
+    {
+      "id": "c5",
+      "field": "system_boundary",
+      "statement": "The system boundary includes passive sensing, local compute, presentation, isolated networking, logging, and one operator.",
+      "target": "system_boundary",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e5"],
+      "lifecycle": "active",
+      "limitations": ["Active response is excluded."]
+    }
+  ],
+  "conflicts": [],
+  "capturedAt": "2026-08-23T01:00:00Z"
+}

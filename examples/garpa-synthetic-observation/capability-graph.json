@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTHETIC-OBSERVATION-1",
+  "missionOutcomeDigest": "sha256:synthetic-observation-mission-v1",
+  "functions": [
+    {
+      "id": "f-observe",
+      "name": "Observe the controlled environment",
+      "purpose": "Convert the external fixture state into timestamped observations.",
+      "functionClass": "essential",
+      "state": "required",
+      "origin": "mission_derived",
+      "inputInterfaceIds": ["i-world"],
+      "outputInterfaceIds": ["i-observation"],
+      "requirementKeys": ["protected_or_affected_object", "problem_or_threat", "operating_environment"],
+      "metricIds": [],
+      "dependencyFunctionIds": [],
+      "humanRoleIds": [],
+      "automationLevel": "bounded_autonomy",
+      "requiresAuthorizationBoundary": false,
+      "operatingConstraints": ["Passive observation only", "Known test geometry"],
+      "failureModes": ["No observation produced", "Timestamp unavailable"],
+      "evidenceCellIds": ["e3", "e4", "e5"],
+      "assumptions": ["The external fixture presents one known test object."],
+      "residualQuestions": ["Performance outside the controlled geometry remains unassessed."]
+    },
+    {
+      "id": "f-detect",
+      "name": "Detect the approaching test object",
+      "purpose": "Convert observations into a bounded detection decision.",
+      "functionClass": "essential",
+      "state": "required",
+      "origin": "mission_derived",
+      "inputInterfaceIds": ["i-observation"],
+      "outputInterfaceIds": ["i-detection"],
+      "requirementKeys": ["problem_or_threat", "desired_state_change", "metric:m1"],
+      "metricIds": ["m1"],
+      "dependencyFunctionIds": ["f-observe"],
+      "humanRoleIds": [],
+      "automationLevel": "bounded_autonomy",
+      "requiresAuthorizationBoundary": false,
+      "operatingConstraints": ["Known synthetic target class"],
+      "failureModes": ["Missed detection", "False detection"],
+      "evidenceCellIds": ["e3"],
+      "assumptions": [],
+      "residualQuestions": ["Unrestricted object classification remains unassessed."]
+    },
+    {
+      "id": "f-present",
+      "name": "Present the detection to the operator",
+      "purpose": "Deliver a timestamped alert to the trained operator within the required latency.",
+      "functionClass": "essential",
+      "state": "required",
+      "origin": "mission_derived",
+      "inputInterfaceIds": ["i-detection"],
+      "outputInterfaceIds": ["i-alert"],
+      "requirementKeys": ["operator", "desired_state_change", "time_and_coverage_requirement", "metric:m2"],
+      "metricIds": ["m2"],
+      "dependencyFunctionIds": ["f-detect"],
+      "humanRoleIds": ["role-operator"],
+      "automationLevel": "decision_support",
+      "requiresAuthorizationBoundary": false,
+      "operatingConstraints": ["One trained operator available during the test window"],
+      "failureModes": ["Alert not presented", "Presentation exceeds latency threshold"],
+      "evidenceCellIds": ["e3", "e5"],
+      "assumptions": [],
+      "residualQuestions": ["Operator workload under concurrent targets remains unassessed."]
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "i-world",
+      "name": "Controlled fixture state",
+      "interfaceType": "environmental",
+      "producerFunctionIds": [],
+      "consumerFunctionIds": ["f-observe"],
+      "externalSource": "Controlled synthetic test fixture",
+      "evidenceCellIds": ["e3", "e4"],
+      "limitations": []
+    },
+    {
+      "id": "i-observation",
+      "name": "Timestamped observation",
+      "interfaceType": "data",
+      "producerFunctionIds": ["f-observe"],
+      "consumerFunctionIds": ["f-detect"],
+      "formatOrProtocol": "Versioned observation record",
+      "evidenceCellIds": ["e5"],
+      "limitations": []
+    },
+    {
+      "id": "i-detection",
+      "name": "Detection event",
+      "interfaceType": "data",
+      "producerFunctionIds": ["f-detect"],
+      "consumerFunctionIds": ["f-present"],
+      "formatOrProtocol": "Versioned detection event",
+      "latencyConstraint": "Included in metric m2",
+      "evidenceCellIds": ["e3", "e5"],
+      "limitations": []
+    },
+    {
+      "id": "i-alert",
+      "name": "Operator alert",
+      "interfaceType": "human",
+      "producerFunctionIds": ["f-present"],
+      "consumerFunctionIds": [],
+      "terminalPurpose": "The trained operator receives and acknowledges the alert.",
+      "evidenceCellIds": ["e3", "e5"],
+      "limitations": []
+    }
+  ],
+  "traces": [
+    {
+      "requirementKey": "operator",
+      "functionIds": ["f-present"],
+      "metricIds": ["m2"],
+      "evidenceCellIds": ["e3"]
+    },
+    {
+      "requirementKey": "protected_or_affected_object",
+      "functionIds": ["f-observe"],
+      "metricIds": [],
+      "evidenceCellIds": ["e3"]
+    },
+    {
+      "requirementKey": "problem_or_threat",
+      "functionIds": ["f-observe", "f-detect"],
+      "metricIds": ["m1"],
+      "evidenceCellIds": ["e3"]
+    },
+    {
+      "requirementKey": "desired_state_change",
+      "functionIds": ["f-detect", "f-present"],
+      "metricIds": ["m1", "m2"],
+      "evidenceCellIds": ["e3"]
+    },
+    {
+      "requirementKey": "operating_environment",
+      "functionIds": ["f-observe"],
+      "metricIds": [],
+      "evidenceCellIds": ["e4"]
+    },
+    {
+      "requirementKey": "time_and_coverage_requirement",
+      "functionIds": ["f-present"],
+      "metricIds": ["m2"],
+      "evidenceCellIds": ["e3"]
+    },
+    {
+      "requirementKey": "metric:m1",
+      "functionIds": ["f-detect"],
+      "metricIds": ["m1"],
+      "evidenceCellIds": ["e3"]
+    },
+    {
+      "requirementKey": "metric:m2",
+      "functionIds": ["f-present"],
+      "metricIds": ["m2"],
+      "evidenceCellIds": ["e3"]
+    }
+  ],
+  "humanRoles": [
+    {
+      "id": "role-operator",
+      "title": "Test operator",
+      "functionIds": ["f-present"],
+      "responsibilities": ["Monitor the presentation surface", "Acknowledge the alert"],
+      "authorityBoundary": "May acknowledge the alert; no active response is authorized.",
+      "training": ["Fixture orientation"],
+      "staffingAssumption": "One operator for one one-hour run",
+      "evidenceCellIds": ["e3", "e5"]
+    }
+  ],
+  "externalDependencies": [],
+  "constraintEnvelope": {
+    "environment": {
+      "state": "defined",
+      "items": ["Fixed, controlled outdoor site", "Known geometry"]
+    },
+    "deployment": {
+      "state": "defined",
+      "items": ["Fixed test position", "One-hour test window"]
+    },
+    "resources": {
+      "state": "defined",
+      "items": ["Mains power", "Isolated local network", "One trained operator"]
+    },
+    "governance": {
+      "state": "defined",
+      "items": ["Passive observation only", "No active response or interference"]
+    },
+    "economic": {
+      "state": "defined",
+      "items": ["Only the bounded synthetic fixture is costed"]
+    }
+  },
+  "exclusions": [
+    "No active response mechanism.",
+    "No operational deployment or unrestricted target claim."
+  ]
+}
