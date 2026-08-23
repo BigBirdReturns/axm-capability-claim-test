@@ -1,6 +1,16 @@
 name: garpa-source-archive-temp
 
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/garpa-source-archive-temp.yml"
+      - "app/**"
+      - "docs/**"
+      - "examples/**"
+      - "mcp/**"
+      - "schemas/**"
+      - "tests/**"
+      - "tsconfig*.json"
   push:
     branches:
       - "feature/garpa-commons-seeded-build-manifest-v1"
