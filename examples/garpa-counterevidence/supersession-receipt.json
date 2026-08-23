@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "supersession-receipt-0001",
+  "caseId": "GARPA-PUBLICATION-0001",
+  "counterevidencePacketId": "counterevidence-0001",
+  "supersededReleaseId": "GARPA-PUBLICATION-0001-R1",
+  "supersededReleaseDigest": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  "supersededReleaseNumber": 1,
+  "candidateSuccessorReleaseId": "GARPA-PUBLICATION-0001-R2",
+  "candidateSuccessorReleaseNumber": 2,
+  "changedClaimIds": ["pub-parity-1"],
+  "reason": "contradicts_current_release: Revise the parity claim because a valid independent same-fixture repeat measured latency outside the admitted tolerance.",
+  "requiredUpstreamActions": [
+    "Prepare a superseding release that addresses contradictory evidence for claims pub-parity-1.",
+    "Preserve the prior release, disclose the contradiction, and identify which conclusion changed."
+  ],
+  "createdAt": "2026-08-23T02:15:00Z",
+  "state": "candidate"
+}
