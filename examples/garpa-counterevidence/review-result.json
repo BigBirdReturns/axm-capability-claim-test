@@ -1,0 +1,19 @@
+{
+  "packetId": "counterevidence-0001",
+  "targetCaseId": "GARPA-PUBLICATION-0001",
+  "targetReleaseId": "GARPA-PUBLICATION-0001-R1",
+  "disposition": "contradicts_current_release",
+  "action": "prepare_superseding_release",
+  "accepted": true,
+  "supersessionRequired": true,
+  "affectedClaimIds": ["pub-parity-1"],
+  "validatedEvidenceCellIds": ["ce-latency-2"],
+  "duplicateEvidenceCellIds": [],
+  "rejectedEvidenceCellIds": [],
+  "preserveTargetRelease": true,
+  "requiredActions": [
+    "Prepare a superseding release that addresses contradictory evidence for claims pub-parity-1.",
+    "Preserve the prior release, disclose the contradiction, and identify which conclusion changed."
+  ],
+  "controlQuestion": "Which result controls the contradiction for pub-parity-1, and what evidence or repeat would falsify that choice?"
+}
