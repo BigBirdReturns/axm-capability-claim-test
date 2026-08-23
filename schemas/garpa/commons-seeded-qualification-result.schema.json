@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-qualification-result.schema.json",
+  "title": "GARPA Commons-Seeded Qualification Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "seededArchitectureResultDigest",
+    "missionOutcomeDigest",
+    "candidateArchitectureDigest",
+    "seededComponentIds",
+    "boundSeededComponentIds",
+    "findings",
+    "qualificationValidationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_qualification_blocked",
+        "seeded_qualification_incomplete",
+        "seeded_qualification_admitted"
+      ]
+    },
+    "seededArchitectureResult": { "type": "object" },
+    "seededArchitectureResultDigest": { "type": "string" },
+    "missionOutcomeDigest": { "type": "string" },
+    "candidateArchitectureDigest": { "type": "string" },
+    "seededComponentIds": { "type": "array", "items": { "type": "string" } },
+    "boundSeededComponentIds": { "type": "array", "items": { "type": "string" } },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "qualificationValidationErrors": { "type": "array", "items": { "type": "string" } },
+    "qualificationGate": { "type": "object" },
+    "qualificationContract": { "type": "object" },
+    "pullList": { "type": "array", "items": { "type": "string" } },
+    "prohibitedTransitions": { "type": "array", "items": { "type": "string" } }
+  }
+}
