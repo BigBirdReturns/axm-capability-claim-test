@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-component-projection-result.schema.json",
+  "title": "GARPA Commons Component Projection Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "transferResult",
+    "transferResultDigest",
+    "admittedProjectionIds",
+    "blockedProjectionIds",
+    "projectedComponents",
+    "findings",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "projection_blocked",
+        "projection_partially_admitted",
+        "projection_admitted"
+      ]
+    },
+    "transferResult": { "type": "object" },
+    "transferResultDigest": { "type": "string" },
+    "admittedProjectionIds": { "type": "array", "items": { "type": "string" } },
+    "blockedProjectionIds": { "type": "array", "items": { "type": "string" } },
+    "projectedComponents": { "type": "array", "items": { "type": "object" } },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "pullList": { "type": "array", "items": { "type": "string" } },
+    "seed": { "type": "object" },
+    "prohibitedTransitions": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "id": "component-sensor-v1-target",
+  "kind": "commercial_hardware",
+  "manufacturer": "GARPA Synthetic Fixtures",
+  "product": "Synthetic Fixture Sensor",
+  "exactModelOrVersion": "sensor-v1",
+  "functionIds": ["f-observe-target"],
+  "interfaceIds": ["i-world-target", "i-observation-target"],
+  "maturity": "independently_reported",
+  "identityEvidenceCellIds": ["e-sensor-id"],
+  "performanceEvidenceCellIds": ["e-sensor-perf"],
+  "licenseEvidenceCellIds": [],
+  "performanceEnvelope": {
+    "targetObservation": "Timestamped observations under the target controlled fixture"
+  },
+  "operatingRequirements": {
+    "firmwareOrSoftwareVersion": "1.0.0",
+    "environment": "Controlled indoor fixture with constant lighting and static background"
+  },
+  "securityNotes": ["Isolate the synthetic fixture network during target qualification."],
+  "price": {
+    "amount": 250,
+    "currency": "USD",
+    "capturedAt": "2026-08-23T01:15:00Z",
+    "evidenceCellIds": ["e-sensor-price"],
+    "includedCostCategories": ["hardware"],
+    "excludedCostCategories": ["integration_labor", "qualification"]
+  },
+  "availability": {
+    "state": "in_stock",
+    "capturedAt": "2026-08-23T01:15:00Z",
+    "evidenceCellIds": ["e-sensor-availability"],
+    "note": "Synthetic availability observation for regression only."
+  },
+  "integrationRequirements": [
+    "Re-run the target observation fixture and interface tests against the target graph and configuration."
+  ],
+  "limitations": [
+    "Qualification is restricted to the released fixture, environment, target class, and metric."
+  ],
+  "residuals": [
+    "No observation exists for adverse weather, unrestricted backgrounds, alternate target classes, or field deployment."
+  ],
+  "lifecycle": "available"
+}
