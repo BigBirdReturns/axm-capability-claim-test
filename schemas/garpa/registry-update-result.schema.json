@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/registry-update-result.schema.json",
+  "title": "GARPA Registry Update Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gate"],
+  "properties": {
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "state", "findings", "nextReleaseNumber"],
+      "properties": {
+        "passed": { "type": "boolean" },
+        "state": {
+          "enum": [
+            "case_mismatch",
+            "current_release_conflict",
+            "release_number_gap",
+            "release_lineage_mismatch",
+            "release_identity_reused",
+            "identity_lineage_missing",
+            "release_not_current_valid",
+            "invalid_case_transition",
+            "registry_update_admitted"
+          ]
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["state", "reason", "requiredAction"],
+            "properties": {
+              "state": {
+                "enum": [
+                  "case_mismatch",
+                  "current_release_conflict",
+                  "release_number_gap",
+                  "release_lineage_mismatch",
+                  "release_identity_reused",
+                  "identity_lineage_missing",
+                  "release_not_current_valid",
+                  "invalid_case_transition"
+                ]
+              },
+              "reason": { "type": "string", "minLength": 1 },
+              "requiredAction": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "nextReleaseNumber": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "entry": { "$ref": "case-registry-entry.schema.json" }
+  }
+}
