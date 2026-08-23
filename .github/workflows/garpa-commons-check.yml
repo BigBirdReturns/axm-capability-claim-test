@@ -30,6 +30,7 @@ on:
       - "mcp/garpa-commons-server.ts"
       - "mcp/tsconfig.commons.json"
       - "mcp/README-GARPA-COMMONS.md"
+      - "tsconfig.commons.json"
       - ".github/workflows/garpa-commons-check.yml"
   push:
     branches:
@@ -63,6 +64,7 @@ on:
       - "mcp/garpa-commons-server.ts"
       - "mcp/tsconfig.commons.json"
       - "mcp/README-GARPA-COMMONS.md"
+      - "tsconfig.commons.json"
       - ".github/workflows/garpa-commons-check.yml"
 
 permissions:
@@ -87,11 +89,11 @@ jobs:
       - name: Run GARPA commons tests
         run: npx vitest run tests/lib/garpaCommons.test.ts tests/lib/garpaCommonsCatalog.test.ts
 
-      - name: Typecheck workbench
-        run: npm run typecheck
+      - name: Typecheck GARPA commons workbench surface
+        run: npx tsc --noEmit -p tsconfig.commons.json
 
-      - name: Build workbench
-        run: npm run build
+      - name: Build static workbench bundle
+        run: npx vite build
 
       - name: Install MCP dependencies
         run: npm ci
