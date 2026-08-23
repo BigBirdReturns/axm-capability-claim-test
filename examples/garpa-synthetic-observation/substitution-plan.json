@@ -1,0 +1,206 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTHETIC-OBSERVATION-1",
+  "capabilityGraphDigest": "sha256:synthetic-observation-graph-v1",
+  "components": [
+    {
+      "id": "component-sensor",
+      "kind": "commercial_hardware",
+      "manufacturer": "Synthetic Hardware Co.",
+      "product": "Passive Fixture Sensor",
+      "exactModelOrVersion": "sensor-v1",
+      "functionIds": ["f-observe"],
+      "interfaceIds": ["i-world", "i-observation"],
+      "maturity": "bench_reproduced",
+      "identityEvidenceCellIds": ["e-sensor-id"],
+      "performanceEvidenceCellIds": ["e-sensor-perf"],
+      "licenseEvidenceCellIds": [],
+      "performanceEnvelope": {
+        "fixture": "Synthetic observation fixture",
+        "output": "Timestamped observation record"
+      },
+      "operatingRequirements": {
+        "power": "Mains-powered test bench",
+        "environment": "Controlled outdoor geometry"
+      },
+      "securityNotes": ["Isolated test network only"],
+      "price": {
+        "amount": 250,
+        "currency": "USD",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-sensor-price"],
+        "includedCostCategories": ["hardware"],
+        "excludedCostCategories": ["integration_labor", "qualification"]
+      },
+      "availability": {
+        "state": "in_stock",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-sensor-availability"]
+      },
+      "integrationRequirements": ["Mount in the frozen fixture", "Emit versioned observation records"],
+      "limitations": ["Controlled geometry only"],
+      "residuals": ["Unrestricted environmental performance remains unassessed"],
+      "lifecycle": "available"
+    },
+    {
+      "id": "component-detector",
+      "kind": "software_package",
+      "product": "Synthetic Detector",
+      "exactModelOrVersion": "detector-1.0",
+      "functionIds": ["f-detect"],
+      "interfaceIds": ["i-observation", "i-detection"],
+      "maturity": "bench_reproduced",
+      "identityEvidenceCellIds": ["e-detector-id"],
+      "performanceEvidenceCellIds": ["e-detector-perf"],
+      "licenseEvidenceCellIds": ["e-detector-license"],
+      "performanceEnvelope": {
+        "target_class": "Known synthetic test object",
+        "fixture": "Frozen observation records"
+      },
+      "operatingRequirements": {
+        "runtime": "Local compute",
+        "input": "Versioned observation record"
+      },
+      "license": "MIT",
+      "sourceAvailability": "Versioned source snapshot",
+      "securityNotes": ["No network access required during the fixture"],
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-detector-price"],
+        "includedCostCategories": ["software_acquisition"],
+        "excludedCostCategories": ["integration_labor", "qualification"]
+      },
+      "availability": {
+        "state": "in_stock",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-detector-availability"]
+      },
+      "integrationRequirements": ["Pin detector-1.0 and its dependency lockfile"],
+      "limitations": ["Known synthetic target class only"],
+      "residuals": ["No general classification claim"],
+      "lifecycle": "available"
+    },
+    {
+      "id": "component-ui",
+      "kind": "software_package",
+      "product": "Synthetic Operator UI",
+      "exactModelOrVersion": "ui-1.0",
+      "functionIds": ["f-present"],
+      "interfaceIds": ["i-detection", "i-alert"],
+      "maturity": "independently_reported",
+      "identityEvidenceCellIds": ["e-ui-id"],
+      "performanceEvidenceCellIds": ["e-ui-perf"],
+      "licenseEvidenceCellIds": ["e-ui-license"],
+      "performanceEnvelope": {
+        "operator_count": "One",
+        "input": "Versioned detection event"
+      },
+      "operatingRequirements": {
+        "runtime": "Local browser",
+        "display": "One operator display"
+      },
+      "license": "Apache-2.0",
+      "sourceAvailability": "Versioned source snapshot",
+      "securityNotes": ["Isolated local network only"],
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-ui-price"],
+        "includedCostCategories": ["software_acquisition"],
+        "excludedCostCategories": ["operator_labor", "integration_labor", "qualification"]
+      },
+      "availability": {
+        "state": "in_stock",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-ui-availability"]
+      },
+      "integrationRequirements": ["Pin ui-1.0", "Use the documented detection-event contract"],
+      "limitations": ["Single-operator fixture only"],
+      "residuals": ["Concurrent-target workload remains unassessed"],
+      "lifecycle": "available"
+    }
+  ],
+  "customCode": [],
+  "compatibilityEdges": [
+    {
+      "id": "compat-observation",
+      "interfaceId": "i-observation",
+      "producerComponentIds": ["component-sensor"],
+      "consumerComponentIds": ["component-detector"],
+      "state": "confirmed_compatible",
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "evidenceCellIds": ["e-compat-observation"],
+      "limitations": ["Versioned synthetic record only"],
+      "falsificationTest": "Replay all frozen sensor-v1 records through detector-1.0 and fail on any rejected or semantically altered record."
+    },
+    {
+      "id": "compat-detection",
+      "interfaceId": "i-detection",
+      "producerComponentIds": ["component-detector"],
+      "consumerComponentIds": ["component-ui"],
+      "state": "reported_compatible",
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "evidenceCellIds": ["e-compat-detection"],
+      "limitations": ["Versioned synthetic event contract only"],
+      "falsificationTest": "Replay all detector-1.0 events through ui-1.0 and fail on any missing, rejected, or timestamp-altered event."
+    }
+  ],
+  "options": [
+    {
+      "id": "option-observe",
+      "functionId": "f-observe",
+      "componentIds": ["component-sensor"],
+      "customCodeIds": [],
+      "coverage": "complete_candidate",
+      "maturity": "reported",
+      "composition": "Use sensor-v1 to emit timestamped observations from the frozen fixture.",
+      "integrationWork": ["Mount and configure the sensor", "Verify timestamps"],
+      "evidenceCellIds": ["e-sensor-perf"],
+      "residuals": ["No unrestricted environment coverage"],
+      "falsificationTest": "Execute the frozen fixture and fail if any required observation is absent or lacks a usable timestamp."
+    },
+    {
+      "id": "option-detect",
+      "functionId": "f-detect",
+      "componentIds": ["component-detector"],
+      "customCodeIds": [],
+      "coverage": "complete_candidate",
+      "maturity": "established",
+      "composition": "Run detector-1.0 against the versioned observation stream.",
+      "integrationWork": ["Pin dependencies", "Load the frozen target configuration"],
+      "evidenceCellIds": ["e-detector-perf"],
+      "residuals": ["Known synthetic target class only"],
+      "falsificationTest": "Run the frozen observation set and fail if the metric m1 decision differs from ground truth."
+    },
+    {
+      "id": "option-present",
+      "functionId": "f-present",
+      "componentIds": ["component-ui"],
+      "customCodeIds": [],
+      "coverage": "complete_candidate",
+      "maturity": "reported",
+      "composition": "Use ui-1.0 to present versioned detection events to one trained operator.",
+      "integrationWork": ["Configure the event endpoint", "Verify operator acknowledgement logging"],
+      "evidenceCellIds": ["e-ui-perf"],
+      "residuals": ["Concurrent-target operator burden remains unassessed"],
+      "falsificationTest": "Replay the frozen event set and fail if presentation latency exceeds metric m2 or an event is not displayed."
+    }
+  ],
+  "costBoundary": {
+    "state": "complete",
+    "currency": "USD",
+    "evaluationPeriod": "One bounded test fixture and one one-hour qualification run",
+    "includedCategories": ["hardware", "software", "integration_labor", "operator_labor", "qualification"],
+    "excludedCategories": ["active_response", "operational_field_deployment"],
+    "note": "Zero-price software observations exclude labor, which is retained as a separate included category."
+  },
+  "exclusions": [
+    "No active response mechanism.",
+    "No operational deployment or vendor-parity claim."
+  ]
+}
