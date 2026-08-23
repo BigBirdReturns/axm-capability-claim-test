@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-COMMONS-TARGET-0001",
+  "missionOutcomeDigest": "sha256:commons-transfer-target:v1",
+  "functions": [
+    {
+      "id": "f-observe-target",
+      "name": "Observe the controlled target environment",
+      "purpose": "Convert the target fixture state into timestamped observations without importing a prior implementation.",
+      "functionClass": "essential",
+      "state": "required",
+      "origin": "mission_derived",
+      "inputInterfaceIds": ["i-world-target"],
+      "outputInterfaceIds": ["i-observation-target"],
+      "requirementKeys": ["operating_environment"],
+      "metricIds": [],
+      "dependencyFunctionIds": [],
+      "humanRoleIds": [],
+      "automationLevel": "bounded_autonomy",
+      "requiresAuthorizationBoundary": false,
+      "operatingConstraints": ["Passive observation", "Controlled indoor fixture"],
+      "failureModes": ["Observation absent", "Timestamp unavailable"],
+      "evidenceCellIds": [],
+      "assumptions": ["One known synthetic object is presented."],
+      "residualQuestions": ["Field and alternate-target performance remain unassessed."]
+    },
+    {
+      "id": "f-detect-target",
+      "name": "Detect the target before boundary crossing",
+      "purpose": "Convert target observations into a bounded detection event before the frozen boundary crossing.",
+      "functionClass": "essential",
+      "state": "required",
+      "origin": "mission_derived",
+      "inputInterfaceIds": ["i-observation-target"],
+      "outputInterfaceIds": ["i-detection-target"],
+      "requirementKeys": ["desired_state_change", "metric:detect"],
+      "metricIds": [],
+      "dependencyFunctionIds": ["f-observe-target"],
+      "humanRoleIds": [],
+      "automationLevel": "bounded_autonomy",
+      "requiresAuthorizationBoundary": false,
+      "operatingConstraints": ["Known target class", "Frozen boundary geometry"],
+      "failureModes": ["Missed detection", "Late detection"],
+      "evidenceCellIds": [],
+      "assumptions": [],
+      "residualQuestions": ["Concurrent and unrestricted target classes remain unassessed."]
+    },
+    {
+      "id": "f-present-target",
+      "name": "Present the detection to the target-case operator",
+      "purpose": "Deliver a timestamped notification to one trained operator and preserve the acknowledgement event.",
+      "functionClass": "essential",
+      "state": "required",
+      "origin": "mission_derived",
+      "inputInterfaceIds": ["i-detection-target"],
+      "outputInterfaceIds": ["i-alert-target"],
+      "requirementKeys": ["operator", "time_and_coverage_requirement"],
+      "metricIds": [],
+      "dependencyFunctionIds": ["f-detect-target"],
+      "humanRoleIds": ["role-target-operator"],
+      "automationLevel": "decision_support",
+      "requiresAuthorizationBoundary": false,
+      "operatingConstraints": ["One trained operator", "No active response"],
+      "failureModes": ["Notification absent", "Notification late", "Acknowledgement not recorded"],
+      "evidenceCellIds": [],
+      "assumptions": [],
+      "residualQuestions": ["Operator workload under concurrent events remains unassessed."]
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "i-world-target",
+      "name": "Controlled target fixture state",
+      "interfaceType": "environmental",
+      "producerFunctionIds": [],
+      "consumerFunctionIds": ["f-observe-target"],
+      "externalSource": "Target controlled indoor fixture",
+      "evidenceCellIds": [],
+      "limitations": []
+    },
+    {
+      "id": "i-observation-target",
+      "name": "Timestamped target observation",
+      "interfaceType": "data",
+      "producerFunctionIds": ["f-observe-target"],
+      "consumerFunctionIds": ["f-detect-target"],
+      "formatOrProtocol": "Target observation record candidate",
+      "evidenceCellIds": [],
+      "limitations": ["Protocol remains a target-case design decision."]
+    },
+    {
+      "id": "i-detection-target",
+      "name": "Target detection event",
+      "interfaceType": "data",
+      "producerFunctionIds": ["f-detect-target"],
+      "consumerFunctionIds": ["f-present-target"],
+      "formatOrProtocol": "Target detection event candidate",
+      "evidenceCellIds": [],
+      "limitations": ["Compatibility remains unassessed."]
+    },
+    {
+      "id": "i-alert-target",
+      "name": "Target operator notification",
+      "interfaceType": "human",
+      "producerFunctionIds": ["f-present-target"],
+      "consumerFunctionIds": [],
+      "terminalPurpose": "The target-case operator receives and acknowledges the bounded notification.",
+      "evidenceCellIds": [],
+      "limitations": []
+    }
+  ],
+  "traces": [
+    {
+      "requirementKey": "operating_environment",
+      "functionIds": ["f-observe-target"],
+      "metricIds": [],
+      "evidenceCellIds": []
+    },
+    {
+      "requirementKey": "desired_state_change",
+      "functionIds": ["f-detect-target", "f-present-target"],
+      "metricIds": [],
+      "evidenceCellIds": []
+    },
+    {
+      "requirementKey": "operator",
+      "functionIds": ["f-present-target"],
+      "metricIds": [],
+      "evidenceCellIds": []
+    }
+  ],
+  "humanRoles": [
+    {
+      "id": "role-target-operator",
+      "title": "Target-case operator",
+      "functionIds": ["f-present-target"],
+      "responsibilities": ["Receive notification", "Acknowledge notification"],
+      "authorityBoundary": "May acknowledge; no active response is authorized.",
+      "training": ["Target fixture orientation"],
+      "staffingAssumption": "One operator for one controlled run",
+      "evidenceCellIds": []
+    }
+  ],
+  "externalDependencies": [],
+  "constraintEnvelope": {
+    "environment": {
+      "state": "defined",
+      "items": ["Controlled indoor fixture", "Constant lighting", "Static background"]
+    },
+    "deployment": {
+      "state": "defined",
+      "items": ["Fixed bench position", "Inert synthetic object"]
+    },
+    "resources": {
+      "state": "defined",
+      "items": ["Isolated network", "One trained operator"]
+    },
+    "governance": {
+      "state": "defined",
+      "items": ["E2 passive bench only", "No active effect"]
+    },
+    "economic": {
+      "state": "defined",
+      "items": ["Target-case costs remain unassessed"]
+    }
+  },
+  "exclusions": [
+    "No source commons object is pre-admitted as target-case evidence.",
+    "No compatibility, architecture, qualification, procurement, testing, deployment, or equivalence state is transferred."
+  ]
+}
