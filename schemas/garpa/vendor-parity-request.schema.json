@@ -1,0 +1,247 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/vendor-parity-request.schema.json",
+  "title": "GARPA Vendor Parity Request",
+  "description": "An exact-version, metric-scoped request for comparing a receipted GARPA build with vendor observations. Same-fixture parity requires independent measurement, matching fixture and method digests, and aligned accounting boundaries where cost is compared.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "vendorOffering",
+    "garpaMissionState",
+    "garpaBuildReceiptDigest",
+    "garpaQualificationContractDigest",
+    "requiredMetricIds",
+    "essentialMetricIds",
+    "comparators",
+    "observations",
+    "scenarioComparisons",
+    "accountingBoundaries"
+  ],
+  "$defs": {
+    "evidenceControl": {
+      "enum": [
+        "claimant_controlled",
+        "commercially_related",
+        "externally_attributed",
+        "independent",
+        "local_measured",
+        "unknown"
+      ]
+    },
+    "costCategory": {
+      "enum": [
+        "hardware",
+        "software",
+        "services",
+        "custom_code",
+        "fabrication",
+        "integration_labor",
+        "operator_labor",
+        "training",
+        "test_equipment",
+        "qualification",
+        "maintenance",
+        "spares",
+        "communications",
+        "facilities",
+        "energy",
+        "regulatory",
+        "replacement",
+        "contingency"
+      ]
+    },
+    "comparator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metricId", "label", "essential", "direction"],
+      "properties": {
+        "metricId": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "essential": { "type": "boolean" },
+        "direction": {
+          "enum": [
+            "higher_is_better",
+            "lower_is_better",
+            "absolute_delta",
+            "boolean_equal",
+            "categorical_equal"
+          ]
+        },
+        "requiredUnit": { "type": "string" },
+        "absoluteTolerance": { "type": "number", "minimum": 0 },
+        "relativeTolerance": { "type": "number", "minimum": 0 },
+        "requiresAccountingAlignment": { "type": "boolean" }
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "subject",
+        "metricId",
+        "scenarioId",
+        "value",
+        "evidenceControl",
+        "evidenceArtifactIds",
+        "limitations"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "subject": { "enum": ["garpa", "vendor"] },
+        "subjectVersion": { "type": "string" },
+        "metricId": { "type": "string", "minLength": 1 },
+        "scenarioId": { "type": "string", "minLength": 1 },
+        "fixtureDigest": { "type": "string" },
+        "methodDigest": { "type": "string" },
+        "buildReceiptDigest": { "type": "string" },
+        "qualificationContractDigest": { "type": "string" },
+        "value": { "type": ["number", "string", "boolean"] },
+        "unit": { "type": "string" },
+        "evidenceControl": { "$ref": "#/$defs/evidenceControl" },
+        "evidenceArtifactIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "limitations": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "scenarioComparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "garpaScenarioId",
+        "vendorScenarioId",
+        "state",
+        "reasons"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "garpaScenarioId": { "type": "string", "minLength": 1 },
+        "vendorScenarioId": { "type": "string", "minLength": 1 },
+        "state": {
+          "enum": [
+            "same_fixture",
+            "normalized",
+            "reported_only",
+            "not_comparable"
+          ]
+        },
+        "normalizationMethod": { "type": "string" },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "accountingBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "subject",
+        "currency",
+        "priceDate",
+        "evaluationPeriod",
+        "includes",
+        "exclusions",
+        "missionDenominator",
+        "evidenceArtifactIds"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "subject": { "enum": ["garpa", "vendor"] },
+        "currency": { "type": "string", "minLength": 3 },
+        "priceDate": { "type": "string", "minLength": 1 },
+        "evaluationPeriod": { "type": "string", "minLength": 1 },
+        "includes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/costCategory" }
+        },
+        "exclusions": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "missionDenominator": { "type": "string", "minLength": 1 },
+        "evidenceArtifactIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "vendorOffering": { "type": "string", "minLength": 1 },
+    "vendorVersion": { "type": "string" },
+    "garpaMissionState": {
+      "enum": [
+        "matched",
+        "bounded_match",
+        "partial",
+        "failed",
+        "incomparable",
+        "unassessed"
+      ]
+    },
+    "garpaBuildReceiptDigest": { "type": "string", "minLength": 1 },
+    "garpaQualificationContractDigest": { "type": "string", "minLength": 1 },
+    "requiredMetricIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "essentialMetricIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "comparators": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/comparator" }
+    },
+    "observations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/observation" }
+    },
+    "scenarioComparisons": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/scenarioComparison" }
+    },
+    "accountingBoundaries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/accountingBoundary" }
+    },
+    "accountingComparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reasons"],
+      "properties": {
+        "garpaBoundaryId": { "type": "string" },
+        "vendorBoundaryId": { "type": "string" },
+        "state": {
+          "enum": [
+            "aligned",
+            "partially_aligned",
+            "misaligned",
+            "not_supplied"
+          ]
+        },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}
