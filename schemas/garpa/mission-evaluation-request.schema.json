@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/mission-evaluation-request.schema.json",
+  "title": "GARPA Mission Evaluation Request",
+  "description": "A frozen mission-evaluation request. Essential metrics are noncompensatory and aborted, invalidated, incomplete, or stale runs do not count toward acceptance.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "caseId",
+    "qualificationContractDigest",
+    "buildReceiptDigest",
+    "requiredScenarioIds",
+    "requiredMetricIds",
+    "essentialMetricIds",
+    "requiredRunsByMetric",
+    "scopeIsFullMission",
+    "runs"
+  ],
+  "properties": {
+    "caseId": { "type": "string", "minLength": 1 },
+    "qualificationContractDigest": { "type": "string", "minLength": 1 },
+    "buildReceiptDigest": { "type": "string", "minLength": 1 },
+    "requiredScenarioIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "requiredMetricIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "essentialMetricIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "requiredRunsByMetric": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "scopeIsFullMission": { "type": "boolean" },
+    "runs": {
+      "type": "array",
+      "items": { "$ref": "test-run-receipt.schema.json" }
+    }
+  }
+}
