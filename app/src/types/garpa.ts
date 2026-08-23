@@ -55,6 +55,12 @@ export type EvidenceTarget =
   | "system_boundary"
   | "independent_verification"
   | "local_result"
+  | "component_identity"
+  | "component_performance"
+  | "component_compatibility"
+  | "component_price"
+  | "component_availability"
+  | "component_license"
   | "other";
 
 export type EvidenceVenue =
