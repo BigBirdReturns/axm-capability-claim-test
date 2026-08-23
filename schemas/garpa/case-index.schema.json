@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/case-index.schema.json",
+  "title": "GARPA Case Index",
+  "description": "Authoritative current case state. Files alone do not advance a stage; admitted stage receipts do.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "title",
+    "createdAt",
+    "updatedAt",
+    "currentState",
+    "currentStage",
+    "artifactIds",
+    "stageReceiptIds",
+    "latestDigests"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string", "minLength": 1 },
+    "updatedAt": { "type": "string", "minLength": 1 },
+    "currentState": {
+      "enum": [
+        "created",
+        "intake_complete",
+        "extraction_complete",
+        "claim_packet_candidate",
+        "claim_packet_valid",
+        "evidence_blocked",
+        "goal_blocked",
+        "goal_admitted",
+        "capability_graph_blocked",
+        "capability_graph_admitted",
+        "component_evidence_blocked",
+        "architecture_blocked",
+        "architecture_candidate",
+        "qualification_blocked",
+        "qualification_frozen",
+        "build_in_progress",
+        "build_assembled",
+        "test_blocked",
+        "testing_in_progress",
+        "testing_complete",
+        "evaluation_complete",
+        "publication_blocked",
+        "publication_ready",
+        "superseded",
+        "withdrawn"
+      ]
+    },
+    "currentStage": {
+      "enum": ["intake", "extraction", "claims", "evidence", "mission_outcome", "capability_graph", "components", "architecture", "qualification", "build", "testing", "evaluation", "publication"]
+    },
+    "artifactIds": { "type": "array", "items": { "type": "string" } },
+    "stageReceiptIds": { "type": "array", "items": { "type": "string" } },
+    "latestDigests": { "type": "object", "additionalProperties": { "type": "string" } }
+  }
+}
