@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-catalog-search-query.schema.json",
+  "title": "GARPA Capability Commons Catalog Search Query",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "text": { "type": "string" },
+    "objectTypes": {
+      "type": "array",
+      "items": { "enum": ["primitive", "component_observation", "architecture_pattern"] }
+    },
+    "sourceCaseIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "sourceReleaseIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "functionIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "interfaceIds": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "executionClasses": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "E0_analysis_only",
+          "E1_simulation_or_replay",
+          "E2_bench_passive",
+          "E3_controlled_field_inert",
+          "E4_regulated_active",
+          "E5_operational_environment"
+        ]
+      }
+    },
+    "primitiveMaturities": {
+      "type": "array",
+      "items": { "enum": ["concept", "candidate", "bench_observed", "field_observed", "repeated"] }
+    },
+    "componentStates": {
+      "type": "array",
+      "items": { "enum": ["vendor_claimed", "externally_reported", "locally_observed", "locally_qualified"] }
+    },
+    "includeSuperseded": { "type": "boolean" },
+    "includeWithdrawn": { "type": "boolean" },
+    "limit": { "type": "integer", "minimum": 1, "maximum": 500 }
+  }
+}

@@ -1,12 +1,15 @@
 # GARPA capability-commons MCP server
 
-The commons server admits reusable capability primitives, exact-version component observations, and architecture patterns from one current verified GARPA release.
+The commons server admits reusable capability primitives, exact-version component observations, and architecture patterns from one current verified GARPA release, then maintains and searches a durable content-addressed catalog without erasing revision history.
 
 It exposes:
 
 ```text
 validate_garpa_commons_admission
 run_garpa_commons_admission
+validate_garpa_commons_catalog
+apply_garpa_commons_catalog_update
+search_garpa_commons_catalog
 ```
 
 Run locally:
@@ -17,24 +20,6 @@ npm install
 npx tsx garpa-commons-server.ts
 ```
 
-Example client configuration:
+The caller supplies artifacts and proposed update operations. The server does not search the web, infer missing receipts, overwrite catalog history, or promote catalog presence into current qualification.
 
-```json
-{
-  "mcpServers": {
-    "garpa-capability-commons": {
-      "command": "npx",
-      "args": [
-        "tsx",
-        "/ABSOLUTE/PATH/TO/axm-capability-claim-test/mcp/garpa-commons-server.ts"
-      ]
-    }
-  }
-}
-```
-
-The server does not search the web or infer missing receipts. The caller supplies a commons request. Validation checks schema and reference integrity. The admission gate then enforces release currency, exact source scope, earned primitive maturity, exact component identity, local-run custody, architecture-pattern support, residuals, falsification conditions, and duplicate identities.
-
-A blocked object remains visible with its reason and required action. Other valid objects in the same request may be admitted, but request-level `passed` is true only when every submitted object passes.
-
-Commons admission does not establish global component qualification, universal substitution, or unrestricted mission equivalence.
+Commons admission controls whether one release may contribute an object. Catalog update controls stable identity, optimistic custody, revision and supersession history, no-op idempotence, and content digests. Search returns complete scoped revisions with source release, fixture, environment, execution class, residuals, and falsification conditions. It does not return a scalar score.

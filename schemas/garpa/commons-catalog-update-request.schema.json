@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-catalog-update-request.schema.json",
+  "title": "GARPA Capability Commons Catalog Update Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "currentCatalog",
+    "expectedCatalogDigest",
+    "admissionRequest",
+    "admissionResult",
+    "operations",
+    "actor",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "currentCatalog": {
+      "$ref": "commons-catalog.schema.json"
+    },
+    "expectedCatalogDigest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "admissionRequest": {
+      "$ref": "commons-admission-request.schema.json"
+    },
+    "admissionResult": {
+      "$ref": "commons-admission-result.schema.json"
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "operationId",
+          "objectType",
+          "incomingObjectId",
+          "action",
+          "catalogObjectId",
+          "aliasesAdded",
+          "reason"
+        ],
+        "properties": {
+          "operationId": { "type": "string", "minLength": 1 },
+          "objectType": {
+            "enum": ["primitive", "component_observation", "architecture_pattern"]
+          },
+          "incomingObjectId": { "type": "string", "minLength": 1 },
+          "action": { "enum": ["create", "supersede", "noop"] },
+          "catalogObjectId": { "type": "string", "minLength": 1 },
+          "expectedCurrentRevisionId": { "type": "string", "minLength": 1 },
+          "aliasesAdded": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "reason": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "actor": { "type": "string", "minLength": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

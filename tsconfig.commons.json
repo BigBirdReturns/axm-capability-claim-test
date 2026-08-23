@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpa.ts",
+    "app/src/types/garpaExecution.ts",
+    "app/src/types/garpaCommons.ts",
+    "app/src/types/garpaCommonsCatalog.ts",
+    "app/src/lib/garpa/validateCommonsAdmission.ts",
+    "app/src/lib/garpa/runCommonsAdmissionGate.ts",
+    "app/src/lib/garpa/renderCommonsAdmission.ts",
+    "app/src/lib/garpa/canonicalJson.ts",
+    "app/src/lib/garpa/sha256.ts",
+    "app/src/lib/garpa/commonsCatalogDigest.ts",
+    "app/src/lib/garpa/commonsCatalogIdentity.ts",
+    "app/src/lib/garpa/validateCommonsCatalog.ts",
+    "app/src/lib/garpa/runCommonsCatalogUpdateGate.ts",
+    "app/src/lib/garpa/applyCommonsCatalogUpdate.ts",
+    "app/src/lib/garpa/searchCommonsCatalog.ts",
+    "app/src/lib/garpa/renderCommonsCatalogUpdate.ts",
+    "app/src/lib/garpa/garpaVersion.ts",
+    "app/src/lib/garpa/implementedStages.ts",
+    "tests/lib/garpaCommons.test.ts",
+    "tests/lib/garpaCommonsCatalog.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts",
+    "examples/garpa-commons/**/*.json",
+    "examples/garpa-commons-catalog/**/*.json"
+  ]
+}
