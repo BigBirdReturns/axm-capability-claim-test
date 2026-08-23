@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTH-OBS-001",
+  "runId": "RUN-001",
+  "buildDigest": "build:synthetic-observation:v1",
+  "qualificationContractDigest": "qualification:synthetic-observation:v1",
+  "scenarioId": "scenario-controlled-entry",
+  "testId": "test-detect-before-boundary",
+  "startedAt": "2026-08-23T05:00:00Z",
+  "endedAt": "2026-08-23T05:10:00Z",
+  "operators": ["GARPA fixture operator"],
+  "observers": ["GARPA fixture observer"],
+  "configurationDigest": "sha256:run-config",
+  "fixtureState": {
+    "camera_position": "fixed",
+    "target_path": "marked line",
+    "response_channel": "simulated"
+  },
+  "environmentObserved": {
+    "location": "controlled indoor fixture",
+    "lighting": "constant",
+    "background": "static"
+  },
+  "rawDataArtifactIds": ["raw-video-1", "raw-events-1"],
+  "logArtifactIds": ["run-log-1"],
+  "observationArtifactIds": ["observer-note-1"],
+  "metricResults": [
+    {
+      "metricId": "metric-detect-before-boundary",
+      "rawSampleArtifactIds": ["raw-video-1", "raw-events-1"],
+      "calculationMethod": "Compare first detection timestamp with ground-truth boundary crossing timestamp.",
+      "codeDigest": "sha256:metric-code",
+      "sampleCount": 10,
+      "excludedSamples": [],
+      "value": true,
+      "thresholdResult": "pass",
+      "analystNotes": ["All ten controlled trials produced a detection before crossing."]
+    }
+  ],
+  "interventions": [],
+  "anomalies": [],
+  "aborts": [],
+  "resultDigest": "result:synthetic-observation:run-001",
+  "state": "valid"
+}
