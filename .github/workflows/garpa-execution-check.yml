@@ -1,0 +1,64 @@
+name: garpa-execution-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaExecution.ts"
+      - "app/src/lib/garpa/validateExecutionReceipts.ts"
+      - "app/src/lib/garpa/validatePreflightRequest.ts"
+      - "app/src/lib/garpa/runPreflightGate.ts"
+      - "app/src/lib/garpa/runMissionEvaluation.ts"
+      - "tests/lib/garpaExecution.test.ts"
+      - "examples/garpa-execution-receipts/**"
+      - "mcp/garpaExecutionTools.ts"
+      - "mcp/garpa-execution-server.ts"
+      - "mcp/tsconfig.execution.json"
+      - ".github/workflows/garpa-execution-check.yml"
+  push:
+    branches:
+      - "feature/garpa-admission-spine-v1"
+    paths:
+      - "app/src/types/garpaExecution.ts"
+      - "app/src/lib/garpa/validateExecutionReceipts.ts"
+      - "app/src/lib/garpa/validatePreflightRequest.ts"
+      - "app/src/lib/garpa/runPreflightGate.ts"
+      - "app/src/lib/garpa/runMissionEvaluation.ts"
+      - "tests/lib/garpaExecution.test.ts"
+      - "examples/garpa-execution-receipts/**"
+      - "mcp/garpaExecutionTools.ts"
+      - "mcp/garpa-execution-server.ts"
+      - "mcp/tsconfig.execution.json"
+      - ".github/workflows/garpa-execution-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  execution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA execution receipt tests
+        run: npx vitest run tests/lib/garpaExecution.test.ts
+
+      - name: Typecheck workbench
+        run: npm run typecheck
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA execution MCP server
+        run: npx tsc --noEmit -p tsconfig.execution.json
+        working-directory: mcp
