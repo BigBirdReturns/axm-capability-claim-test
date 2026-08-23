@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "operator": {
+    "value": "One trained site operator",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e_outcome", "e_boundary"],
+    "limitations": []
+  },
+  "protectedOrAffectedObject": {
+    "value": "The controlled test site inside the marked boundary",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e_outcome"],
+    "limitations": []
+  },
+  "problemOrThreat": {
+    "value": "An unauthorized test object approaching the marked boundary",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e_outcome"],
+    "limitations": ["Only the defined test-object class is admitted."]
+  },
+  "desiredStateChange": {
+    "value": "Present a detection notification before the test object crosses the boundary and preserve a replayable record",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e_outcome", "e_metric"],
+    "limitations": []
+  },
+  "operatingEnvironment": {
+    "value": "Controlled outdoor daylight test site",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e_environment"],
+    "limitations": ["Adverse weather and unrestricted background traffic are excluded."]
+  },
+  "timeAndCoverageRequirement": {
+    "value": "Continuous coverage during one one-hour trial within the marked test geometry",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e_metric"],
+    "limitations": []
+  },
+  "successMetrics": [
+    {
+      "id": "m_detect_before_boundary",
+      "name": "Notification before boundary crossing",
+      "comparator": "boolean",
+      "threshold": true,
+      "baseline": false,
+      "basis": "externally_supported",
+      "evidenceCellIds": ["e_metric"],
+      "limitations": []
+    }
+  ],
+  "economicConstraint": {
+    "value": "All evaluated cost categories must remain visible; no price ceiling is yet admitted.",
+    "basis": "derived",
+    "evidenceCellIds": ["e_boundary"],
+    "limitations": ["A numerical acquisition or operating ceiling is not available."]
+  },
+  "exclusions": [
+    "No active interference or physical effect delivery.",
+    "No performance claim outside the controlled test geometry and defined test-object class."
+  ]
+}

@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-EXAMPLE-0001",
+  "missionOutcomeDigest": "sha256:site-awareness-mission-v1",
+  "functions": [
+    {
+      "id": "f_observe_environment",
+      "name": "Observe the admitted environment",
+      "purpose": "Convert the controlled test fixture into a timestamped observation stream.",
+      "functionClass": "essential",
+      "state": "required",
+      "inputInterfaceIds": ["i_scene_input"],
+      "outputInterfaceIds": ["i_observation_stream"],
+      "functionDependencyIds": [],
+      "externalDependencyIds": ["dep_test_fixture"],
+      "automationLevel": "bounded_autonomy",
+      "humanRoleIds": [],
+      "consequenceClass": "routine",
+      "evidenceCellIds": ["e_environment", "e_metric"],
+      "assumptions": ["The test fixture supplies ground-truthed scene input."],
+      "failureModes": ["Observation stream unavailable or not time-aligned."],
+      "residualQuestions": ["Which sensing modality will satisfy this function most economically?"]
+    },
+    {
+      "id": "f_detect_candidate",
+      "name": "Detect the candidate object",
+      "purpose": "Determine whether the admitted test object is present and approaching the marked boundary.",
+      "functionClass": "essential",
+      "state": "required",
+      "inputInterfaceIds": ["i_observation_stream"],
+      "outputInterfaceIds": ["i_detection_event"],
+      "functionDependencyIds": ["f_observe_environment"],
+      "externalDependencyIds": [],
+      "automationLevel": "bounded_autonomy",
+      "humanRoleIds": [],
+      "consequenceClass": "material",
+      "evidenceCellIds": ["e_outcome", "e_metric"],
+      "assumptions": ["The target class is limited to the defined fixture."],
+      "failureModes": ["Missed detection or detection after boundary crossing."],
+      "residualQuestions": ["What false-positive burden is acceptable in later qualification?"]
+    },
+    {
+      "id": "f_present_notification",
+      "name": "Present the notification to the operator",
+      "purpose": "Deliver a time-stamped detection notice to the trained site operator before boundary crossing.",
+      "functionClass": "essential",
+      "state": "required",
+      "inputInterfaceIds": ["i_detection_event"],
+      "outputInterfaceIds": ["i_operator_notice"],
+      "functionDependencyIds": ["f_detect_candidate"],
+      "externalDependencyIds": [],
+      "automationLevel": "decision_support",
+      "humanRoleIds": ["role_site_operator"],
+      "consequenceClass": "material",
+      "evidenceCellIds": ["e_outcome", "e_metric", "e_boundary"],
+      "assumptions": ["The operator is present and trained for the one-hour trial."],
+      "failureModes": ["Notice not delivered, not visible, or delivered too late."],
+      "residualQuestions": ["Which operator interface minimizes workload without hiding uncertainty?"]
+    },
+    {
+      "id": "f_record_event",
+      "name": "Record the event chain",
+      "purpose": "Preserve the observations, detection event, and operator notice in a replayable record.",
+      "functionClass": "sustainment",
+      "state": "required",
+      "inputInterfaceIds": ["i_detection_event"],
+      "outputInterfaceIds": ["i_replay_record"],
+      "functionDependencyIds": ["f_detect_candidate"],
+      "externalDependencyIds": [],
+      "automationLevel": "bounded_autonomy",
+      "humanRoleIds": [],
+      "consequenceClass": "routine",
+      "evidenceCellIds": ["e_boundary", "e_metric"],
+      "assumptions": ["Local storage is available throughout the trial."],
+      "failureModes": ["Incomplete timestamps, missing events, or unreplayable output."],
+      "residualQuestions": ["What retention period belongs in a later operating boundary?"]
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "i_scene_input",
+      "name": "Ground-truthed scene input",
+      "interfaceType": "environmental",
+      "externalProducerDependencyIds": ["dep_test_fixture"],
+      "externalConsumerDependencyIds": [],
+      "terminal": false,
+      "evidenceCellIds": ["e_environment"],
+      "limitations": ["Only the controlled fixture is admitted."]
+    },
+    {
+      "id": "i_observation_stream",
+      "name": "Timestamped observation stream",
+      "interfaceType": "data",
+      "externalProducerDependencyIds": [],
+      "externalConsumerDependencyIds": [],
+      "terminal": false,
+      "evidenceCellIds": ["e_metric"],
+      "limitations": []
+    },
+    {
+      "id": "i_detection_event",
+      "name": "Candidate detection event",
+      "interfaceType": "data",
+      "externalProducerDependencyIds": [],
+      "externalConsumerDependencyIds": [],
+      "terminal": false,
+      "evidenceCellIds": ["e_metric"],
+      "limitations": []
+    },
+    {
+      "id": "i_operator_notice",
+      "name": "Operator notification",
+      "interfaceType": "human",
+      "externalProducerDependencyIds": [],
+      "externalConsumerDependencyIds": [],
+      "terminal": true,
+      "evidenceCellIds": ["e_outcome", "e_metric"],
+      "limitations": []
+    },
+    {
+      "id": "i_replay_record",
+      "name": "Replayable event record",
+      "interfaceType": "data",
+      "externalProducerDependencyIds": [],
+      "externalConsumerDependencyIds": [],
+      "terminal": true,
+      "evidenceCellIds": ["e_boundary"],
+      "limitations": []
+    }
+  ],
+  "traces": [
+    {
+      "id": "t_operator",
+      "missionField": "operator",
+      "functionIds": ["f_present_notification"],
+      "evidenceCellIds": ["e_outcome", "e_boundary"],
+      "rationale": "The operator receives and interprets the notification."
+    },
+    {
+      "id": "t_object",
+      "missionField": "protected_or_affected_object",
+      "functionIds": ["f_observe_environment", "f_detect_candidate"],
+      "evidenceCellIds": ["e_outcome"],
+      "rationale": "Observation and detection are scoped to the protected test geometry."
+    },
+    {
+      "id": "t_threat",
+      "missionField": "problem_or_threat",
+      "functionIds": ["f_detect_candidate"],
+      "evidenceCellIds": ["e_outcome"],
+      "rationale": "Detection distinguishes the admitted test object from no-object baseline conditions."
+    },
+    {
+      "id": "t_state_change",
+      "missionField": "desired_state_change",
+      "functionIds": ["f_observe_environment", "f_detect_candidate", "f_present_notification", "f_record_event"],
+      "evidenceCellIds": ["e_outcome", "e_metric"],
+      "rationale": "The required state change is detection, notification, and replayable evidence before boundary crossing."
+    },
+    {
+      "id": "t_environment",
+      "missionField": "operating_environment",
+      "functionIds": ["f_observe_environment"],
+      "evidenceCellIds": ["e_environment"],
+      "rationale": "The observation function is constrained to the admitted daylight outdoor fixture."
+    },
+    {
+      "id": "t_time_coverage",
+      "missionField": "time_and_coverage_requirement",
+      "functionIds": ["f_observe_environment", "f_detect_candidate", "f_present_notification"],
+      "evidenceCellIds": ["e_metric"],
+      "rationale": "These functions carry continuous coverage and timely notification across the one-hour trial."
+    },
+    {
+      "id": "t_metric_detection",
+      "missionField": "success_metric",
+      "metricId": "m_detect_before_boundary",
+      "functionIds": ["f_observe_environment", "f_detect_candidate", "f_present_notification", "f_record_event"],
+      "evidenceCellIds": ["e_metric"],
+      "rationale": "The metric requires observation, detection, operator presentation, and a replayable timing record."
+    }
+  ],
+  "humanRoles": [
+    {
+      "id": "role_site_operator",
+      "title": "Site operator",
+      "responsibilities": ["Remain present during the trial", "Acknowledge the notification", "Record any intervention"],
+      "authorityBoundary": "The operator may acknowledge or annotate notices but may not alter detection thresholds during a run.",
+      "staffingAssumption": "One trained operator for one one-hour trial.",
+      "trainingRequirements": ["Fixture orientation", "Notification acknowledgement", "Intervention logging"],
+      "evidenceCellIds": ["e_boundary", "e_metric"],
+      "limitations": []
+    }
+  ],
+  "externalDependencies": [
+    {
+      "id": "dep_test_fixture",
+      "name": "Controlled ground-truthed test fixture",
+      "dependencyType": "sensor_or_input",
+      "required": true,
+      "provider": "GARPA test harness",
+      "evidenceCellIds": ["e_environment", "e_metric"],
+      "limitations": ["The fixture does not represent unrestricted field conditions."]
+    }
+  ],
+  "constraintEnvelope": {
+    "environment": {
+      "state": "complete",
+      "statements": ["Controlled outdoor daylight site", "Defined test-object class", "Marked boundary geometry"],
+      "openQuestions": [],
+      "evidenceCellIds": ["e_environment", "e_metric"]
+    },
+    "deployment": {
+      "state": "complete",
+      "statements": ["Fixed test position", "One one-hour trial", "No active effect delivery"],
+      "openQuestions": [],
+      "evidenceCellIds": ["e_metric", "e_boundary"]
+    },
+    "resources": {
+      "state": "complete",
+      "statements": ["Local processing", "Local storage", "One trained operator", "Controlled input fixture"],
+      "openQuestions": [],
+      "evidenceCellIds": ["e_boundary"]
+    },
+    "governance": {
+      "state": "complete",
+      "statements": ["Passive controlled testing only", "No regulated transmission or physical effect", "Operator interventions must be logged"],
+      "openQuestions": [],
+      "evidenceCellIds": ["e_boundary", "e_metric"]
+    },
+    "economic": {
+      "state": "complete",
+      "statements": ["Hardware, software, integration labor, operator labor, fixture support, and qualification cost remain inside the accounting boundary"],
+      "openQuestions": [],
+      "evidenceCellIds": ["e_boundary"]
+    }
+  },
+  "feedbackLoops": [],
+  "exclusions": ["No component, vendor, or implementation is selected by this graph.", "No field or operational equivalence is claimed."],
+  "generatedAt": "2026-08-22T20:00:00Z"
+}

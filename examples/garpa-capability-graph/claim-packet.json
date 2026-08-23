@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "subject": {
+    "claimant": "Example Integrator",
+    "organization": "Example Integrator",
+    "offering": "Site Awareness Service",
+    "offeringVersion": "1.0",
+    "offeringType": "service"
+  },
+  "artifacts": [
+    {
+      "id": "a1",
+      "kind": "datasheet",
+      "title": "Site Awareness Service 1.0 offering record",
+      "publisher": "Example Integrator",
+      "capturedAt": "2026-08-22T20:00:00Z",
+      "exactVersion": "1.0"
+    },
+    {
+      "id": "a2",
+      "kind": "contract_record",
+      "title": "Controlled-site awareness requirement",
+      "publisher": "Example Site Operator",
+      "capturedAt": "2026-08-22T20:00:00Z"
+    }
+  ],
+  "evidence": [
+    {
+      "id": "e_identity",
+      "target": "offering_identity",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "a1",
+        "description": "The offering record names Site Awareness Service."
+      },
+      "supports": ["c_identity"],
+      "limitations": []
+    },
+    {
+      "id": "e_version",
+      "target": "offering_version",
+      "venue": "claimant_publication",
+      "control": "claimant_controlled",
+      "locator": {
+        "artifactId": "a1",
+        "description": "The offering record identifies version 1.0."
+      },
+      "subjectVersion": "1.0",
+      "supports": ["c_version"],
+      "limitations": []
+    },
+    {
+      "id": "e_outcome",
+      "target": "operator_need",
+      "venue": "customer_publication",
+      "control": "externally_attributed",
+      "locator": {
+        "artifactId": "a2",
+        "description": "The site operator requires detection and notification before a defined boundary crossing."
+      },
+      "scopeCompleteness": "complete",
+      "supports": ["c_outcome"],
+      "limitations": []
+    },
+    {
+      "id": "e_environment",
+      "target": "operating_environment",
+      "venue": "customer_publication",
+      "control": "externally_attributed",
+      "locator": {
+        "artifactId": "a2",
+        "description": "The requirement defines a controlled outdoor test site and daylight conditions."
+      },
+      "scopeCompleteness": "complete",
+      "supports": ["c_environment"],
+      "limitations": ["The requirement does not cover adverse weather or unrestricted background traffic."]
+    },
+    {
+      "id": "e_boundary",
+      "target": "system_boundary",
+      "venue": "customer_publication",
+      "control": "externally_attributed",
+      "locator": {
+        "artifactId": "a2",
+        "description": "The boundary includes sensing input, local processing, operator presentation, logging, one trained operator, and test-fixture support."
+      },
+      "scopeCompleteness": "complete",
+      "supports": ["c_boundary"],
+      "limitations": []
+    },
+    {
+      "id": "e_metric",
+      "target": "operator_need",
+      "venue": "customer_publication",
+      "control": "externally_attributed",
+      "locator": {
+        "artifactId": "a2",
+        "description": "The required result is a notification before the test object crosses the marked boundary during a one-hour trial."
+      },
+      "scopeCompleteness": "complete",
+      "supports": [],
+      "limitations": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "c_identity",
+      "field": "offering_identity",
+      "statement": "Example Integrator identifies the offering as Site Awareness Service.",
+      "target": "offering_identity",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e_identity"],
+      "lifecycle": "active",
+      "limitations": []
+    },
+    {
+      "id": "c_version",
+      "field": "offering_version",
+      "statement": "The evaluated offering version is 1.0.",
+      "target": "offering_version",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e_version"],
+      "lifecycle": "active",
+      "limitations": []
+    },
+    {
+      "id": "c_outcome",
+      "field": "advertised_outcome",
+      "statement": "The customer requires detection and operator notification before a defined boundary crossing.",
+      "target": "operator_need",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e_outcome"],
+      "lifecycle": "active",
+      "limitations": []
+    },
+    {
+      "id": "c_environment",
+      "field": "operating_environment",
+      "statement": "The admitted environment is a controlled outdoor daylight test site.",
+      "target": "operating_environment",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e_environment"],
+      "lifecycle": "active",
+      "limitations": ["Adverse weather and unrestricted background traffic are excluded."]
+    },
+    {
+      "id": "c_boundary",
+      "field": "system_boundary",
+      "statement": "The complete evaluated boundary includes input sensing, local processing, operator presentation, logging, one trained operator, and test-fixture support.",
+      "target": "system_boundary",
+      "evidenceClass": "confirmed",
+      "evidenceCellIds": ["e_boundary"],
+      "lifecycle": "active",
+      "limitations": []
+    }
+  ],
+  "conflicts": [],
+  "capturedAt": "2026-08-22T20:00:00Z"
+}

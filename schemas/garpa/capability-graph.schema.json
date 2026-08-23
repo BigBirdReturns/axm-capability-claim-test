@@ -1,0 +1,228 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/capability-graph.schema.json",
+  "title": "GARPA Capability Graph",
+  "description": "Implementation-neutral decomposition of an admitted mission outcome. Component selection and architecture remain downstream.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "caseId",
+    "missionOutcomeDigest",
+    "functions",
+    "interfaces",
+    "traces",
+    "humanRoles",
+    "externalDependencies",
+    "constraintEnvelope",
+    "feedbackLoops",
+    "exclusions",
+    "generatedAt"
+  ],
+  "$defs": {
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "constraintSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "statements", "openQuestions", "evidenceCellIds"],
+      "properties": {
+        "state": { "enum": ["complete", "partial", "open"] },
+        "statements": { "$ref": "#/$defs/stringArray" },
+        "openQuestions": { "$ref": "#/$defs/stringArray" },
+        "evidenceCellIds": { "$ref": "#/$defs/stringArray" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "missionOutcomeDigest": { "type": "string", "minLength": 1 },
+    "functions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "purpose",
+          "functionClass",
+          "state",
+          "inputInterfaceIds",
+          "outputInterfaceIds",
+          "functionDependencyIds",
+          "externalDependencyIds",
+          "automationLevel",
+          "humanRoleIds",
+          "consequenceClass",
+          "evidenceCellIds",
+          "assumptions",
+          "failureModes",
+          "residualQuestions"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "purpose": { "type": "string", "minLength": 1 },
+          "functionClass": {
+            "enum": ["essential", "enabling", "coordination", "sustainment", "assurance", "vendor_specific"]
+          },
+          "state": { "enum": ["required", "optional", "excluded", "unresolved"] },
+          "inputInterfaceIds": { "$ref": "#/$defs/stringArray" },
+          "outputInterfaceIds": { "$ref": "#/$defs/stringArray" },
+          "functionDependencyIds": { "$ref": "#/$defs/stringArray" },
+          "externalDependencyIds": { "$ref": "#/$defs/stringArray" },
+          "automationLevel": {
+            "enum": ["manual", "decision_support", "supervised_automation", "bounded_autonomy"]
+          },
+          "humanRoleIds": { "$ref": "#/$defs/stringArray" },
+          "consequenceClass": { "enum": ["routine", "material", "safety_critical"] },
+          "authorityBoundary": { "type": "string" },
+          "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+          "assumptions": { "$ref": "#/$defs/stringArray" },
+          "failureModes": { "$ref": "#/$defs/stringArray" },
+          "residualQuestions": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "interfaces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "interfaceType",
+          "externalProducerDependencyIds",
+          "externalConsumerDependencyIds",
+          "terminal",
+          "evidenceCellIds",
+          "limitations"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "interfaceType": {
+            "enum": ["data", "power", "mechanical", "network", "human", "environmental", "organizational"]
+          },
+          "formatOrProtocol": { "type": "string" },
+          "rateOrCapacity": { "type": "string" },
+          "latencyConstraint": { "type": "string" },
+          "securityConstraint": { "type": "string" },
+          "externalProducerDependencyIds": { "$ref": "#/$defs/stringArray" },
+          "externalConsumerDependencyIds": { "$ref": "#/$defs/stringArray" },
+          "terminal": { "type": "boolean" },
+          "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+          "limitations": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "traces": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "missionField", "functionIds", "evidenceCellIds", "rationale"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "missionField": {
+            "enum": ["operator", "protected_or_affected_object", "problem_or_threat", "desired_state_change", "operating_environment", "time_and_coverage_requirement", "success_metric"]
+          },
+          "metricId": { "type": "string" },
+          "functionIds": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+          "rationale": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "humanRoles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "responsibilities", "trainingRequirements", "evidenceCellIds", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "responsibilities": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "authorityBoundary": { "type": "string" },
+          "staffingAssumption": { "type": "string" },
+          "trainingRequirements": { "$ref": "#/$defs/stringArray" },
+          "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+          "limitations": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "externalDependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "dependencyType", "required", "evidenceCellIds", "limitations"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "dependencyType": {
+            "enum": ["sensor_or_input", "service", "infrastructure", "communications", "power", "operator_organization", "other"]
+          },
+          "required": { "type": "boolean" },
+          "provider": { "type": "string" },
+          "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+          "limitations": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "constraintEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environment", "deployment", "resources", "governance", "economic"],
+      "properties": {
+        "environment": { "$ref": "#/$defs/constraintSection" },
+        "deployment": { "$ref": "#/$defs/constraintSection" },
+        "resources": { "$ref": "#/$defs/constraintSection" },
+        "governance": { "$ref": "#/$defs/constraintSection" },
+        "economic": { "$ref": "#/$defs/constraintSection" }
+      }
+    },
+    "feedbackLoops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "functionIds", "interfaceIds", "rationale"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "functionIds": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "interfaceIds": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string" }
+          },
+          "rationale": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "exclusions": { "$ref": "#/$defs/stringArray" },
+    "generatedAt": { "type": "string", "minLength": 1 }
+  }
+}
