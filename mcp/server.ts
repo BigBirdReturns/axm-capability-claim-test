@@ -34,6 +34,7 @@ import {
 import { runGarpaAdmission } from "../app/src/lib/garpa/runGarpaAdmission.ts";
 import { renderGarpaRealityBrief } from "../app/src/lib/garpa/renderRealityBrief.ts";
 import { registerGarpaCapabilityTools } from "./garpaCapabilityTools.ts";
+import { registerGarpaSubstitutionTools } from "./garpaSubstitutionTools.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -259,9 +260,6 @@ server.registerTool(
 );
 
 // 5. GARPA ADMISSION ---------------------------------------------------------
-// This is the first executable bridge from arbitrary hype artifacts to a
-// governed engineering case. It stops before architecture: no admitted goal,
-// no decomposition; no measured evidence, no performance or cost promotion.
 server.registerTool(
   "validate_garpa_claim_packet",
   {
@@ -338,10 +336,10 @@ server.registerTool(
 );
 
 // 6. GARPA CAPABILITY GRAPH --------------------------------------------------
-// The capability-graph tools are registered from a separate module so future
-// substitution and architecture tools can grow without turning this server
-// into a second implementation of the method.
 registerGarpaCapabilityTools(server);
+
+// 7. GARPA COMPONENT SUBSTITUTION -------------------------------------------
+registerGarpaSubstitutionTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
