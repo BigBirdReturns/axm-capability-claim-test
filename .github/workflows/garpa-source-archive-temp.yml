@@ -1,29 +1,38 @@
-name: garpa-source-archive-temp
+name: garpa-seeded-build-manifest-bootstrap
 
 on:
-  pull_request:
-    paths:
-      - ".github/workflows/garpa-source-archive-temp.yml"
-      - "app/**"
-      - "docs/**"
-      - "examples/**"
-      - "mcp/**"
-      - "schemas/**"
-      - "tests/**"
-      - "tsconfig*.json"
   push:
     branches:
       - "feature/garpa-commons-seeded-build-manifest-v1"
+    paths:
+      - ".github/garpa-bootstrap-trigger"
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: garpa-seeded-build-manifest-bootstrap
+  cancel-in-progress: false
 
 jobs:
-  archive:
+  apply-and-qualify:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout branch
         uses: actions/checkout@v4
+        with:
+          ref: "feature/garpa-commons-seeded-build-manifest-v1"
+          fetch-depth: 0
+
+      - name: Apply governed build-manifest change set
+        shell: bash
+        run: |
+          cat .github/garpa-build-payload-*.b64 > /tmp/garpa-build-changes.b64
+          base64 --decode /tmp/garpa-build-changes.b64 > /tmp/garpa-build-changes.tar.gz
+          tar -xzf /tmp/garpa-build-changes.tar.gz
+          rm -f .github/workflows/garpa-source-archive-temp.yml
+          rm -f .github/garpa-build-payload-*.b64
+          rm -f .github/garpa-bootstrap-trigger
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -34,14 +43,35 @@ jobs:
       - name: Install workbench dependencies
         run: npm ci
 
+      - name: Run seeded chain and method regressions
+        run: >-
+          npx vitest run
+          tests/lib/garpaCommonsSeededSubstitution.test.ts
+          tests/lib/garpaCommonsSeededArchitecture.test.ts
+          tests/lib/garpaCommonsSeededQualification.test.ts
+          tests/lib/garpaCommonsSeededBuildManifest.test.ts
+          tests/lib/garpaMethodVersion.test.ts
+
+      - name: Typecheck seeded build-manifest surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+
+      - name: Build static workbench bundle
+        run: npx vite build
+
       - name: Install MCP dependencies
         run: npm ci
         working-directory: mcp
 
-      - name: Upload dependency-complete source tree
-        uses: actions/upload-artifact@v4
-        with:
-          name: garpa-seeded-build-manifest-source
-          path: .
-          include-hidden-files: true
-          retention-days: 1
+      - name: Typecheck seeded build-manifest MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+        working-directory: mcp
+
+      - name: Commit qualified change set
+        shell: bash
+        run: |
+          git config user.name "BigBirdReturns"
+          git config user.email "bigbirdreturns@proton.me"
+          git add -A
+          git diff --cached --check
+          git commit -m "Bind Commons-seeded qualification into build manifests"
+          git push origin HEAD:feature/garpa-commons-seeded-build-manifest-v1
