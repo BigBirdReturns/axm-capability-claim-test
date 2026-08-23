@@ -24,7 +24,7 @@ This prevents a launch post that says "a fraction of the cost" from satisfying a
 The first gate requires:
 
 - claimant and offering identity;
-- an exact product, service, or system version;
+- an exact product, service, or system version bound to a version evidence cell;
 - the advertised customer outcome;
 - a complete operating environment;
 - a complete system boundary that includes the material service and labor envelope.
@@ -46,7 +46,7 @@ The second gate requires:
 - at least one falsifiable success metric;
 - a baseline for each admitted metric.
 
-Vague terms such as `effective`, `advanced`, `high-performance`, or `a fraction of the cost` are retrieval targets, not acceptance criteria.
+Vague terms such as `effective`, `advanced`, `high-performance`, or `a fraction of the cost` are retrieval targets, not acceptance criteria. Numeric metrics require units, boolean and categorical metrics require typed thresholds, and every admitted metric requires a type-compatible baseline.
 
 ## First fixture
 

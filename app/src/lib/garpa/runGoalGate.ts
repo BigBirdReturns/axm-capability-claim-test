@@ -38,10 +38,12 @@ function hasTargetedEvidence(
   cells: ReadonlyMap<string, EvidenceCell>,
   targets: ReadonlySet<EvidenceTarget>,
   requireExternal: boolean,
+  requireCompleteScope: boolean,
 ): boolean {
   return ids.some((id) => {
     const cell = cells.get(id);
     if (!cell || !targets.has(cell.target)) return false;
+    if (requireCompleteScope && cell.scopeCompleteness !== "complete") return false;
     if (!requireExternal) return true;
     return ["externally_attributed", "independent", "local_measured"].includes(
       cell.control,
@@ -61,14 +63,38 @@ function valueAdmitted(
     cells,
     TARGETS[field]!,
     value.basis === "externally_supported",
+    field === "operating_environment" ||
+      field === "time_and_coverage_requirement",
   );
 }
 
 function metricHasThreshold(metric: OutcomeMetric): boolean {
   if (metric.comparator === "range") {
-    return metric.lowerBound !== undefined && metric.upperBound !== undefined;
+    return (
+      metric.lowerBound !== undefined &&
+      metric.upperBound !== undefined &&
+      Boolean(metric.unit?.trim())
+    );
   }
-  return metric.threshold !== undefined;
+  if (metric.comparator === "gte" || metric.comparator === "lte") {
+    return typeof metric.threshold === "number" && Boolean(metric.unit?.trim());
+  }
+  if (metric.comparator === "boolean") {
+    return typeof metric.threshold === "boolean";
+  }
+  return (
+    typeof metric.threshold === "string" &&
+    Boolean(metric.threshold.trim()) &&
+    !VAGUE_LANGUAGE.test(metric.threshold)
+  );
+}
+
+function metricHasBaseline(metric: OutcomeMetric): boolean {
+  if (metric.comparator === "range" || metric.comparator === "gte" || metric.comparator === "lte") {
+    return typeof metric.baseline === "number";
+  }
+  if (metric.comparator === "boolean") return typeof metric.baseline === "boolean";
+  return typeof metric.baseline === "string" && Boolean(metric.baseline.trim());
 }
 
 function metricAdmitted(
@@ -77,13 +103,16 @@ function metricAdmitted(
 ): boolean {
   if (metric.basis === "open" || metric.basis === "analyst_hypothesis") return false;
   if (!metricHasThreshold(metric)) return false;
-  if (VAGUE_LANGUAGE.test(metric.name)) return false;
-  if (typeof metric.threshold === "string" && VAGUE_LANGUAGE.test(metric.threshold)) return false;
+  if (
+    (metric.comparator === "boolean" || metric.comparator === "categorical") &&
+    VAGUE_LANGUAGE.test(metric.name)
+  ) return false;
   return hasTargetedEvidence(
     metric.evidenceCellIds,
     cells,
     TARGETS.success_metrics!,
     metric.basis === "externally_supported",
+    false,
   );
 }
 
@@ -134,7 +163,7 @@ export function runGoalGate(
     .filter((metric) => !metricAdmitted(metric, cells))
     .map((metric) => metric.id);
   const missingBaselineMetricIds = admittedMetrics
-    .filter((metric) => metric.baseline === undefined)
+    .filter((metric) => !metricHasBaseline(metric))
     .map((metric) => metric.id);
 
   if (admittedMetrics.length > 0) admittedFields.push("success_metrics");

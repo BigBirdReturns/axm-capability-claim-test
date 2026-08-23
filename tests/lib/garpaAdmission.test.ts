@@ -28,6 +28,7 @@ function packetWithGoalEvidence(packet: ClaimPacket): ClaimPacket {
       venue: "customer_publication",
       control: "externally_attributed",
       locator: { artifactId: copy.artifacts[0]!.id, description: "Controlled outdoor site." },
+      scopeCompleteness: "complete",
       supports: [],
       limitations: [],
     },
@@ -37,6 +38,7 @@ function packetWithGoalEvidence(packet: ClaimPacket): ClaimPacket {
       venue: "customer_publication",
       control: "externally_attributed",
       locator: { artifactId: copy.artifacts[0]!.id, description: "One-hour detection requirement." },
+      scopeCompleteness: "complete",
       supports: [],
       limitations: [],
     },
@@ -44,7 +46,7 @@ function packetWithGoalEvidence(packet: ClaimPacket): ClaimPacket {
   return copy;
 }
 
-function passingOutcome(packet: ClaimPacket): MissionOutcome {
+function passingOutcome(): MissionOutcome {
   const claimEvidence = ["e2"];
   const value = (text: string, evidenceCellIds: string[] = claimEvidence) => ({
     value: text,
@@ -134,6 +136,14 @@ describe("GARPA offering evidence gate", () => {
     expect(result.admittedFields).not.toContain("system_boundary");
     expect(result.missingFields).toContain("system_boundary");
   });
+
+  it("does not accept a model-supplied version without source-bound version evidence", () => {
+    const { packet } = validatedVectus();
+    packet.subject.offeringVersion = "1.0";
+    const result = runOfferingEvidenceGate(packet);
+    expect(result.admittedFields).not.toContain("offering_version");
+    expect(result.missingFields).toContain("offering_version");
+  });
 });
 
 describe("GARPA goal gate", () => {
@@ -150,7 +160,7 @@ describe("GARPA goal gate", () => {
   it("admits a fully sourced, falsifiable mission outcome", () => {
     const { packet } = validatedVectus();
     const enriched = packetWithGoalEvidence(packet);
-    const result = runGoalGate(passingOutcome(enriched), enriched);
+    const result = runGoalGate(passingOutcome(), enriched);
     expect(result.passed).toBe(true);
     expect(result.state).toBe("admitted_for_decomposition");
   });
@@ -163,10 +173,26 @@ describe("GARPA goal gate", () => {
     expect(result.missingFields).toContain("operator");
   });
 
+  it("rejects numeric thresholds that omit the measured unit", () => {
+    const { packet } = validatedVectus();
+    const enriched = packetWithGoalEvidence(packet);
+    const outcome = passingOutcome();
+    outcome.successMetrics[0] = {
+      ...outcome.successMetrics[0]!,
+      comparator: "lte",
+      threshold: 2,
+      baseline: 10,
+      unit: undefined,
+    };
+    const result = runGoalGate(outcome, enriched);
+    expect(result.passed).toBe(false);
+    expect(result.rejectedMetricIds).toContain("m1");
+  });
+
   it("rejects vague marketing language as a success metric", () => {
     const { packet } = validatedVectus();
     const enriched = packetWithGoalEvidence(packet);
-    const outcome = passingOutcome(enriched);
+    const outcome = passingOutcome();
     outcome.successMetrics[0] = {
       ...outcome.successMetrics[0]!,
       name: "Effective high-performance protection",

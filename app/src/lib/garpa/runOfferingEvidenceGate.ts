@@ -39,10 +39,12 @@ function fieldHasEvidence(
   targets: ReadonlySet<EvidenceTarget>,
   controls?: ReadonlySet<EvidenceControl>,
 ): boolean {
-  return claimsForField(packet, field).some((claim) =>
-    cellsForClaim(packet, claim).some(
-      (cell) => targets.has(cell.target) && (!controls || controls.has(cell.control)),
-    ),
+  return claimsForField(packet, field).some(
+    (claim) =>
+      targets.has(claim.target) &&
+      cellsForClaim(packet, claim).some(
+        (cell) => targets.has(cell.target) && (!controls || controls.has(cell.control)),
+      ),
   );
 }
 
@@ -51,53 +53,86 @@ function fieldHasCompleteScope(
   field: string,
   targets: ReadonlySet<EvidenceTarget>,
 ): boolean {
-  return claimsForField(packet, field).some((claim) =>
-    cellsForClaim(packet, claim).some(
-      (cell) => targets.has(cell.target) && cell.scopeCompleteness === "complete",
-    ),
+  return claimsForField(packet, field).some(
+    (claim) =>
+      targets.has(claim.target) &&
+      cellsForClaim(packet, claim).some(
+        (cell) =>
+          targets.has(cell.target) && cell.scopeCompleteness === "complete",
+      ),
   );
 }
 
 function versionResolved(packet: ClaimPacket): boolean {
-  if (packet.subject.offeringVersion?.trim()) return true;
-  return packet.evidence.some(
-    (cell) => cell.target === "offering_version" && Boolean(cell.subjectVersion?.trim()),
+  const version = packet.subject.offeringVersion?.trim();
+  if (!version) return false;
+  return claimsForField(packet, "offering_version").some(
+    (claim) =>
+      claim.target === "offering_version" &&
+      cellsForClaim(packet, claim).some(
+        (cell) =>
+          cell.target === "offering_version" &&
+          cell.subjectVersion?.trim() === version,
+      ),
+  );
+}
+
+const SENSITIVE_POLICY: Record<
+  string,
+  {
+    targets: ReadonlySet<EvidenceTarget>;
+    controls: ReadonlySet<EvidenceControl>;
+    reason: string;
+  }
+> = {
+  deployment_record: {
+    targets: new Set(["deployment_occurred"]),
+    controls: EXTERNAL_CONTROLS,
+    reason:
+      "Deployment requires a customer, government, independent, or locally measured record.",
+  },
+  measured_performance: {
+    targets: new Set(["performance_observed", "local_result"]),
+    controls: INDEPENDENT_CONTROLS,
+    reason: "Measured performance requires independent or local measurement evidence.",
+  },
+  economic_baseline: {
+    targets: new Set(["cost_observed"]),
+    controls: EXTERNAL_CONTROLS,
+    reason:
+      "An economic baseline requires an externally attributable or measured cost record.",
+  },
+  independent_verification: {
+    targets: new Set(["independent_verification", "performance_observed"]),
+    controls: INDEPENDENT_CONTROLS,
+    reason:
+      "Independent verification cannot be supplied by claimant-controlled evidence.",
+  },
+};
+
+function sensitiveFieldAdmitted(packet: ClaimPacket, field: string): boolean {
+  const rule = SENSITIVE_POLICY[field];
+  if (!rule) return false;
+  return claimsForField(packet, field).some(
+    (claim) =>
+      rule.targets.has(claim.target) &&
+      cellsForClaim(packet, claim).some(
+        (cell) => rule.targets.has(cell.target) && rule.controls.has(cell.control),
+      ),
   );
 }
 
 function disqualifySensitiveClaims(packet: ClaimPacket): EvidenceDisqualification[] {
-  const policy: Record<
-    string,
-    { targets: ReadonlySet<EvidenceTarget>; controls: ReadonlySet<EvidenceControl>; reason: string }
-  > = {
-    deployment_record: {
-      targets: new Set(["deployment_occurred"]),
-      controls: EXTERNAL_CONTROLS,
-      reason: "Deployment requires a customer, government, independent, or locally measured record.",
-    },
-    measured_performance: {
-      targets: new Set(["performance_observed", "local_result"]),
-      controls: INDEPENDENT_CONTROLS,
-      reason: "Measured performance requires independent or local measurement evidence.",
-    },
-    economic_baseline: {
-      targets: new Set(["cost_observed"]),
-      controls: EXTERNAL_CONTROLS,
-      reason: "An economic baseline requires an externally attributable or measured cost record.",
-    },
-    independent_verification: {
-      targets: new Set(["independent_verification", "performance_observed"]),
-      controls: INDEPENDENT_CONTROLS,
-      reason: "Independent verification cannot be supplied by claimant-controlled evidence.",
-    },
-  };
-
   const findings: EvidenceDisqualification[] = [];
   for (const claim of packet.claims) {
-    const rule = policy[claim.field];
+    const rule = SENSITIVE_POLICY[claim.field];
     if (!rule) continue;
     for (const cell of cellsForClaim(packet, claim)) {
-      if (!rule.targets.has(cell.target) || !rule.controls.has(cell.control)) {
+      if (
+        !rule.targets.has(claim.target) ||
+        !rule.targets.has(cell.target) ||
+        !rule.controls.has(cell.control)
+      ) {
         findings.push({
           evidenceCellId: cell.id,
           claimId: claim.id,
@@ -135,7 +170,7 @@ export function runOfferingEvidenceGate(packet: ClaimPacket): OfferingEvidenceGa
     fieldHasEvidence(
       packet,
       "offering_identity",
-      new Set(["offering_identity", "claim_was_made"]),
+      new Set(["offering_identity"]),
     );
   (identity ? admittedFields : missingFields).push("offering_identity");
 
@@ -164,13 +199,10 @@ export function runOfferingEvidenceGate(packet: ClaimPacket): OfferingEvidenceGa
   (boundary ? admittedFields : missingFields).push("system_boundary");
 
   const disqualifiedCells = disqualifySensitiveClaims(packet);
-  const disqualifiedClaimIds = new Set(disqualifiedCells.map((finding) => finding.claimId));
-  const claimedOnlyFields = Array.from(
-    new Set(
-      packet.claims
-        .filter((claim) => disqualifiedClaimIds.has(claim.id))
-        .map((claim) => claim.field),
-    ),
+  const claimedOnlyFields = Object.keys(SENSITIVE_POLICY).filter(
+    (field) =>
+      claimsForField(packet, field).length > 0 &&
+      !sensitiveFieldAdmitted(packet, field),
   );
 
   const state = !identity
