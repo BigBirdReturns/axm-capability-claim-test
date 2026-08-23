@@ -1,0 +1,326 @@
+{
+  "authority": {
+    "authorityId": "authority-bench-1",
+    "executionClass": "E2_bench_passive",
+    "venueId": "bench-cell-1",
+    "permittedActivities": ["recorded replay", "passive sensing", "simulated response"],
+    "prohibitedActivities": ["radio-frequency interference", "physical defeat"],
+    "requiredAuthorizationRefs": ["bench-owner-approval"],
+    "receivedAuthorizationRefs": ["bench-owner-approval"],
+    "abortAuthority": ["test-authority"],
+    "validFrom": "2026-08-22T00:00:00Z",
+    "expiresAt": "2026-12-31T23:59:59Z",
+    "evidenceArtifactIds": ["authority-record-1"]
+  },
+  "buildReceipt": {
+    "schemaVersion": 1,
+    "caseId": "GARPA-EXEC-0001",
+    "buildId": "build-1",
+    "architectureDigest": "architecture-digest-1",
+    "buildManifestDigest": "manifest-digest-1",
+    "qualificationContractDigest": "qualification-digest-1",
+    "startedAt": "2026-08-22T10:00:00Z",
+    "completedAt": "2026-08-22T14:00:00Z",
+    "installedComponents": [
+      {
+        "manifestItemId": "manifest-camera-1",
+        "componentId": "camera-1",
+        "exactModelOrVersion": "Synthetic Camera 1.0",
+        "serialOrLot": "SIM-001",
+        "firmwareOrSoftwareVersion": "1.0.0",
+        "quantity": 1,
+        "state": "installed"
+      },
+      {
+        "manifestItemId": "manifest-tracker-1",
+        "componentId": "tracker-1",
+        "exactModelOrVersion": "Open Tracker 0.1.0",
+        "firmwareOrSoftwareVersion": "0.1.0",
+        "quantity": 1,
+        "state": "installed"
+      }
+    ],
+    "codeCommits": [
+      {
+        "repository": "BigBirdReturns/garpa-synthetic-observation",
+        "commitSha": "0123456789abcdef",
+        "dirty": false,
+        "buildArtifactDigest": "container-digest-1"
+      }
+    ],
+    "substitutions": [],
+    "deviations": [],
+    "calibrationReceipts": [
+      {
+        "instrumentId": "clock-1",
+        "state": "current",
+        "calibratedAt": "2026-08-22T09:00:00Z",
+        "expiresAt": "2026-09-22T09:00:00Z",
+        "evidenceArtifactIds": ["clock-calibration-1"]
+      }
+    ],
+    "actualCostLines": [
+      {
+        "id": "cost-hardware-1",
+        "category": "hardware",
+        "description": "Synthetic sensing fixture",
+        "amount": 250,
+        "currency": "USD",
+        "recurrence": "one_time",
+        "evidenceArtifactIds": ["invoice-1"]
+      }
+    ],
+    "laborReceipts": [
+      {
+        "id": "labor-integration-1",
+        "category": "integration",
+        "actor": "builder-1",
+        "hours": 4,
+        "note": "Fixture and replay pipeline integration."
+      }
+    ],
+    "artifactIds": ["build-photo-1", "configuration-export-1"],
+    "state": "assembled",
+    "receiptDigest": "build-receipt-digest-1"
+  },
+  "preflightRequest": {
+    "expectedArchitectureDigest": "architecture-digest-1",
+    "expectedBuildManifestDigest": "manifest-digest-1",
+    "expectedQualificationContractDigest": "qualification-digest-1",
+    "requiredExecutionClass": "E2_bench_passive",
+    "requiredActivities": ["recorded replay", "passive sensing", "simulated response"],
+    "requiredOperatorRoles": ["test-authority", "test-operator"],
+    "buildReceipt": {
+      "schemaVersion": 1,
+      "caseId": "GARPA-EXEC-0001",
+      "buildId": "build-1",
+      "architectureDigest": "architecture-digest-1",
+      "buildManifestDigest": "manifest-digest-1",
+      "qualificationContractDigest": "qualification-digest-1",
+      "startedAt": "2026-08-22T10:00:00Z",
+      "completedAt": "2026-08-22T14:00:00Z",
+      "installedComponents": [
+        {
+          "manifestItemId": "manifest-camera-1",
+          "componentId": "camera-1",
+          "exactModelOrVersion": "Synthetic Camera 1.0",
+          "serialOrLot": "SIM-001",
+          "firmwareOrSoftwareVersion": "1.0.0",
+          "quantity": 1,
+          "state": "installed"
+        },
+        {
+          "manifestItemId": "manifest-tracker-1",
+          "componentId": "tracker-1",
+          "exactModelOrVersion": "Open Tracker 0.1.0",
+          "firmwareOrSoftwareVersion": "0.1.0",
+          "quantity": 1,
+          "state": "installed"
+        }
+      ],
+      "codeCommits": [
+        {
+          "repository": "BigBirdReturns/garpa-synthetic-observation",
+          "commitSha": "0123456789abcdef",
+          "dirty": false,
+          "buildArtifactDigest": "container-digest-1"
+        }
+      ],
+      "substitutions": [],
+      "deviations": [],
+      "calibrationReceipts": [
+        {
+          "instrumentId": "clock-1",
+          "state": "current",
+          "calibratedAt": "2026-08-22T09:00:00Z",
+          "expiresAt": "2026-09-22T09:00:00Z",
+          "evidenceArtifactIds": ["clock-calibration-1"]
+        }
+      ],
+      "actualCostLines": [
+        {
+          "id": "cost-hardware-1",
+          "category": "hardware",
+          "description": "Synthetic sensing fixture",
+          "amount": 250,
+          "currency": "USD",
+          "recurrence": "one_time",
+          "evidenceArtifactIds": ["invoice-1"]
+        }
+      ],
+      "laborReceipts": [
+        {
+          "id": "labor-integration-1",
+          "category": "integration",
+          "actor": "builder-1",
+          "hours": 4,
+          "note": "Fixture and replay pipeline integration."
+        }
+      ],
+      "artifactIds": ["build-photo-1", "configuration-export-1"],
+      "state": "assembled",
+      "receiptDigest": "build-receipt-digest-1"
+    },
+    "authority": {
+      "authorityId": "authority-bench-1",
+      "executionClass": "E2_bench_passive",
+      "venueId": "bench-cell-1",
+      "permittedActivities": ["recorded replay", "passive sensing", "simulated response"],
+      "prohibitedActivities": ["radio-frequency interference", "physical defeat"],
+      "requiredAuthorizationRefs": ["bench-owner-approval"],
+      "receivedAuthorizationRefs": ["bench-owner-approval"],
+      "abortAuthority": ["test-authority"],
+      "validFrom": "2026-08-22T00:00:00Z",
+      "expiresAt": "2026-12-31T23:59:59Z",
+      "evidenceArtifactIds": ["authority-record-1"]
+    },
+    "instrumentation": [
+      {
+        "instrumentId": "clock-1",
+        "required": true,
+        "present": true,
+        "calibrationState": "current",
+        "clockSynchronized": true
+      },
+      {
+        "instrumentId": "capture-1",
+        "required": true,
+        "present": true,
+        "calibrationState": "not_required",
+        "clockSynchronized": true
+      }
+    ],
+    "fixtureReady": true,
+    "storageReady": true,
+    "clocksReady": true,
+    "abortPathReady": true,
+    "runIdReserved": true,
+    "assignedOperatorRoles": ["test-authority", "test-operator"],
+    "now": "2026-08-22T15:00:00Z"
+  },
+  "evaluationRequest": {
+    "caseId": "GARPA-EXEC-0001",
+    "qualificationContractDigest": "qualification-digest-1",
+    "buildReceiptDigest": "build-receipt-digest-1",
+    "requiredScenarioIds": ["scenario-passive-observation"],
+    "requiredMetricIds": ["m-detection", "m-latency-ms"],
+    "essentialMetricIds": ["m-detection", "m-latency-ms"],
+    "requiredRunsByMetric": {
+      "m-detection": 1,
+      "m-latency-ms": 1
+    },
+    "scopeIsFullMission": false,
+    "runs": [
+      {
+        "schemaVersion": 1,
+        "caseId": "GARPA-EXEC-0001",
+        "runId": "run-valid-1",
+        "buildReceiptDigest": "build-receipt-digest-1",
+        "qualificationContractDigest": "qualification-digest-1",
+        "scenarioId": "scenario-passive-observation",
+        "testId": "test-end-to-end-1",
+        "executionClass": "E2_bench_passive",
+        "authorityId": "authority-bench-1",
+        "startedAt": "2026-08-22T15:10:00Z",
+        "endedAt": "2026-08-22T15:20:00Z",
+        "operators": ["test-operator"],
+        "configurationDigest": "configuration-digest-1",
+        "fixtureState": {
+          "replay": "fixture-v1",
+          "groundTruth": "known"
+        },
+        "environmentObserved": {
+          "venue": "bench",
+          "network": "isolated"
+        },
+        "instrumentation": [
+          {
+            "instrumentId": "clock-1",
+            "required": true,
+            "present": true,
+            "calibrationState": "current",
+            "clockSynchronized": true
+          },
+          {
+            "instrumentId": "capture-1",
+            "required": true,
+            "present": true,
+            "calibrationState": "not_required",
+            "clockSynchronized": true
+          }
+        ],
+        "rawDataArtifactIds": ["raw-run-valid-1"],
+        "logArtifactIds": ["log-run-valid-1"],
+        "metricResults": [
+          {
+            "metricId": "m-detection",
+            "criticality": "essential",
+            "rawSampleArtifactIds": ["raw-run-valid-1"],
+            "calculationMethod": "Compare event timestamp to ground-truth boundary crossing.",
+            "codeDigest": "analysis-code-digest-1",
+            "sampleCount": 20,
+            "excludedSamples": [],
+            "value": true,
+            "thresholdResult": "pass",
+            "notes": []
+          },
+          {
+            "metricId": "m-latency-ms",
+            "criticality": "essential",
+            "rawSampleArtifactIds": ["raw-run-valid-1"],
+            "calculationMethod": "Median presentation timestamp minus observation timestamp.",
+            "codeDigest": "analysis-code-digest-1",
+            "sampleCount": 20,
+            "excludedSamples": [],
+            "value": 1200,
+            "uncertainty": "±20 ms",
+            "thresholdResult": "pass",
+            "notes": []
+          }
+        ],
+        "interventions": [],
+        "anomalies": [],
+        "aborts": [],
+        "state": "valid",
+        "resultDigest": "run-result-digest-1"
+      },
+      {
+        "schemaVersion": 1,
+        "caseId": "GARPA-EXEC-0001",
+        "runId": "run-aborted-1",
+        "buildReceiptDigest": "build-receipt-digest-1",
+        "qualificationContractDigest": "qualification-digest-1",
+        "scenarioId": "scenario-passive-observation",
+        "testId": "test-end-to-end-1",
+        "executionClass": "E2_bench_passive",
+        "authorityId": "authority-bench-1",
+        "startedAt": "2026-08-22T14:50:00Z",
+        "endedAt": "2026-08-22T14:51:00Z",
+        "operators": ["test-operator"],
+        "configurationDigest": "configuration-digest-1",
+        "fixtureState": {
+          "replay": "fixture-v1"
+        },
+        "environmentObserved": {
+          "venue": "bench"
+        },
+        "instrumentation": [],
+        "rawDataArtifactIds": [],
+        "logArtifactIds": ["log-run-aborted-1"],
+        "metricResults": [],
+        "interventions": [],
+        "anomalies": [],
+        "aborts": [
+          {
+            "id": "abort-1",
+            "occurredAt": "2026-08-22T14:51:00Z",
+            "authority": "test-authority",
+            "reason": "Fixture state did not match the frozen precondition."
+          }
+        ],
+        "state": "aborted",
+        "resultDigest": "run-result-digest-aborted-1"
+      }
+    ]
+  }
+}
