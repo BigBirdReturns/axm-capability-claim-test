@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/release-verification-request.schema.json",
+  "title": "GARPA Release Verification Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest", "computedManifestDigest", "observedFiles"],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "byteLength", "role"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "byteLength": { "type": "integer", "minimum": 0 },
+        "mediaType": { "type": "string" },
+        "role": {
+          "enum": [
+            "release_metadata",
+            "manifest",
+            "reality_brief",
+            "public_dossier",
+            "publication_claims",
+            "support_graph",
+            "source_ledger",
+            "engineering_summary",
+            "mission_evaluation",
+            "vendor_parity",
+            "metric_results",
+            "cost_ledger",
+            "failure_register",
+            "residual_register",
+            "gate_receipt",
+            "rights_receipt",
+            "safety_receipt",
+            "redaction_receipt",
+            "asset",
+            "other"
+          ]
+        }
+      }
+    }
+  },
+  "properties": {
+    "manifest": { "$ref": "release-manifest.schema.json" },
+    "computedManifestDigest": { "$ref": "#/$defs/sha256" },
+    "observedFiles": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/file" }
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "caseId",
+        "supersededReleaseIds",
+        "withdrawnReleaseIds"
+      ],
+      "properties": {
+        "caseId": { "type": "string", "minLength": 1 },
+        "currentReleaseId": { "type": "string" },
+        "currentReleaseDigest": { "$ref": "#/$defs/sha256" },
+        "supersededReleaseIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "withdrawnReleaseIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}
