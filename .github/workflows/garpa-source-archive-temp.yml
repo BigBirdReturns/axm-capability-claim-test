@@ -1,6 +1,9 @@
 name: garpa-seeded-build-manifest-bootstrap
 
 on:
+  pull_request:
+    paths:
+      - ".github/garpa-bootstrap-trigger"
   push:
     branches:
       - "feature/garpa-commons-seeded-build-manifest-v1"
