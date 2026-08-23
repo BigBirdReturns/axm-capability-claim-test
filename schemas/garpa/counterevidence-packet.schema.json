@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/counterevidence-packet.schema.json",
+  "title": "GARPA Counterevidence Packet",
+  "description": "A source-addressable submission against one exact case release and one or more published claim identifiers. The packet proposes evidence; it does not mutate the target release.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packetId",
+    "targetCaseId",
+    "targetReleaseId",
+    "targetReleaseDigest",
+    "targetClaimIds",
+    "submitter",
+    "artifactIds",
+    "evidenceCellIds",
+    "requestedCorrection",
+    "submittedAt"
+  ],
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "packetId": { "type": "string", "minLength": 1 },
+    "targetCaseId": { "type": "string", "minLength": 1 },
+    "targetReleaseId": { "type": "string", "minLength": 1 },
+    "targetReleaseDigest": { "$ref": "#/$defs/sha256" },
+    "targetClaimIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "submitter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["relationshipToSubject"],
+      "properties": {
+        "name": { "type": "string" },
+        "organization": { "type": "string" },
+        "relationshipToSubject": {
+          "enum": [
+            "public",
+            "customer",
+            "vendor",
+            "investor",
+            "employee",
+            "researcher",
+            "operator",
+            "unknown"
+          ]
+        }
+      }
+    },
+    "artifactIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "evidenceCellIds": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "requestedCorrection": { "type": "string", "minLength": 1 },
+    "submittedAt": { "type": "string", "minLength": 1 }
+  }
+}
