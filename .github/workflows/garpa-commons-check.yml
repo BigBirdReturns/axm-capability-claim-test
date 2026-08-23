@@ -4,15 +4,29 @@ on:
   pull_request:
     paths:
       - "app/src/types/garpaCommons.ts"
+      - "app/src/types/garpaCommonsCatalog.ts"
       - "app/src/lib/garpa/validateCommonsAdmission.ts"
       - "app/src/lib/garpa/runCommonsAdmissionGate.ts"
       - "app/src/lib/garpa/renderCommonsAdmission.ts"
+      - "app/src/lib/garpa/canonicalJson.ts"
+      - "app/src/lib/garpa/sha256.ts"
+      - "app/src/lib/garpa/commonsCatalogDigest.ts"
+      - "app/src/lib/garpa/commonsCatalogIdentity.ts"
+      - "app/src/lib/garpa/validateCommonsCatalog.ts"
+      - "app/src/lib/garpa/runCommonsCatalogUpdateGate.ts"
+      - "app/src/lib/garpa/applyCommonsCatalogUpdate.ts"
+      - "app/src/lib/garpa/searchCommonsCatalog.ts"
+      - "app/src/lib/garpa/renderCommonsCatalogUpdate.ts"
       - "tests/lib/garpaCommons.test.ts"
+      - "tests/lib/garpaCommonsCatalog.test.ts"
       - "examples/garpa-commons/**"
+      - "examples/garpa-commons-catalog/**"
       - "schemas/garpa/commons-admission-request.schema.json"
       - "schemas/garpa/commons-admission-result.schema.json"
-      - "docs/garpa-capability-commons.md"
+      - "schemas/garpa/commons-catalog*.schema.json"
+      - "docs/garpa-capability-commons*.md"
       - "mcp/garpaCommonsTools.ts"
+      - "mcp/garpaCommonsCatalogTools.ts"
       - "mcp/garpa-commons-server.ts"
       - "mcp/tsconfig.commons.json"
       - "mcp/README-GARPA-COMMONS.md"
@@ -20,17 +34,32 @@ on:
   push:
     branches:
       - "feature/garpa-commons-admission-v1"
+      - "feature/garpa-commons-catalog-v1"
     paths:
       - "app/src/types/garpaCommons.ts"
+      - "app/src/types/garpaCommonsCatalog.ts"
       - "app/src/lib/garpa/validateCommonsAdmission.ts"
       - "app/src/lib/garpa/runCommonsAdmissionGate.ts"
       - "app/src/lib/garpa/renderCommonsAdmission.ts"
+      - "app/src/lib/garpa/canonicalJson.ts"
+      - "app/src/lib/garpa/sha256.ts"
+      - "app/src/lib/garpa/commonsCatalogDigest.ts"
+      - "app/src/lib/garpa/commonsCatalogIdentity.ts"
+      - "app/src/lib/garpa/validateCommonsCatalog.ts"
+      - "app/src/lib/garpa/runCommonsCatalogUpdateGate.ts"
+      - "app/src/lib/garpa/applyCommonsCatalogUpdate.ts"
+      - "app/src/lib/garpa/searchCommonsCatalog.ts"
+      - "app/src/lib/garpa/renderCommonsCatalogUpdate.ts"
       - "tests/lib/garpaCommons.test.ts"
+      - "tests/lib/garpaCommonsCatalog.test.ts"
       - "examples/garpa-commons/**"
+      - "examples/garpa-commons-catalog/**"
       - "schemas/garpa/commons-admission-request.schema.json"
       - "schemas/garpa/commons-admission-result.schema.json"
-      - "docs/garpa-capability-commons.md"
+      - "schemas/garpa/commons-catalog*.schema.json"
+      - "docs/garpa-capability-commons*.md"
       - "mcp/garpaCommonsTools.ts"
+      - "mcp/garpaCommonsCatalogTools.ts"
       - "mcp/garpa-commons-server.ts"
       - "mcp/tsconfig.commons.json"
       - "mcp/README-GARPA-COMMONS.md"
@@ -56,7 +85,7 @@ jobs:
         run: npm ci
 
       - name: Run GARPA commons tests
-        run: npx vitest run tests/lib/garpaCommons.test.ts
+        run: npx vitest run tests/lib/garpaCommons.test.ts tests/lib/garpaCommonsCatalog.test.ts
 
       - name: Typecheck workbench
         run: npm run typecheck

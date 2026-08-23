@@ -11,6 +11,13 @@ export const IMPLEMENTED_GARPA_STAGES = [
   "preflight_receipt",
   "test_run_receipt",
   "custodied_mission_evaluation",
+  "vendor_parity",
+  "publication_gate",
+  "release_verification",
+  "counterevidence_review",
+  "public_registry",
+  "capability_commons_admission",
+  "capability_commons_catalog",
 ] as const;
 
 export type ImplementedGarpaStage = (typeof IMPLEMENTED_GARPA_STAGES)[number];
