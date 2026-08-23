@@ -37,6 +37,12 @@ const evidenceTarget = z.enum([
   "system_boundary",
   "independent_verification",
   "local_result",
+  "component_identity",
+  "component_performance",
+  "component_compatibility",
+  "component_price",
+  "component_availability",
+  "component_license",
   "other",
 ]);
 
