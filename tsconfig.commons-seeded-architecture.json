@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededArchitecture.ts",
+    "app/src/lib/garpa/commonsSeededArchitectureDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededArchitecture.ts",
+    "app/src/lib/garpa/runCommonsSeededArchitectureGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededArchitecture.ts",
+    "tests/lib/garpaCommonsSeededArchitecture.test.ts",
+    "examples/garpa-commons-seeded-architecture/**/*.json"
+  ]
+}

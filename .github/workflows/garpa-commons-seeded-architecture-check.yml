@@ -1,0 +1,73 @@
+name: garpa-commons-seeded-architecture-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededArchitecture.ts"
+      - "app/src/lib/garpa/commonsSeededArchitectureDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededArchitecture.ts"
+      - "app/src/lib/garpa/runCommonsSeededArchitectureGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededArchitecture.ts"
+      - "tests/lib/garpaCommonsSeededArchitecture.test.ts"
+      - "examples/garpa-commons-seeded-architecture/**"
+      - "schemas/garpa/commons-seeded-architecture-*.schema.json"
+      - "docs/garpa-commons-seeded-architecture.md"
+      - "mcp/garpaCommonsSeededArchitectureTools.ts"
+      - "mcp/garpa-commons-seeded-architecture-server.ts"
+      - "mcp/tsconfig.commons-seeded-architecture.json"
+      - "tsconfig.commons-seeded-architecture.json"
+      - ".github/workflows/garpa-commons-seeded-architecture-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-architecture-v1"
+    paths:
+      - "app/src/types/garpaCommonsSeededArchitecture.ts"
+      - "app/src/lib/garpa/commonsSeededArchitectureDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededArchitecture.ts"
+      - "app/src/lib/garpa/runCommonsSeededArchitectureGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededArchitecture.ts"
+      - "tests/lib/garpaCommonsSeededArchitecture.test.ts"
+      - "examples/garpa-commons-seeded-architecture/**"
+      - "schemas/garpa/commons-seeded-architecture-*.schema.json"
+      - "docs/garpa-commons-seeded-architecture.md"
+      - "mcp/garpaCommonsSeededArchitectureTools.ts"
+      - "mcp/garpa-commons-seeded-architecture-server.ts"
+      - "mcp/tsconfig.commons-seeded-architecture.json"
+      - "tsconfig.commons-seeded-architecture.json"
+      - ".github/workflows/garpa-commons-seeded-architecture-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  seeded-architecture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA Commons-seeded architecture tests
+        run: npx vitest run tests/lib/garpaCommonsSeededArchitecture.test.ts
+
+      - name: Typecheck GARPA Commons-seeded architecture surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-architecture.json
+
+      - name: Build static workbench bundle
+        run: npx vite build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA Commons-seeded architecture MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-architecture.json
+        working-directory: mcp
