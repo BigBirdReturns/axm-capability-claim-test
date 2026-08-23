@@ -1,0 +1,233 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-admission-request.schema.json",
+  "title": "GARPA Capability Commons Admission Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "sourceCaseId",
+    "sourceReleaseId",
+    "sourceReleaseDigest",
+    "releaseVerificationState",
+    "primitives",
+    "componentObservations",
+    "architecturePatterns"
+  ],
+  "$defs": {
+    "stringArray": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+    "executionClass": {
+      "enum": [
+        "E0_analysis_only",
+        "E1_simulation_or_replay",
+        "E2_bench_passive",
+        "E3_controlled_field_inert",
+        "E4_regulated_active",
+        "E5_operational_environment"
+      ]
+    },
+    "implementationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseId", "releaseId", "componentIds", "architecturePatternIds", "note"],
+      "properties": {
+        "caseId": { "type": "string", "minLength": 1 },
+        "releaseId": { "type": "string", "minLength": 1 },
+        "buildReceiptDigest": { "type": "string" },
+        "componentIds": { "$ref": "#/$defs/stringArray" },
+        "architecturePatternIds": { "$ref": "#/$defs/stringArray" },
+        "note": { "type": "string", "minLength": 1 }
+      }
+    },
+    "qualificationRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "caseId",
+        "releaseId",
+        "qualificationContractDigest",
+        "runReceiptIds",
+        "scenarioIds",
+        "metricIds",
+        "executionClass",
+        "state",
+        "limitations"
+      ],
+      "properties": {
+        "caseId": { "type": "string", "minLength": 1 },
+        "releaseId": { "type": "string", "minLength": 1 },
+        "qualificationContractDigest": { "type": "string", "minLength": 1 },
+        "runReceiptIds": { "$ref": "#/$defs/stringArray" },
+        "scenarioIds": { "$ref": "#/$defs/stringArray" },
+        "metricIds": { "$ref": "#/$defs/stringArray" },
+        "executionClass": { "$ref": "#/$defs/executionClass" },
+        "state": { "enum": ["candidate", "bench_observed", "field_observed", "repeated"] },
+        "limitations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "interfacePattern": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "interfaceType", "direction", "constraints"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "interfaceType": {
+          "enum": ["data", "power", "mechanical", "network", "human", "environmental", "organizational"]
+        },
+        "direction": { "enum": ["input", "output", "bidirectional"] },
+        "protocolOrFormat": { "type": "string" },
+        "constraints": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "metricResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metricId",
+        "rawSampleArtifactIds",
+        "calculationMethod",
+        "sampleCount",
+        "excludedSamples",
+        "thresholdResult",
+        "analystNotes"
+      ],
+      "properties": {
+        "metricId": { "type": "string", "minLength": 1 },
+        "rawSampleArtifactIds": { "$ref": "#/$defs/stringArray" },
+        "calculationMethod": { "type": "string", "minLength": 1 },
+        "codeDigest": { "type": "string" },
+        "sampleCount": { "type": "integer", "minimum": 0 },
+        "excludedSamples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["sampleRef", "reason"],
+            "properties": {
+              "sampleRef": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "value": { "type": ["number", "string", "boolean"] },
+        "uncertainty": { "type": "string" },
+        "thresholdResult": { "enum": ["pass", "fail", "inconclusive", "not_measured"] },
+        "analystNotes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "sourceCaseId": { "type": "string", "minLength": 1 },
+    "sourceReleaseId": { "type": "string", "minLength": 1 },
+    "sourceReleaseDigest": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+    "releaseVerificationState": { "enum": ["current_valid", "superseded_valid", "withdrawn_valid"] },
+    "primitives": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "primitiveId", "name", "purpose", "functionClass", "inputInterfacePatterns",
+          "outputInterfacePatterns", "operatingConstraints", "humanRoles",
+          "observedImplementations", "qualificationRefs", "maturity", "residuals",
+          "falsificationConditions", "sourceCaseIds", "sourceReleaseIds"
+        ],
+        "properties": {
+          "primitiveId": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "purpose": { "type": "string", "minLength": 1 },
+          "functionClass": { "enum": ["essential", "enabling", "coordination", "sustainment", "assurance"] },
+          "inputInterfacePatterns": { "type": "array", "items": { "$ref": "#/$defs/interfacePattern" } },
+          "outputInterfacePatterns": { "type": "array", "items": { "$ref": "#/$defs/interfacePattern" } },
+          "operatingConstraints": { "type": "array", "items": { "type": "string" } },
+          "humanRoles": { "type": "array", "items": { "type": "string" } },
+          "observedImplementations": { "type": "array", "items": { "$ref": "#/$defs/implementationRef" } },
+          "qualificationRefs": { "type": "array", "items": { "$ref": "#/$defs/qualificationRef" } },
+          "maturity": { "enum": ["concept", "candidate", "bench_observed", "field_observed", "repeated"] },
+          "residuals": { "type": "array", "items": { "type": "string" } },
+          "falsificationConditions": { "type": "array", "items": { "type": "string" } },
+          "sourceCaseIds": { "$ref": "#/$defs/stringArray" },
+          "sourceReleaseIds": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    },
+    "componentObservations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "observationId", "componentIdentity", "functionIds", "interfaceIds", "fixture",
+          "environment", "metricResults", "runReceiptIds", "state", "limitations",
+          "residuals", "sourceCaseId", "sourceReleaseId", "sourceReleaseDigest"
+        ],
+        "properties": {
+          "observationId": { "type": "string", "minLength": 1 },
+          "componentIdentity": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["product", "exactModelOrVersion"],
+            "properties": {
+              "manufacturer": { "type": "string" },
+              "product": { "type": "string", "minLength": 1 },
+              "exactModelOrVersion": { "type": "string", "minLength": 1 },
+              "firmwareOrSoftwareVersion": { "type": "string" }
+            }
+          },
+          "functionIds": { "$ref": "#/$defs/stringArray" },
+          "interfaceIds": { "$ref": "#/$defs/stringArray" },
+          "fixture": { "type": "string", "minLength": 1 },
+          "environment": { "type": "object", "additionalProperties": { "type": "string" } },
+          "executionClass": { "$ref": "#/$defs/executionClass" },
+          "metricResults": { "type": "array", "items": { "$ref": "#/$defs/metricResult" } },
+          "runReceiptIds": { "$ref": "#/$defs/stringArray" },
+          "costObservation": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["amount", "currency", "capturedAt", "accountingBoundary", "evidenceArtifactIds"],
+            "properties": {
+              "amount": { "type": "number", "minimum": 0 },
+              "currency": { "type": "string", "minLength": 1 },
+              "capturedAt": { "type": "string", "minLength": 1 },
+              "accountingBoundary": { "type": "string", "minLength": 1 },
+              "evidenceArtifactIds": { "$ref": "#/$defs/stringArray" }
+            }
+          },
+          "state": { "enum": ["vendor_claimed", "externally_reported", "locally_observed", "locally_qualified"] },
+          "limitations": { "type": "array", "items": { "type": "string" } },
+          "residuals": { "type": "array", "items": { "type": "string" } },
+          "sourceCaseId": { "type": "string", "minLength": 1 },
+          "sourceReleaseId": { "type": "string", "minLength": 1 },
+          "sourceReleaseDigest": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" }
+        }
+      }
+    },
+    "architecturePatterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "patternId", "name", "problemShape", "functionRoles", "interfaceRoles",
+          "knownImplementationRefs", "qualificationRefs", "applicableConstraints",
+          "failureModes", "residuals", "sourceCaseIds", "sourceReleaseIds"
+        ],
+        "properties": {
+          "patternId": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "problemShape": { "type": "string", "minLength": 1 },
+          "functionRoles": { "$ref": "#/$defs/stringArray" },
+          "interfaceRoles": { "$ref": "#/$defs/stringArray" },
+          "knownImplementationRefs": { "type": "array", "items": { "$ref": "#/$defs/implementationRef" } },
+          "qualificationRefs": { "type": "array", "items": { "$ref": "#/$defs/qualificationRef" } },
+          "applicableConstraints": { "type": "array", "items": { "type": "string" } },
+          "failureModes": { "type": "array", "items": { "type": "string" } },
+          "residuals": { "type": "array", "items": { "type": "string" } },
+          "sourceCaseIds": { "$ref": "#/$defs/stringArray" },
+          "sourceReleaseIds": { "$ref": "#/$defs/stringArray" }
+        }
+      }
+    }
+  }
+}
