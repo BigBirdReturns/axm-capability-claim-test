@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "operator": {
+    "value": "Trained target-case operator",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "protectedOrAffectedObject": {
+    "value": "Controlled target boundary",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "problemOrThreat": {
+    "value": "One known synthetic object approaching the target boundary",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": ["No unrestricted target class is included."]
+  },
+  "desiredStateChange": {
+    "value": "Detect the target object and present an alert before boundary crossing",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "operatingEnvironment": {
+    "value": "Controlled indoor fixture with constant lighting, static background, and target class synthetic-known-object-v1",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e4"],
+    "limitations": ["No unrestricted environment or weather claim is included."]
+  },
+  "timeAndCoverageRequirement": {
+    "value": "Continuous observation during one bounded target qualification session",
+    "basis": "externally_supported",
+    "evidenceCellIds": ["e3"],
+    "limitations": []
+  },
+  "successMetrics": [
+    {
+      "id": "m1",
+      "name": "Detection before boundary crossing",
+      "comparator": "boolean",
+      "threshold": true,
+      "baseline": false,
+      "basis": "externally_supported",
+      "evidenceCellIds": ["e3"],
+      "limitations": []
+    },
+    {
+      "id": "m2",
+      "name": "Observation-to-presentation latency",
+      "unit": "seconds",
+      "comparator": "lte",
+      "threshold": 2,
+      "baseline": 10,
+      "basis": "externally_supported",
+      "evidenceCellIds": ["e3"],
+      "limitations": ["Measured only inside the controlled target fixture."]
+    }
+  ],
+  "exclusions": [
+    "No active response or interference mechanism.",
+    "No operational deployment, vendor parity, or mission-equivalence claim."
+  ]
+}

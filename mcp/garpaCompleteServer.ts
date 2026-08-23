@@ -19,11 +19,12 @@ import { registerGarpaCommonsTransferTools } from "./garpaCommonsTransferTools.t
 import { registerGarpaCommonsProjectionTools } from "./garpaCommonsProjectionTools.ts";
 import { registerGarpaCommonsSeededSubstitutionTools } from "./garpaCommonsSeededSubstitutionTools.ts";
 import { registerGarpaCommonsSeededArchitectureTools } from "./garpaCommonsSeededArchitectureTools.ts";
+import { registerGarpaCommonsSeededQualificationTools } from "./garpaCommonsSeededQualificationTools.ts";
 import { registerGarpaMethodTools } from "./garpaMethodTools.ts";
 
 const server = new McpServer({
   name: "garpa-complete",
-  version: "0.6.0",
+  version: "0.7.0",
 });
 
 registerGarpaMethodTools(server);
@@ -45,6 +46,7 @@ registerGarpaCommonsTransferTools(server);
 registerGarpaCommonsProjectionTools(server);
 registerGarpaCommonsSeededSubstitutionTools(server);
 registerGarpaCommonsSeededArchitectureTools(server);
+registerGarpaCommonsSeededQualificationTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);

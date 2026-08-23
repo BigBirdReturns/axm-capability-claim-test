@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-COMMONS-TARGET-0001",
+  "missionOutcomeDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "capabilityGraphDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "candidateArchitectureDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "scenarios": [
+    {
+      "id": "scenario-target-nominal",
+      "name": "Controlled target boundary approach",
+      "purpose": "Requalify the Commons-seeded sensor and the complete target observation, detection, and presentation chain under the admitted target environment.",
+      "venueClass": "bench",
+      "protectedOrAffectedObject": "Controlled target boundary",
+      "inputOrThreatProfile": ["One known synthetic object approaching on the frozen target path"],
+      "environment": {
+        "location": "controlled indoor fixture",
+        "lighting": "constant",
+        "background": "static",
+        "target_class": "synthetic-known-object-v1",
+        "network": "isolated target network",
+        "clock_policy": "one monotonic target run clock"
+      },
+      "duration": "One hour maximum per target qualification session",
+      "coverageGeometry": "Frozen target path and boundary coordinates",
+      "loadProfile": "Ten scored single-object passes",
+      "concurrencyProfile": "One object at a time",
+      "operatorConditions": {
+        "staffing": "One trained target operator",
+        "training": "Target fixture orientation and acknowledgement procedure",
+        "priorKnowledge": "Operator knows the target class but not the presentation timestamp",
+        "permittedIntervention": ["Acknowledge target alerts", "Abort for safety, fixture failure, or receipt failure"]
+      },
+      "degradedConditions": ["One delayed-observation replay retained as diagnostic evidence"],
+      "excludedConditions": ["Concurrent targets", "Active response", "Uncontrolled environment", "Operational deployment"],
+      "fixtureIds": ["fixture-commons-target-v1"],
+      "metricIds": ["q-target-detection", "q-target-latency"],
+      "instrumentationIds": ["instrument-target-clock", "instrument-target-recorder"],
+      "authorizationId": "authorization-target-bench-passive",
+      "activeEffect": false,
+      "evidenceCellIds": ["e3", "e4", "e5"],
+      "assumptions": ["The exact admitted candidate architecture is loaded before every scored run."]
+    }
+  ],
+  "metrics": [
+    {
+      "id": "q-target-detection",
+      "missionMetricIds": ["m1"],
+      "riskIds": ["risk-target-detection"],
+      "residualIds": ["residual-target-detection"],
+      "name": "Target detection before boundary crossing",
+      "criticality": "essential",
+      "quantity": "Whether a target detection event occurs before the frozen boundary-crossing timestamp",
+      "direction": "boolean",
+      "threshold": true,
+      "baseline": false,
+      "measurementMethod": "Compare the first valid target detection-event timestamp with the target ground-truth boundary-crossing timestamp for each scored pass.",
+      "instrumentationIds": ["instrument-target-clock", "instrument-target-recorder"],
+      "samplingMethod": "Ten scored single-object passes using the frozen target path and target profile",
+      "requiredRuns": 10,
+      "aggregation": "all_runs",
+      "allowedUncertainty": "Target timestamp uncertainty must remain below 10 milliseconds; otherwise the run is inconclusive.",
+      "failureCondition": "Any valid scored pass lacks a detection before boundary crossing.",
+      "evidenceCellIds": ["e3", "e-sensor-perf", "e-detector-perf"],
+      "limitations": ["Known synthetic target class and controlled target environment only."]
+    },
+    {
+      "id": "q-target-latency",
+      "missionMetricIds": ["m2"],
+      "riskIds": ["risk-target-latency"],
+      "residualIds": [],
+      "name": "Target observation-to-presentation latency",
+      "criticality": "essential",
+      "quantity": "Elapsed time between first qualifying target observation and operator presentation",
+      "unit": "seconds",
+      "direction": "lower_is_better",
+      "threshold": 2,
+      "baseline": 10,
+      "measurementMethod": "Subtract the first qualifying target observation timestamp from the corresponding target presentation timestamp under the shared run clock.",
+      "instrumentationIds": ["instrument-target-clock", "instrument-target-recorder"],
+      "samplingMethod": "Measure one latency value for each of ten valid scored target passes",
+      "requiredRuns": 10,
+      "aggregation": "percentile",
+      "aggregationParameter": 95,
+      "allowedUncertainty": "Combined target timestamp uncertainty must remain below 10 milliseconds.",
+      "failureCondition": "The 95th percentile target latency exceeds 2 seconds or any required event lacks a valid timestamp.",
+      "evidenceCellIds": ["e3", "e-ui-perf", "e-compat-observation", "e-compat-detection"],
+      "limitations": ["Single-object and single-operator target fixture only."]
+    }
+  ],
+  "instrumentation": [
+    {
+      "id": "instrument-target-clock",
+      "name": "Target qualification run clock",
+      "modelOrVersion": "target-monotonic-clock-policy-v1",
+      "quantitiesMeasured": ["Observation timestamps", "Detection timestamps", "Presentation timestamps", "Boundary-crossing timestamps"],
+      "samplingRate": "Event-driven with one millisecond resolution",
+      "accuracy": "Better than 10 milliseconds across the bounded target run",
+      "clockSource": "One target host monotonic clock distributed through the event recorder",
+      "calibrationState": "not_required",
+      "calibrationEvidenceIds": ["e5"],
+      "dataFormat": "RFC3339 wall time plus monotonic nanoseconds in JSON Lines",
+      "storagePath": "runs/<run-id>/target-clock-events.jsonl"
+    },
+    {
+      "id": "instrument-target-recorder",
+      "name": "Target immutable event and intervention recorder",
+      "modelOrVersion": "target-event-recorder-v1",
+      "quantitiesMeasured": ["Event order", "Event payload digest", "Operator acknowledgement", "Manual intervention"],
+      "samplingRate": "Every event",
+      "accuracy": "Lossless for valid target fixture events",
+      "clockSource": "instrument-target-clock",
+      "calibrationState": "current",
+      "calibrationEvidenceIds": ["e-compat-observation", "e-compat-detection"],
+      "dataFormat": "Append-only JSON Lines with per-record digest",
+      "storagePath": "runs/<run-id>/target-events.jsonl"
+    }
+  ],
+  "comparators": [
+    {
+      "id": "comparator-target-requirement",
+      "type": "customer_requirement",
+      "name": "Frozen target operator requirement",
+      "version": "1.0",
+      "scenarioIds": ["scenario-target-nominal"],
+      "metricIds": ["q-target-detection", "q-target-latency"],
+      "resultEvidenceCellIds": ["e3"],
+      "comparability": "same_fixture",
+      "limitations": ["This comparator establishes bounded target mission adequacy only; it is not a vendor baseline."]
+    }
+  ],
+  "accountingBoundary": {
+    "currency": "USD",
+    "evaluationPeriod": "Acquisition, target integration, and one bounded qualification campaign",
+    "includedCategories": ["hardware", "software", "integration_labor", "operator_labor", "qualification", "contingency"],
+    "excludedCategories": ["active_response", "operational_field_deployment"],
+    "missionDenominator": "One integrated target candidate and ten valid scored passes in the frozen target scenario"
+  },
+  "authorizations": [
+    {
+      "id": "authorization-target-bench-passive",
+      "venueClass": "bench",
+      "ownerOrController": "GARPA target fixture owner",
+      "permittedActivities": ["Passive observation", "Local compute", "Operator presentation", "Append-only target logging"],
+      "prohibitedActivities": ["Active transmission outside the isolated target fixture", "Interference", "Physical effect delivery"],
+      "requiredAuthorizations": [],
+      "receivedAuthorizationRefs": [],
+      "abortAuthority": ["Target qualification operator", "Target fixture owner"],
+      "timeBoundary": "During the bounded target qualification session only",
+      "evidenceCellIds": ["e5"],
+      "state": "not_required",
+      "rationale": "The target fixture is passive, isolated, and contains no regulated active effect."
+    }
+  ],
+  "acceptanceRule": {
+    "allEssentialMustPass": true,
+    "allowInconclusiveEssential": false,
+    "minimumValidRunsPerMetric": 10,
+    "missingDataDisposition": "inconclusive",
+    "invalidRunDisposition": "exclude_with_receipt",
+    "secondaryMetricsCanOffsetEssentialFailure": false
+  },
+  "frozenAt": "2026-08-23T20:05:00Z",
+  "state": "frozen"
+}

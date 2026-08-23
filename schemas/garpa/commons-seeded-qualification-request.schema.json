@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-qualification-request.schema.json",
+  "title": "GARPA Commons-Seeded Qualification Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededArchitectureRequest",
+    "expectedSeededArchitectureResultDigest",
+    "targetMissionOutcome",
+    "targetMissionOutcomeDigest",
+    "qualificationContract",
+    "seededComponentBindings",
+    "frozenAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededArchitectureRequest": { "type": "object" },
+    "expectedSeededArchitectureResultDigest": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "targetMissionOutcome": { "type": "object" },
+    "targetMissionOutcomeDigest": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+    "qualificationContract": { "type": "object" },
+    "seededComponentBindings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "bindingId",
+          "componentId",
+          "sourceCatalogObjectId",
+          "sourceRevisionId",
+          "sourceObjectDigest",
+          "architectureSelectionDigest",
+          "riskIds",
+          "residualIds",
+          "requiredTestClosures"
+        ],
+        "properties": {
+          "bindingId": { "type": "string", "minLength": 1 },
+          "componentId": { "type": "string", "minLength": 1 },
+          "sourceCatalogObjectId": { "type": "string", "minLength": 1 },
+          "sourceRevisionId": { "type": "string", "minLength": 1 },
+          "sourceObjectDigest": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+          "architectureSelectionDigest": { "type": "string", "pattern": "^[a-fA-F0-9]{64}$" },
+          "riskIds": { "type": "array", "items": { "type": "string" } },
+          "residualIds": { "type": "array", "items": { "type": "string" } },
+          "requiredTestClosures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["requirement", "scenarioIds", "metricIds", "rationale"],
+              "properties": {
+                "requirement": { "type": "string", "minLength": 1 },
+                "scenarioIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+                "metricIds": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+                "rationale": { "type": "string", "minLength": 1 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "frozenAt": { "type": "string", "minLength": 1 }
+  }
+}
