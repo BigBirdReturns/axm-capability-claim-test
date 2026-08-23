@@ -33,6 +33,7 @@ import {
 } from "../app/src/lib/garpa/validateClaimPacket.ts";
 import { runGarpaAdmission } from "../app/src/lib/garpa/runGarpaAdmission.ts";
 import { renderGarpaRealityBrief } from "../app/src/lib/garpa/renderRealityBrief.ts";
+import { registerGarpaCapabilityTools } from "./garpaCapabilityTools.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -335,6 +336,12 @@ server.registerTool(
     );
   },
 );
+
+// 6. GARPA CAPABILITY GRAPH --------------------------------------------------
+// The capability-graph tools are registered from a separate module so future
+// substitution and architecture tools can grow without turning this server
+// into a second implementation of the method.
+registerGarpaCapabilityTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
