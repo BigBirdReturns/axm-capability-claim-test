@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-commons-seeded-architecture-server.ts",
+    "garpaCommonsSeededArchitectureTools.ts"
+  ]
+}

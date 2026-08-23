@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-architecture-request.schema.json",
+  "title": "GARPA Commons-Seeded Architecture Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededSubstitutionRequest",
+    "expectedSeededSubstitutionResultDigest",
+    "architecture",
+    "assembledAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededSubstitutionRequest": { "type": "object" },
+    "expectedSeededSubstitutionResultDigest": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "architecture": { "type": "object" },
+    "assembledAt": { "type": "string", "minLength": 1 }
+  }
+}

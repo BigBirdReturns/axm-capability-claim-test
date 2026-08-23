@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-architecture-result.schema.json",
+  "title": "GARPA Commons-Seeded Architecture Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "seededSubstitutionResult",
+    "seededSubstitutionResultDigest",
+    "substitutionPlanDigest",
+    "seededComponentIds",
+    "selectedSeededComponentIds",
+    "findings",
+    "architectureValidationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_architecture_blocked",
+        "seeded_architecture_incomplete",
+        "seeded_architecture_admitted"
+      ]
+    },
+    "seededSubstitutionResult": { "type": "object" },
+    "seededSubstitutionResultDigest": { "type": "string" },
+    "substitutionPlanDigest": { "type": "string" },
+    "seededComponentIds": { "type": "array", "items": { "type": "string" } },
+    "selectedSeededComponentIds": { "type": "array", "items": { "type": "string" } },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "architectureValidationErrors": { "type": "array", "items": { "type": "string" } },
+    "architectureGate": { "type": "object" },
+    "architecture": { "type": "object" },
+    "pullList": { "type": "array", "items": { "type": "string" } },
+    "prohibitedTransitions": { "type": "array", "items": { "type": "string" } }
+  }
+}
