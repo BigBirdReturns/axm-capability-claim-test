@@ -30,6 +30,7 @@ import { renderGarpaRealityBrief } from "../app/src/lib/garpa/renderRealityBrief
 import { registerGarpaCapabilityTools } from "./garpaCapabilityTools.ts";
 import { registerGarpaSubstitutionTools } from "./garpaSubstitutionTools.ts";
 import { registerGarpaArchitectureTools } from "./garpaArchitectureTools.ts";
+import { registerGarpaQualificationTools } from "./garpaQualificationTools.ts";
 
 const server = new McpServer({
   name: "capability-claim-test",
@@ -337,6 +338,7 @@ server.registerTool(
 registerGarpaCapabilityTools(server);
 registerGarpaSubstitutionTools(server);
 registerGarpaArchitectureTools(server);
+registerGarpaQualificationTools(server);
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
