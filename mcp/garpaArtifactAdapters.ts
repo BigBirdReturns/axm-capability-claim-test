@@ -129,7 +129,7 @@ export async function extractArtifact(input: {
   const failures: string[] = [];
   let textBlocks: ExtractedBlock[] = [];
   let adapterId = "unsupported-passive-adapter";
-  let safetyState: ArtifactEnvelope["safetyState"] = "passive_content";
+  let safetyState: ArtifactEnvelope["safetyState"] = "not_inspected";
   let extractionState: ArtifactEnvelope["extractionState"] = "unsupported";
 
   if (
@@ -140,6 +140,7 @@ export async function extractArtifact(input: {
     adapterId = "native-text-v1";
     const text = await readFile(sourcePath, "utf8");
     textBlocks = paragraphBlocks(text);
+    safetyState = "passive_content";
     extractionState = "complete";
   } else if (envelope.kind === "html" || envelope.kind === "web_snapshot") {
     adapterId = "passive-html-v1";
