@@ -1,0 +1,73 @@
+name: garpa-publication-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaPublication.ts"
+      - "app/src/lib/garpa/validatePublicationCompilationInput.ts"
+      - "app/src/lib/garpa/compilePublicationClaims.ts"
+      - "app/src/lib/garpa/validatePublicationPackage.ts"
+      - "app/src/lib/garpa/runPublicationGate.ts"
+      - "app/src/lib/garpa/renderPublicDossier.ts"
+      - "tests/lib/garpaPublication.test.ts"
+      - "examples/garpa-publication/**"
+      - "schemas/garpa/publication-package.schema.json"
+      - "schemas/garpa/publication-gate-result.schema.json"
+      - "mcp/garpaPublicationTools.ts"
+      - "mcp/garpa-publication-server.ts"
+      - "mcp/tsconfig.publication.json"
+      - ".github/workflows/garpa-publication-check.yml"
+  push:
+    branches:
+      - "feature/garpa-admission-spine-v1"
+    paths:
+      - "app/src/types/garpaPublication.ts"
+      - "app/src/lib/garpa/validatePublicationCompilationInput.ts"
+      - "app/src/lib/garpa/compilePublicationClaims.ts"
+      - "app/src/lib/garpa/validatePublicationPackage.ts"
+      - "app/src/lib/garpa/runPublicationGate.ts"
+      - "app/src/lib/garpa/renderPublicDossier.ts"
+      - "tests/lib/garpaPublication.test.ts"
+      - "examples/garpa-publication/**"
+      - "schemas/garpa/publication-package.schema.json"
+      - "schemas/garpa/publication-gate-result.schema.json"
+      - "mcp/garpaPublicationTools.ts"
+      - "mcp/garpa-publication-server.ts"
+      - "mcp/tsconfig.publication.json"
+      - ".github/workflows/garpa-publication-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  publication:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA publication tests
+        run: npx vitest run tests/lib/garpaPublication.test.ts
+
+      - name: Typecheck workbench
+        run: npm run typecheck
+
+      - name: Build workbench
+        run: npm run build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA publication MCP server
+        run: npx tsc --noEmit -p tsconfig.publication.json
+        working-directory: mcp
