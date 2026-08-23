@@ -1,0 +1,306 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTHETIC-OBSERVATION-1",
+  "missionOutcomeDigest": "sha256:synthetic-observation-mission-v1",
+  "capabilityGraphDigest": "sha256:synthetic-observation-graph-v1",
+  "substitutionPlanDigest": "sha256:synthetic-observation-substitution-v1",
+  "selectedOptionIds": [
+    "option-observe",
+    "option-detect",
+    "option-present"
+  ],
+  "componentSelections": [
+    {
+      "componentId": "component-sensor",
+      "quantity": 1,
+      "optionIds": ["option-observe"],
+      "functionIds": ["f-observe"],
+      "interfaceIds": ["i-world", "i-observation"],
+      "role": "Produce timestamped observations from the frozen fixture.",
+      "configurationState": "defined",
+      "configuration": {
+        "model": "sensor-v1",
+        "mount": "fixed fixture position",
+        "output_contract": "observation-record-v1"
+      }
+    },
+    {
+      "componentId": "component-detector",
+      "quantity": 1,
+      "optionIds": ["option-detect"],
+      "functionIds": ["f-detect"],
+      "interfaceIds": ["i-observation", "i-detection"],
+      "role": "Convert versioned observations into bounded detection events.",
+      "configurationState": "defined",
+      "configuration": {
+        "version": "detector-1.0",
+        "input_contract": "observation-record-v1",
+        "output_contract": "detection-event-v1",
+        "target_profile": "synthetic-known-object-v1"
+      }
+    },
+    {
+      "componentId": "component-ui",
+      "quantity": 1,
+      "optionIds": ["option-present"],
+      "functionIds": ["f-present"],
+      "interfaceIds": ["i-detection", "i-alert"],
+      "role": "Present and timestamp detection events for one trained operator.",
+      "configurationState": "defined",
+      "configuration": {
+        "version": "ui-1.0",
+        "input_contract": "detection-event-v1",
+        "display_mode": "single-operator-test"
+      }
+    }
+  ],
+  "customCodeSelections": [],
+  "compatibilitySelections": [
+    {
+      "compatibilityEdgeId": "compat-observation",
+      "interfaceId": "i-observation",
+      "producerComponentIds": ["component-sensor"],
+      "consumerComponentIds": ["component-detector"],
+      "adapterComponentIds": [],
+      "customCodeIds": []
+    },
+    {
+      "compatibilityEdgeId": "compat-detection",
+      "interfaceId": "i-detection",
+      "producerComponentIds": ["component-detector"],
+      "consumerComponentIds": ["component-ui"],
+      "adapterComponentIds": [],
+      "customCodeIds": []
+    }
+  ],
+  "humanRoleSelections": [
+    {
+      "humanRoleId": "role-operator",
+      "staffing": "One trained operator for one one-hour qualification window",
+      "responsibilities": [
+        "Monitor the presentation surface",
+        "Acknowledge the alert",
+        "Record any manual intervention"
+      ],
+      "authorityBoundary": "The operator may acknowledge the alert but may not initiate any active response."
+    }
+  ],
+  "dependencySelections": [],
+  "costEnvelope": {
+    "currency": "USD",
+    "evaluationPeriod": "Acquisition, integration, and one bounded qualification campaign",
+    "lines": [
+      {
+        "id": "cost-hardware",
+        "category": "hardware",
+        "description": "One sensor-v1 fixture sensor",
+        "low": 250,
+        "expected": 250,
+        "high": 300,
+        "currency": "USD",
+        "recurrence": "one_time",
+        "quantity": 1,
+        "basis": "Captured synthetic procurement record",
+        "evidenceCellIds": ["e-sensor-price"],
+        "confidence": "high"
+      },
+      {
+        "id": "cost-software",
+        "category": "software",
+        "description": "Versioned detector-1.0 and ui-1.0 acquisition",
+        "low": 0,
+        "expected": 0,
+        "high": 0,
+        "currency": "USD",
+        "recurrence": "one_time",
+        "quantity": 1,
+        "basis": "Captured synthetic price records; labor is separate",
+        "evidenceCellIds": ["e-detector-price", "e-ui-price"],
+        "confidence": "high"
+      },
+      {
+        "id": "cost-integration",
+        "category": "integration_labor",
+        "description": "Mounting, configuration, contract verification, and logging integration",
+        "low": 600,
+        "expected": 800,
+        "high": 1200,
+        "currency": "USD",
+        "recurrence": "one_time",
+        "quantity": 1,
+        "basis": "Bounded engineering estimate for the synthetic fixture",
+        "evidenceCellIds": [],
+        "confidence": "medium"
+      },
+      {
+        "id": "cost-operator",
+        "category": "operator_labor",
+        "description": "One trained operator for setup and one qualification run",
+        "low": 40,
+        "expected": 50,
+        "high": 80,
+        "currency": "USD",
+        "recurrence": "per_operation",
+        "quantity": 1,
+        "basis": "Bounded labor estimate",
+        "evidenceCellIds": [],
+        "confidence": "medium"
+      },
+      {
+        "id": "cost-qualification",
+        "category": "qualification",
+        "description": "Fixture preparation, repeated runs, result analysis, and receipts",
+        "low": 200,
+        "expected": 300,
+        "high": 500,
+        "currency": "USD",
+        "recurrence": "one_time",
+        "quantity": 1,
+        "basis": "Qualification planning estimate",
+        "evidenceCellIds": [],
+        "confidence": "low"
+      },
+      {
+        "id": "cost-contingency",
+        "category": "contingency",
+        "description": "Bounded contingency for replacement cabling, mounts, or reruns",
+        "low": 100,
+        "expected": 140,
+        "high": 250,
+        "currency": "USD",
+        "recurrence": "one_time",
+        "quantity": 1,
+        "basis": "Approximately ten percent of expected nonzero project cost",
+        "evidenceCellIds": [],
+        "confidence": "low"
+      }
+    ],
+    "exclusions": [
+      "No active-response equipment or authority",
+      "No operational field deployment",
+      "No unrestricted target-set qualification"
+    ]
+  },
+  "scheduleEnvelope": {
+    "lines": [
+      {
+        "id": "schedule-procurement",
+        "phase": "procurement",
+        "description": "Acquire and verify the exact sensor-v1 item and source snapshots.",
+        "predecessorIds": [],
+        "lowDays": 1,
+        "expectedDays": 2,
+        "highDays": 5,
+        "owner": "Campaign owner",
+        "acceptanceCondition": "Exact versions and captured evidence match the manifest."
+      },
+      {
+        "id": "schedule-integration",
+        "phase": "integration",
+        "description": "Mount, configure, connect, and verify both versioned data contracts.",
+        "predecessorIds": ["schedule-procurement"],
+        "lowDays": 1,
+        "expectedDays": 3,
+        "highDays": 5,
+        "owner": "Integration owner",
+        "acceptanceCondition": "Both internal interfaces pass their frozen compatibility tests."
+      },
+      {
+        "id": "schedule-qualification",
+        "phase": "qualification",
+        "description": "Execute the frozen detection and latency qualification tests.",
+        "predecessorIds": ["schedule-integration"],
+        "lowDays": 1,
+        "expectedDays": 2,
+        "highDays": 4,
+        "owner": "Qualification owner",
+        "acceptanceCondition": "All required runs produce complete receipts and metric results."
+      }
+    ],
+    "assumptions": [
+      "The exact synthetic component versions remain available.",
+      "The controlled fixture and one trained operator are available."
+    ]
+  },
+  "risks": [
+    {
+      "id": "risk-detection",
+      "category": "performance",
+      "statement": "The detector may fail to identify the known test object before boundary crossing.",
+      "probability": "medium",
+      "consequence": "mission_failure",
+      "affectedFunctionIds": ["f-detect"],
+      "affectedComponentIds": ["component-sensor", "component-detector"],
+      "mitigation": ["Freeze the target profile and verify observation completeness before scored runs."],
+      "qualificationTestIds": ["q-detection"],
+      "evidenceCellIds": ["e-sensor-perf", "e-detector-perf"],
+      "closureState": "requires_test"
+    },
+    {
+      "id": "risk-latency",
+      "category": "integration",
+      "statement": "Timestamp, transport, or presentation delays may exceed the two-second threshold.",
+      "probability": "medium",
+      "consequence": "mission_failure",
+      "affectedFunctionIds": ["f-observe", "f-detect", "f-present"],
+      "affectedComponentIds": ["component-sensor", "component-detector", "component-ui"],
+      "mitigation": ["Use one clock policy and verify timestamps at both internal interfaces."],
+      "qualificationTestIds": ["q-latency"],
+      "evidenceCellIds": ["e-compat-observation", "e-compat-detection"],
+      "closureState": "requires_test"
+    },
+    {
+      "id": "risk-operator-burden",
+      "category": "operator_burden",
+      "statement": "The single-operator fixture does not characterize concurrent-target workload.",
+      "probability": "unknown",
+      "consequence": "material",
+      "affectedFunctionIds": ["f-present"],
+      "affectedComponentIds": ["component-ui"],
+      "mitigation": ["Keep the public result scoped to the single-target fixture."],
+      "qualificationTestIds": [],
+      "evidenceCellIds": ["e-ui-perf"],
+      "closureState": "accepted"
+    }
+  ],
+  "residuals": [
+    {
+      "id": "residual-observation-envelope",
+      "statement": "Observation performance outside the controlled geometry remains unassessed.",
+      "sourceOptionIds": ["option-observe"],
+      "sourceComponentIds": ["component-sensor"],
+      "affectedFunctionIds": ["f-observe"],
+      "disposition": "exclude",
+      "qualificationTestIds": []
+    },
+    {
+      "id": "residual-target-class",
+      "statement": "Detection is qualified only for the known synthetic target class.",
+      "sourceOptionIds": ["option-detect"],
+      "sourceComponentIds": ["component-detector"],
+      "affectedFunctionIds": ["f-detect"],
+      "disposition": "qualify",
+      "qualificationTestIds": ["q-detection"]
+    },
+    {
+      "id": "residual-operator-load",
+      "statement": "Concurrent-target operator burden remains unassessed.",
+      "sourceOptionIds": ["option-present"],
+      "sourceComponentIds": ["component-ui"],
+      "affectedFunctionIds": ["f-present"],
+      "disposition": "exclude",
+      "qualificationTestIds": []
+    }
+  ],
+  "assumptions": [
+    "All components are operated at their exact source-bound versions.",
+    "The fixture remains passive and isolated.",
+    "No result is generalized beyond the frozen mission outcome."
+  ],
+  "exclusions": [
+    "No active response or interference",
+    "No operational deployment",
+    "No vendor parity"
+  ],
+  "state": "candidate"
+}

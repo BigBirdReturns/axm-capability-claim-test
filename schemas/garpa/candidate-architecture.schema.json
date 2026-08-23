@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/candidate-architecture.schema.json",
+  "title": "GARPA Candidate Architecture",
+  "description": "Selected substitution options, exact components and configurations, complete cost and schedule envelopes, risk controls, and carried residuals. This contract does not represent an assembled or qualified build.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "caseId", "missionOutcomeDigest", "capabilityGraphDigest", "substitutionPlanDigest", "selectedOptionIds", "componentSelections", "customCodeSelections", "compatibilitySelections", "humanRoleSelections", "dependencySelections", "costEnvelope", "scheduleEnvelope", "risks", "residuals", "assumptions", "exclusions", "state"],
+  "$defs": {
+    "stringArray": { "type": "array", "items": { "type": "string" } },
+    "componentSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["componentId", "quantity", "optionIds", "functionIds", "interfaceIds", "role", "configurationState", "configuration"],
+      "properties": {
+        "componentId": { "type": "string", "minLength": 1 },
+        "quantity": { "type": "number", "exclusiveMinimum": 0 },
+        "optionIds": { "$ref": "#/$defs/stringArray" },
+        "functionIds": { "$ref": "#/$defs/stringArray" },
+        "interfaceIds": { "$ref": "#/$defs/stringArray" },
+        "role": { "type": "string", "minLength": 1 },
+        "configurationState": { "enum": ["defined", "unresolved"] },
+        "configuration": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "customCodeSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["customCodeId", "optionIds", "functionIds", "interfaceIds", "configurationState", "configuration"],
+      "properties": {
+        "customCodeId": { "type": "string", "minLength": 1 },
+        "optionIds": { "$ref": "#/$defs/stringArray" },
+        "functionIds": { "$ref": "#/$defs/stringArray" },
+        "interfaceIds": { "$ref": "#/$defs/stringArray" },
+        "configurationState": { "enum": ["defined", "unresolved"] },
+        "configuration": { "type": "object", "additionalProperties": { "type": "string" } }
+      }
+    },
+    "compatibilitySelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compatibilityEdgeId", "interfaceId", "producerComponentIds", "consumerComponentIds", "adapterComponentIds", "customCodeIds"],
+      "properties": {
+        "compatibilityEdgeId": { "type": "string", "minLength": 1 },
+        "interfaceId": { "type": "string", "minLength": 1 },
+        "producerComponentIds": { "$ref": "#/$defs/stringArray" },
+        "consumerComponentIds": { "$ref": "#/$defs/stringArray" },
+        "adapterComponentIds": { "$ref": "#/$defs/stringArray" },
+        "customCodeIds": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "costLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "description", "low", "expected", "high", "currency", "recurrence", "quantity", "basis", "evidenceCellIds", "confidence"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": { "enum": ["hardware", "software", "services", "custom_code", "fabrication", "integration_labor", "operator_labor", "training", "test_equipment", "qualification", "maintenance", "spares", "communications", "facilities", "energy", "regulatory", "contingency"] },
+        "description": { "type": "string", "minLength": 1 },
+        "low": { "type": "number", "minimum": 0 },
+        "expected": { "type": "number", "minimum": 0 },
+        "high": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "minLength": 1 },
+        "recurrence": { "enum": ["one_time", "monthly", "annual", "per_operation", "per_unit"] },
+        "quantity": { "type": "number", "exclusiveMinimum": 0 },
+        "basis": { "type": "string", "minLength": 1 },
+        "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+        "confidence": { "enum": ["high", "medium", "low", "open"] }
+      }
+    },
+    "scheduleLine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "phase", "description", "predecessorIds", "lowDays", "expectedDays", "highDays", "owner", "acceptanceCondition"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "phase": { "enum": ["procurement", "assembly", "integration", "qualification", "other"] },
+        "description": { "type": "string", "minLength": 1 },
+        "predecessorIds": { "$ref": "#/$defs/stringArray" },
+        "lowDays": { "type": "number", "minimum": 0 },
+        "expectedDays": { "type": "number", "minimum": 0 },
+        "highDays": { "type": "number", "minimum": 0 },
+        "owner": { "type": "string", "minLength": 1 },
+        "acceptanceCondition": { "type": "string", "minLength": 1 }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "category", "statement", "probability", "consequence", "affectedFunctionIds", "affectedComponentIds", "mitigation", "qualificationTestIds", "evidenceCellIds", "closureState"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "category": { "enum": ["performance", "integration", "availability", "security", "safety", "regulatory", "sustainment", "cost", "schedule", "operator_burden", "evidence"] },
+        "statement": { "type": "string", "minLength": 1 },
+        "probability": { "enum": ["low", "medium", "high", "unknown"] },
+        "consequence": { "enum": ["minor", "material", "mission_failure", "unsafe", "unknown"] },
+        "affectedFunctionIds": { "$ref": "#/$defs/stringArray" },
+        "affectedComponentIds": { "$ref": "#/$defs/stringArray" },
+        "mitigation": { "$ref": "#/$defs/stringArray" },
+        "qualificationTestIds": { "$ref": "#/$defs/stringArray" },
+        "evidenceCellIds": { "$ref": "#/$defs/stringArray" },
+        "closureState": { "enum": ["open", "mitigated_by_design", "requires_test", "accepted", "closed"] }
+      }
+    },
+    "residual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "sourceOptionIds", "sourceComponentIds", "affectedFunctionIds", "disposition", "qualificationTestIds"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "statement": { "type": "string", "minLength": 1 },
+        "sourceOptionIds": { "$ref": "#/$defs/stringArray" },
+        "sourceComponentIds": { "$ref": "#/$defs/stringArray" },
+        "affectedFunctionIds": { "$ref": "#/$defs/stringArray" },
+        "disposition": { "enum": ["qualify", "accept", "redesign", "exclude", "unresolved"] },
+        "qualificationTestIds": { "$ref": "#/$defs/stringArray" }
+      }
+    }
+  },
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "missionOutcomeDigest": { "type": "string", "minLength": 1 },
+    "capabilityGraphDigest": { "type": "string", "minLength": 1 },
+    "substitutionPlanDigest": { "type": "string", "minLength": 1 },
+    "selectedOptionIds": { "$ref": "#/$defs/stringArray" },
+    "componentSelections": { "type": "array", "items": { "$ref": "#/$defs/componentSelection" } },
+    "customCodeSelections": { "type": "array", "items": { "$ref": "#/$defs/customCodeSelection" } },
+    "compatibilitySelections": { "type": "array", "items": { "$ref": "#/$defs/compatibilitySelection" } },
+    "humanRoleSelections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["humanRoleId", "staffing", "responsibilities"],
+        "properties": {
+          "humanRoleId": { "type": "string", "minLength": 1 },
+          "staffing": { "type": "string", "minLength": 1 },
+          "responsibilities": { "$ref": "#/$defs/stringArray" },
+          "authorityBoundary": { "type": "string" }
+        }
+      }
+    },
+    "dependencySelections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["dependencyId", "providerOrSource", "availabilityAssumption"],
+        "properties": {
+          "dependencyId": { "type": "string", "minLength": 1 },
+          "providerOrSource": { "type": "string", "minLength": 1 },
+          "availabilityAssumption": { "type": "string", "minLength": 1 },
+          "fallback": { "type": "string" }
+        }
+      }
+    },
+    "costEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["currency", "evaluationPeriod", "lines", "exclusions"],
+      "properties": {
+        "currency": { "type": "string", "minLength": 1 },
+        "evaluationPeriod": { "type": "string", "minLength": 1 },
+        "lines": { "type": "array", "items": { "$ref": "#/$defs/costLine" } },
+        "exclusions": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "scheduleEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["lines", "assumptions"],
+      "properties": {
+        "lines": { "type": "array", "items": { "$ref": "#/$defs/scheduleLine" } },
+        "assumptions": { "$ref": "#/$defs/stringArray" }
+      }
+    },
+    "risks": { "type": "array", "items": { "$ref": "#/$defs/risk" } },
+    "residuals": { "type": "array", "items": { "$ref": "#/$defs/residual" } },
+    "assumptions": { "$ref": "#/$defs/stringArray" },
+    "exclusions": { "$ref": "#/$defs/stringArray" },
+    "state": { "enum": ["concept", "candidate", "integration_ready", "superseded"] }
+  }
+}
