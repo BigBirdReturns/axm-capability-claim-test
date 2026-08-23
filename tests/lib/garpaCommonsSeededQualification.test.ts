@@ -47,6 +47,19 @@ describe("GARPA Commons-seeded qualification", () => {
     ).toBe(true);
   });
 
+  it("blocks a freeze time that differs from the contract or predates architecture admission", () => {
+    const request = buildSeededQualificationRequest();
+    request.frozenAt = "2026-08-23T19:45:00Z";
+    const result = runCommonsSeededQualificationGate(request);
+    expect(result.state).toBe("seeded_qualification_blocked");
+    expect(
+      result.findings.some(
+        (finding) =>
+          finding.state === "qualification_freeze_time_mismatch",
+      ),
+    ).toBe(true);
+  });
+
   it("blocks a missing seeded-component qualification binding", () => {
     const request = buildSeededQualificationRequest();
     request.seededComponentBindings = [];
