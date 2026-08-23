@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.org/axm-capability-claim-test/garpa/claim-packet.schema.json",
   "title": "GARPA Claim Packet",
-  "description": "Source-addressable offering claims. A source may prove that a claim was made without proving the claimed capability.",
+  "description": "Source-addressable offering and component claims. A source may prove that a claim was made without proving the claimed capability.",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "subject", "artifacts", "evidence", "claims", "conflicts", "capturedAt"],
@@ -50,7 +50,7 @@
         "required": ["id", "target", "venue", "control", "locator", "supports", "limitations"],
         "properties": {
           "id": { "type": "string", "minLength": 1 },
-          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "other"] },
+          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "component_identity", "component_performance", "component_compatibility", "component_price", "component_availability", "component_license", "other"] },
           "venue": { "enum": ["claimant_publication", "customer_publication", "government_record", "independent_test", "published_benchmark", "journalistic_report", "community_report", "local_reproduction", "analyst_derivation"] },
           "control": { "enum": ["claimant_controlled", "commercially_related", "externally_attributed", "independent", "local_measured", "unknown"] },
           "locator": {
@@ -91,7 +91,7 @@
           "id": { "type": "string", "minLength": 1 },
           "field": { "type": "string", "minLength": 1 },
           "statement": { "type": "string", "minLength": 1 },
-          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "other"] },
+          "target": { "enum": ["claim_was_made", "offering_identity", "offering_version", "operator_need", "advertised_outcome", "claimed_mechanism", "deployment_occurred", "performance_observed", "cost_observed", "operating_environment", "system_boundary", "independent_verification", "local_result", "component_identity", "component_performance", "component_compatibility", "component_price", "component_availability", "component_license", "other"] },
           "evidenceClass": { "enum": ["confirmed", "reported", "derived", "judgment", "open"] },
           "evidenceCellIds": { "type": "array", "items": { "type": "string" } },
           "scope": { "type": "string" },
