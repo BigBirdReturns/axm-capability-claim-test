@@ -336,6 +336,18 @@ export function runCommonsSeededQualificationGate(
       "Recompute the canonical target architecture digest and regenerate the contract.",
     );
   }
+  if (
+    request.frozenAt !== request.qualificationContract.frozenAt ||
+    Date.parse(request.frozenAt) <
+      Date.parse(request.seededArchitectureRequest.assembledAt)
+  ) {
+    addFinding(
+      findings,
+      "qualification_freeze_time_mismatch",
+      "The qualification freeze time differs from the frozen contract or predates the admitted candidate architecture.",
+      "Use the contract frozenAt value and freeze only after the governing architecture was assembled and admitted.",
+    );
+  }
 
   const projected = seededArchitectureResult.seededSubstitutionResult
     .projectionResult.projectedComponents;
