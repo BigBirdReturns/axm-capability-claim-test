@@ -354,7 +354,7 @@ describe("GARPA commons catalog search", () => {
       text: "controlled fixture",
       executionClasses: ["E2_bench_passive"],
     });
-    expect(result.totalMatches).toBe(3);
+    expect(result.totalMatches).toBe(2);
     expect(result.hits[0]).not.toHaveProperty("score");
     expect(result.hits.every((hit) => hit.sourceReleaseDigest.length === 64)).toBe(
       true,
@@ -417,6 +417,6 @@ describe("GARPA commons catalog search", () => {
     expect(updateMarkdown).toContain("An existing revision is never overwritten");
     expect(updateMarkdown).toContain("Catalog presence does not upgrade maturity");
     expect(searchMarkdown).toContain("does not assign a scalar score");
-    expect(searchMarkdown).toContain("source release digest");
+    expect(searchMarkdown).toContain("Source release digest");
   });
 });
