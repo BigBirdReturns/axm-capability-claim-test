@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-SYNTH-OBS-001",
+  "runId": "RUN-001",
+  "buildId": "BUILD-001",
+  "buildDigest": "build:synthetic-observation:v1",
+  "manifestDigest": "manifest:synthetic-observation:v1",
+  "qualificationContractDigest": "qualification:synthetic-observation:v1",
+  "readiness": {
+    "fixtureReady": true,
+    "instrumentationReady": true,
+    "calibrationReady": true,
+    "storageReady": true,
+    "clocksReady": true,
+    "authorityReady": true,
+    "hazardControlsReady": true,
+    "abortPathReady": true,
+    "operatorRolesReady": true,
+    "runIdReserved": true
+  },
+  "gate": {
+    "passed": true,
+    "manifestCurrent": true,
+    "qualificationContractCurrent": true,
+    "buildStateAdmissible": true,
+    "materialDeviationsClosed": true,
+    "readiness": {
+      "fixtureReady": true,
+      "instrumentationReady": true,
+      "calibrationReady": true,
+      "storageReady": true,
+      "clocksReady": true,
+      "authorityReady": true,
+      "hazardControlsReady": true,
+      "abortPathReady": true,
+      "operatorRolesReady": true,
+      "runIdReserved": true
+    },
+    "blockingReasons": []
+  },
+  "evaluatedAt": "2026-08-23T04:55:00Z",
+  "preflightDigest": "preflight:synthetic-observation:run-001"
+}
