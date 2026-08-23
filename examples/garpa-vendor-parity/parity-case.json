@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-PARITY-0001",
+  "vendorOffering": "Synthetic Vendor Reference System",
+  "vendorVersion": "reference-1.0.0",
+  "garpaMissionState": "bounded_match",
+  "garpaBuildReceiptDigest": "build-receipt-digest-1",
+  "garpaQualificationContractDigest": "qualification-digest-1",
+  "requiredMetricIds": ["m-detection", "m-latency-ms"],
+  "essentialMetricIds": ["m-detection", "m-latency-ms"],
+  "comparators": [
+    {
+      "metricId": "m-detection",
+      "label": "Detection before boundary crossing",
+      "essential": true,
+      "direction": "boolean_equal"
+    },
+    {
+      "metricId": "m-latency-ms",
+      "label": "Median operator-presentation latency",
+      "essential": true,
+      "direction": "lower_is_better",
+      "requiredUnit": "ms",
+      "absoluteTolerance": 50,
+      "relativeTolerance": 0
+    }
+  ],
+  "observations": [
+    {
+      "id": "garpa-detection-1",
+      "subject": "garpa",
+      "metricId": "m-detection",
+      "scenarioId": "garpa-scenario-1",
+      "fixtureDigest": "shared-fixture-digest-1",
+      "methodDigest": "shared-method-digest-1",
+      "buildReceiptDigest": "build-receipt-digest-1",
+      "qualificationContractDigest": "qualification-digest-1",
+      "value": true,
+      "evidenceControl": "local_measured",
+      "evidenceArtifactIds": ["garpa-run-receipt-1"],
+      "limitations": ["Controlled passive observation fixture only."]
+    },
+    {
+      "id": "vendor-detection-1",
+      "subject": "vendor",
+      "subjectVersion": "reference-1.0.0",
+      "metricId": "m-detection",
+      "scenarioId": "vendor-scenario-1",
+      "fixtureDigest": "shared-fixture-digest-1",
+      "methodDigest": "shared-method-digest-1",
+      "value": true,
+      "evidenceControl": "independent",
+      "evidenceArtifactIds": ["vendor-independent-run-1"],
+      "limitations": ["Synthetic regression fixture, not a real vendor result."]
+    },
+    {
+      "id": "garpa-latency-1",
+      "subject": "garpa",
+      "metricId": "m-latency-ms",
+      "scenarioId": "garpa-scenario-1",
+      "fixtureDigest": "shared-fixture-digest-1",
+      "methodDigest": "shared-method-digest-1",
+      "buildReceiptDigest": "build-receipt-digest-1",
+      "qualificationContractDigest": "qualification-digest-1",
+      "value": 1200,
+      "unit": "ms",
+      "evidenceControl": "local_measured",
+      "evidenceArtifactIds": ["garpa-run-receipt-1"],
+      "limitations": ["Controlled passive observation fixture only."]
+    },
+    {
+      "id": "vendor-latency-1",
+      "subject": "vendor",
+      "subjectVersion": "reference-1.0.0",
+      "metricId": "m-latency-ms",
+      "scenarioId": "vendor-scenario-1",
+      "fixtureDigest": "shared-fixture-digest-1",
+      "methodDigest": "shared-method-digest-1",
+      "value": 1400,
+      "unit": "ms",
+      "evidenceControl": "independent",
+      "evidenceArtifactIds": ["vendor-independent-run-1"],
+      "limitations": ["Synthetic regression fixture, not a real vendor result."]
+    }
+  ],
+  "scenarioComparisons": [
+    {
+      "id": "scenario-comparison-1",
+      "garpaScenarioId": "garpa-scenario-1",
+      "vendorScenarioId": "vendor-scenario-1",
+      "state": "same_fixture",
+      "reasons": [
+        "Both observations use the same frozen fixture digest and measurement-method digest."
+      ]
+    }
+  ],
+  "accountingBoundaries": []
+}
