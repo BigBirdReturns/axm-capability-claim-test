@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededSubstitution.ts",
+    "app/src/lib/garpa/commonsSeededSubstitutionDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededSubstitution.ts",
+    "app/src/lib/garpa/runCommonsSeededSubstitutionGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededSubstitution.ts",
+    "tests/lib/garpaCommonsSeededSubstitution.test.ts",
+    "examples/garpa-commons-seeded-substitution/**/*.json"
+  ]
+}

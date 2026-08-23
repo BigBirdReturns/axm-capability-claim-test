@@ -1,7 +1,7 @@
 # GARPA method version
 
-Current branch method version: `0.4.0-commons-component-projection`.
+Current branch method version: `0.5.0-commons-seeded-substitution`.
 
-The highest governed stage is target-case component projection from an admitted Capability Commons nomination. The ordered method now covers claim intake, mission reconstruction, functional decomposition, substitution, architecture, qualification, build and test custody, mission evaluation, vendor parity, publication, release verification, correction and registry history, Commons admission, revision-preserving catalog search, deterministic target-function retrieval, source-bound case nomination, and exact-version target component projection.
+The highest governed stage binds exact Commons-projected components into a complete target substitution plan and returns that plan to the existing substitution validator and gate. The ordered method now covers claim intake, mission reconstruction, functional decomposition, substitution, architecture, qualification, build and test custody, mission evaluation, vendor parity, publication, release verification, correction and registry history, Commons admission, catalog search, target-function retrieval, source-bound nomination, exact-version target component projection, and seeded substitution admission.
 
-Automatic physical execution is not implemented or authorized. Commons projection does not transfer source-case performance, price, availability, licensing, qualification, compatibility, function coverage, architecture, procurement, testing, deployment, publication, or equivalence. The target case must supply its own evidence and pass its existing gates.
+Automatic physical execution is not implemented or authorized. Seeded substitution does not transfer source evidence, permit seed mutation, or bypass target component, compatibility, option, availability, cost, licensing, architecture, procurement, testing, deployment, publication, or equivalence gates.

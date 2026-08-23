@@ -1,0 +1,73 @@
+name: garpa-commons-seeded-substitution-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededSubstitution.ts"
+      - "app/src/lib/garpa/commonsSeededSubstitutionDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededSubstitution.ts"
+      - "app/src/lib/garpa/runCommonsSeededSubstitutionGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededSubstitution.ts"
+      - "tests/lib/garpaCommonsSeededSubstitution.test.ts"
+      - "examples/garpa-commons-seeded-substitution/**"
+      - "schemas/garpa/commons-seeded-substitution-*.schema.json"
+      - "docs/garpa-commons-seeded-substitution.md"
+      - "mcp/garpaCommonsSeededSubstitutionTools.ts"
+      - "mcp/garpa-commons-seeded-substitution-server.ts"
+      - "mcp/tsconfig.commons-seeded-substitution.json"
+      - "tsconfig.commons-seeded-substitution.json"
+      - ".github/workflows/garpa-commons-seeded-substitution-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-substitution-v1"
+    paths:
+      - "app/src/types/garpaCommonsSeededSubstitution.ts"
+      - "app/src/lib/garpa/commonsSeededSubstitutionDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededSubstitution.ts"
+      - "app/src/lib/garpa/runCommonsSeededSubstitutionGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededSubstitution.ts"
+      - "tests/lib/garpaCommonsSeededSubstitution.test.ts"
+      - "examples/garpa-commons-seeded-substitution/**"
+      - "schemas/garpa/commons-seeded-substitution-*.schema.json"
+      - "docs/garpa-commons-seeded-substitution.md"
+      - "mcp/garpaCommonsSeededSubstitutionTools.ts"
+      - "mcp/garpa-commons-seeded-substitution-server.ts"
+      - "mcp/tsconfig.commons-seeded-substitution.json"
+      - "tsconfig.commons-seeded-substitution.json"
+      - ".github/workflows/garpa-commons-seeded-substitution-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  seeded-substitution:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run GARPA Commons-seeded substitution tests
+        run: npx vitest run tests/lib/garpaCommonsSeededSubstitution.test.ts
+
+      - name: Typecheck GARPA Commons-seeded substitution surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-substitution.json
+
+      - name: Build static workbench bundle
+        run: npx vite build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck GARPA Commons-seeded substitution MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-substitution.json
+        working-directory: mcp

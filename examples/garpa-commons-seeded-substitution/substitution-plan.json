@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-COMMONS-TARGET-0001",
+  "capabilityGraphDigest": "0000000000000000000000000000000000000000000000000000000000000000",
+  "components": [
+    {
+      "id": "component-sensor-v1-target",
+      "kind": "commercial_hardware",
+      "manufacturer": "GARPA Synthetic Fixtures",
+      "product": "Synthetic Fixture Sensor",
+      "exactModelOrVersion": "sensor-v1",
+      "functionIds": ["f-observe-target"],
+      "interfaceIds": ["i-world-target", "i-observation-target"],
+      "maturity": "independently_reported",
+      "identityEvidenceCellIds": ["e-sensor-id"],
+      "performanceEvidenceCellIds": ["e-sensor-perf"],
+      "licenseEvidenceCellIds": [],
+      "performanceEnvelope": {
+        "targetObservation": "Timestamped observations under the target controlled fixture"
+      },
+      "operatingRequirements": {
+        "firmwareOrSoftwareVersion": "1.0.0",
+        "environment": "Controlled indoor fixture with constant lighting and static background"
+      },
+      "securityNotes": ["Isolate the synthetic fixture network during target qualification."],
+      "price": {
+        "amount": 250,
+        "currency": "USD",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-sensor-price"],
+        "includedCostCategories": ["hardware"],
+        "excludedCostCategories": ["integration_labor", "qualification"]
+      },
+      "availability": {
+        "state": "in_stock",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-sensor-availability"],
+        "note": "Synthetic availability observation for regression only."
+      },
+      "integrationRequirements": [
+        "Re-run the target observation fixture and interface tests against the target graph and configuration."
+      ],
+      "limitations": [
+        "Qualification is restricted to the released fixture, environment, target class, and metric."
+      ],
+      "residuals": [
+        "No observation exists for adverse weather, unrestricted backgrounds, alternate target classes, or field deployment."
+      ],
+      "lifecycle": "available"
+    },
+    {
+      "id": "component-detector-target",
+      "kind": "software_package",
+      "product": "Synthetic Detector",
+      "exactModelOrVersion": "detector-1.0",
+      "functionIds": ["f-detect-target"],
+      "interfaceIds": ["i-observation-target", "i-detection-target"],
+      "maturity": "independently_reported",
+      "identityEvidenceCellIds": ["e-detector-id"],
+      "performanceEvidenceCellIds": ["e-detector-perf"],
+      "licenseEvidenceCellIds": ["e-detector-license"],
+      "performanceEnvelope": {
+        "targetClass": "Known synthetic object",
+        "fixture": "Target controlled observation records"
+      },
+      "operatingRequirements": {
+        "runtime": "Target local compute",
+        "input": "Versioned target observation record"
+      },
+      "license": "MIT",
+      "sourceAvailability": "Versioned source snapshot",
+      "securityNotes": ["No network access required during the fixture."],
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-detector-price"],
+        "includedCostCategories": ["software_acquisition"],
+        "excludedCostCategories": ["integration_labor", "qualification"]
+      },
+      "availability": {
+        "state": "in_stock",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-detector-availability"]
+      },
+      "integrationRequirements": ["Pin detector-1.0 and its dependency lockfile."],
+      "limitations": ["Known synthetic target class only."],
+      "residuals": ["No general classification claim."],
+      "lifecycle": "available"
+    },
+    {
+      "id": "component-ui-target",
+      "kind": "software_package",
+      "product": "Synthetic Operator UI",
+      "exactModelOrVersion": "ui-1.0",
+      "functionIds": ["f-present-target"],
+      "interfaceIds": ["i-detection-target", "i-alert-target"],
+      "maturity": "independently_reported",
+      "identityEvidenceCellIds": ["e-ui-id"],
+      "performanceEvidenceCellIds": ["e-ui-perf"],
+      "licenseEvidenceCellIds": ["e-ui-license"],
+      "performanceEnvelope": {
+        "operatorCount": "One",
+        "input": "Versioned target detection event"
+      },
+      "operatingRequirements": {
+        "runtime": "Target local browser",
+        "display": "One operator display"
+      },
+      "license": "Apache-2.0",
+      "sourceAvailability": "Versioned source snapshot",
+      "securityNotes": ["Isolated target network only."],
+      "price": {
+        "amount": 0,
+        "currency": "USD",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-ui-price"],
+        "includedCostCategories": ["software_acquisition"],
+        "excludedCostCategories": ["operator_labor", "integration_labor", "qualification"]
+      },
+      "availability": {
+        "state": "in_stock",
+        "capturedAt": "2026-08-23T01:15:00Z",
+        "evidenceCellIds": ["e-ui-availability"]
+      },
+      "integrationRequirements": ["Pin ui-1.0 and the target detection-event contract."],
+      "limitations": ["Single-operator fixture only."],
+      "residuals": ["Concurrent-target workload remains unassessed."],
+      "lifecycle": "available"
+    }
+  ],
+  "customCode": [],
+  "compatibilityEdges": [
+    {
+      "id": "compat-observation-target",
+      "interfaceId": "i-observation-target",
+      "producerComponentIds": ["component-sensor-v1-target"],
+      "consumerComponentIds": ["component-detector-target"],
+      "state": "confirmed_compatible",
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "evidenceCellIds": ["e-compat-observation"],
+      "limitations": ["Versioned synthetic record only."],
+      "falsificationTest": "Replay all target sensor-v1 records through detector-1.0 and fail on any rejected or altered record."
+    },
+    {
+      "id": "compat-detection-target",
+      "interfaceId": "i-detection-target",
+      "producerComponentIds": ["component-detector-target"],
+      "consumerComponentIds": ["component-ui-target"],
+      "state": "reported_compatible",
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "evidenceCellIds": ["e-compat-detection"],
+      "limitations": ["Versioned synthetic event contract only."],
+      "falsificationTest": "Replay all detector-1.0 target events through ui-1.0 and fail on any missing, rejected, or timestamp-altered event."
+    }
+  ],
+  "options": [
+    {
+      "id": "option-observe-target",
+      "functionId": "f-observe-target",
+      "componentIds": ["component-sensor-v1-target"],
+      "customCodeIds": [],
+      "coverage": "complete_candidate",
+      "maturity": "reported",
+      "composition": "Use target-evidenced sensor-v1 to emit timestamped observations from the frozen target fixture.",
+      "integrationWork": ["Mount the sensor", "Verify target timestamps"],
+      "evidenceCellIds": ["e-sensor-perf"],
+      "residuals": ["No unrestricted environment coverage."],
+      "falsificationTest": "Execute the target fixture and fail if any required observation is absent or lacks a usable timestamp."
+    },
+    {
+      "id": "option-detect-target",
+      "functionId": "f-detect-target",
+      "componentIds": ["component-detector-target"],
+      "customCodeIds": [],
+      "coverage": "complete_candidate",
+      "maturity": "reported",
+      "composition": "Run detector-1.0 against the versioned target observation stream.",
+      "integrationWork": ["Pin dependencies", "Load the target configuration"],
+      "evidenceCellIds": ["e-detector-perf"],
+      "residuals": ["Known synthetic target class only."],
+      "falsificationTest": "Run the target observation set and fail if the detection decision differs from ground truth."
+    },
+    {
+      "id": "option-present-target",
+      "functionId": "f-present-target",
+      "componentIds": ["component-ui-target"],
+      "customCodeIds": [],
+      "coverage": "complete_candidate",
+      "maturity": "reported",
+      "composition": "Use ui-1.0 to present target detection events to one trained operator.",
+      "integrationWork": ["Configure the target event endpoint", "Verify acknowledgement logging"],
+      "evidenceCellIds": ["e-ui-perf"],
+      "residuals": ["Concurrent-target operator burden remains unassessed."],
+      "falsificationTest": "Replay the target event set and fail if a required event is not displayed or acknowledged."
+    }
+  ],
+  "costBoundary": {
+    "state": "complete",
+    "currency": "USD",
+    "evaluationPeriod": "One bounded target fixture and one one-hour qualification run",
+    "includedCategories": [
+      "hardware",
+      "software",
+      "integration_labor",
+      "operator_labor",
+      "qualification"
+    ],
+    "excludedCategories": ["active_response", "operational_field_deployment"],
+    "note": "Target software prices exclude labor, which remains a separate included category."
+  },
+  "exclusions": [
+    "No active response mechanism.",
+    "No operational deployment, transferred qualification, or vendor-parity claim."
+  ]
+}

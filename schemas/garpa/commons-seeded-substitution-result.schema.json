@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-substitution-result.schema.json",
+  "title": "GARPA Commons-Seeded Substitution Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "projectionResult",
+    "projectionResultDigest",
+    "graphGate",
+    "seededComponentIds",
+    "targetOnlyComponentIds",
+    "findings",
+    "planValidationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_substitution_blocked",
+        "seeded_substitution_incomplete",
+        "seeded_substitution_admitted"
+      ]
+    },
+    "projectionResult": { "type": "object" },
+    "projectionResultDigest": { "type": "string" },
+    "graphGate": { "type": "object" },
+    "seededComponentIds": { "type": "array", "items": { "type": "string" } },
+    "targetOnlyComponentIds": { "type": "array", "items": { "type": "string" } },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "planValidationErrors": { "type": "array", "items": { "type": "string" } },
+    "substitutionGate": { "type": "object" },
+    "plan": { "type": "object" },
+    "pullList": { "type": "array", "items": { "type": "string" } },
+    "prohibitedTransitions": { "type": "array", "items": { "type": "string" } }
+  }
+}
