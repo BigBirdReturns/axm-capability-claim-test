@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-release-request.schema.json",
+  "title": "GARPA Commons-Seeded Release Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededPublicationRequest",
+    "expectedSeededPublicationResultDigest",
+    "releaseManifest",
+    "releaseFiles",
+    "releaseEnvelope",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededPublicationRequest": { "type": "object" },
+    "expectedSeededPublicationResultDigest": { "$ref": "#/$defs/digest" },
+    "releaseManifest": { "type": "object" },
+    "releaseFiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "mediaType",
+          "role",
+          "required",
+          "contentEncoding",
+          "content",
+          "sha256",
+          "byteLength"
+        ],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "mediaType": { "type": "string", "minLength": 1 },
+          "role": { "type": "string", "minLength": 1 },
+          "required": { "const": true },
+          "contentEncoding": { "const": "utf-8" },
+          "content": { "type": "string" },
+          "sha256": { "$ref": "#/$defs/digest" },
+          "byteLength": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "releaseEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "releaseReceiptId",
+        "caseId",
+        "releaseId",
+        "releaseNumber",
+        "releaseState",
+        "caseIndexDigest",
+        "seededPublicationResultDigest",
+        "publicationPackageDigest",
+        "publicationGateResultDigest",
+        "releaseManifestDigest",
+        "fileSetDigest",
+        "bundleDigest",
+        "verifiedAt",
+        "publicationReady",
+        "unrestrictedEquivalenceClaimed",
+        "deploymentAuthorityClaimed",
+        "registryUpdated",
+        "publicReleaseOccurred",
+        "envelopeDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "releaseReceiptId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "releaseId": { "type": "string", "minLength": 1 },
+        "releaseNumber": { "const": 1 },
+        "releaseState": { "const": "current" },
+        "caseIndexDigest": { "$ref": "#/$defs/digest" },
+        "seededPublicationResultDigest": { "$ref": "#/$defs/digest" },
+        "publicationPackageDigest": { "$ref": "#/$defs/digest" },
+        "publicationGateResultDigest": { "$ref": "#/$defs/digest" },
+        "releaseManifestDigest": { "$ref": "#/$defs/digest" },
+        "fileSetDigest": { "$ref": "#/$defs/digest" },
+        "bundleDigest": { "$ref": "#/$defs/digest" },
+        "verifiedAt": { "type": "string", "format": "date-time" },
+        "publicationReady": { "const": true },
+        "unrestrictedEquivalenceClaimed": { "const": false },
+        "deploymentAuthorityClaimed": { "const": false },
+        "registryUpdated": { "const": false },
+        "publicReleaseOccurred": { "const": false },
+        "envelopeDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "admittedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    }
+  }
+}

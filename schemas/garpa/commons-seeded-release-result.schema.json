@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-release-result.schema.json",
+  "title": "GARPA Commons-Seeded Release Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "releaseVerified",
+    "seededPublicationResultDigest",
+    "releaseManifestDigest",
+    "releaseEnvelopeDigest",
+    "fileSetDigest",
+    "bundleDigest",
+    "expectedFiles",
+    "releaseFiles",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_release_blocked",
+        "seeded_release_incomplete",
+        "seeded_release_admitted"
+      ]
+    },
+    "releaseVerified": { "type": "boolean" },
+    "releaseState": {
+      "enum": [
+        "current_valid",
+        "superseded_valid",
+        "withdrawn_valid",
+        "manifest_digest_mismatch",
+        "file_missing",
+        "unexpected_file",
+        "file_digest_mismatch",
+        "file_length_mismatch",
+        "duplicate_path",
+        "unsafe_path",
+        "registry_mismatch"
+      ]
+    },
+    "seededPublicationResult": { "type": "object" },
+    "seededPublicationResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "releaseManifestDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "releaseEnvelopeDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "fileSetDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "bundleDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "ordinaryManifestVerification": { "type": "object" },
+    "ordinaryBundleVerification": { "type": "object" },
+    "releaseManifest": { "type": "object" },
+    "expectedFiles": { "type": "array", "items": { "type": "object" } },
+    "releaseFiles": { "type": "array", "items": { "type": "object" } },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "validationErrors": { "$ref": "#/$defs/stringArray" },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

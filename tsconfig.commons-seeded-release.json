@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededRelease.ts",
+    "app/src/lib/garpa/commonsSeededReleaseDigest.ts",
+    "app/src/lib/garpa/deriveCommonsSeededRelease.ts",
+    "app/src/lib/garpa/validateCommonsSeededRelease.ts",
+    "app/src/lib/garpa/runCommonsSeededReleaseGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededRelease.ts",
+    "tests/fixtures/garpaCommonsSeededReleaseFixture.ts",
+    "tests/lib/garpaCommonsSeededRelease.test.ts"
+  ]
+}
