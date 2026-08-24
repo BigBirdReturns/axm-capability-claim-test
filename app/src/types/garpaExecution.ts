@@ -198,6 +198,7 @@ export interface TestAbort {
   occurredAt: string;
   authority: string;
   reason: string;
+  evidenceArtifactIds?: string[];
 }
 
 export type TestRunState =
