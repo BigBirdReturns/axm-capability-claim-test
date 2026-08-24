@@ -13,6 +13,7 @@ on:
       - "tests/fixtures/garpaCommonsSeededPreflightFixture.ts"
       - "tests/lib/garpaCommonsSeededPreflight.test.ts"
       - "tests/lib/garpaMethodVersion.test.ts"
+      - "examples/garpa-commons-seeded-preflight/**"
       - "schemas/garpa/commons-seeded-preflight-*.schema.json"
       - "docs/garpa-commons-seeded-preflight.md"
       - "docs/garpa-method-version.md"
@@ -56,7 +57,7 @@ jobs:
         run: npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
 
       - name: Build static workbench bundle
-        run: npm run build
+        run: npx vite build
 
       - name: Install MCP dependencies
         run: npm ci
