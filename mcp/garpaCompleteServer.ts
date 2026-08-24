@@ -28,14 +28,16 @@ import { registerGarpaCommonsSeededMissionEvaluationTools } from "./garpaCommons
 import { registerGarpaCommonsSeededVendorParityTools } from "./garpaCommonsSeededVendorParityTools.ts";
 import { registerGarpaCommonsSeededPublicationTools } from "./garpaCommonsSeededPublicationTools.ts";
 import { registerGarpaCommonsSeededReleaseTools } from "./garpaCommonsSeededReleaseTools.ts";
+import { registerGarpaCommonsSeededPublicRegistryTools } from "./garpaCommonsSeededPublicRegistryTools.ts";
 import { registerGarpaMethodTools } from "./garpaMethodTools.ts";
 
 const server = new McpServer({
   name: "garpa-complete",
-  version: "1.5.0",
+  version: "1.6.0",
 });
 
 registerGarpaMethodTools(server);
+registerGarpaCommonsSeededPublicRegistryTools(server);
 registerGarpaCommonsSeededReleaseTools(server);
 registerGarpaCommonsSeededPublicationTools(server);
 registerGarpaCommonsSeededVendorParityTools(server);

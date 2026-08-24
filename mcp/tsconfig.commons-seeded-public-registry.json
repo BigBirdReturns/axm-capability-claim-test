@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededPublicRegistryTools.ts",
+    "garpa-commons-seeded-public-registry-server.ts"
+  ]
+}

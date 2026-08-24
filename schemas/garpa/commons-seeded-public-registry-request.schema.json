@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-public-registry-request.schema.json",
+  "title": "GARPA Commons-Seeded Public Registry Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededReleaseRequest",
+    "expectedSeededReleaseResultDigest",
+    "registryUpdateRequest",
+    "registryEnvelope",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededReleaseRequest": { "type": "object" },
+    "expectedSeededReleaseResultDigest": { "$ref": "#/$defs/digest" },
+    "registryUpdateRequest": { "$ref": "registry-release-update-request.schema.json" },
+    "registryEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "registryReceiptId",
+        "caseId",
+        "releaseId",
+        "releaseNumber",
+        "releaseManifestDigest",
+        "releaseBundleDigest",
+        "seededReleaseResultDigest",
+        "currentEntryDigest",
+        "registryUpdateRequestDigest",
+        "identityPatchDigest",
+        "registryUpdateGateResultDigest",
+        "nextEntryDigest",
+        "releaseHistoryDigest",
+        "updatedAt",
+        "publicRegistryPublished",
+        "publicReleaseOccurred",
+        "deploymentAuthorityClaimed",
+        "unrestrictedEquivalenceClaimed",
+        "envelopeDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "registryReceiptId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "releaseId": { "type": "string", "minLength": 1 },
+        "releaseNumber": { "const": 1 },
+        "releaseManifestDigest": { "$ref": "#/$defs/digest" },
+        "releaseBundleDigest": { "$ref": "#/$defs/digest" },
+        "seededReleaseResultDigest": { "$ref": "#/$defs/digest" },
+        "currentEntryDigest": { "$ref": "#/$defs/digest" },
+        "registryUpdateRequestDigest": { "$ref": "#/$defs/digest" },
+        "identityPatchDigest": { "$ref": "#/$defs/digest" },
+        "registryUpdateGateResultDigest": { "$ref": "#/$defs/digest" },
+        "nextEntryDigest": { "$ref": "#/$defs/digest" },
+        "releaseHistoryDigest": { "$ref": "#/$defs/digest" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "publicRegistryPublished": { "const": false },
+        "publicReleaseOccurred": { "const": false },
+        "deploymentAuthorityClaimed": { "const": false },
+        "unrestrictedEquivalenceClaimed": { "const": false },
+        "envelopeDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "admittedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    }
+  }
+}

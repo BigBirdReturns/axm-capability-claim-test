@@ -1,0 +1,74 @@
+name: garpa-commons-seeded-public-registry-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededPublicRegistry.ts"
+      - "app/src/lib/garpa/commonsSeededPublicRegistry*.ts"
+      - "app/src/lib/garpa/deriveCommonsSeededPublicRegistry.ts"
+      - "app/src/lib/garpa/validateCommonsSeededPublicRegistry.ts"
+      - "app/src/lib/garpa/runCommonsSeededPublicRegistryGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededPublicRegistry.ts"
+      - "app/src/lib/garpa/validateReleaseManifest.ts"
+      - "app/src/lib/garpa/garpaVersion.ts"
+      - "app/src/lib/garpa/implementedStages.ts"
+      - "tests/fixtures/garpaCommonsSeededPublicRegistryFixture.ts"
+      - "tests/lib/garpaCommonsSeededPublicRegistry.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-public-registry-*.schema.json"
+      - "docs/garpa-commons-seeded-public-registry.md"
+      - "docs/garpa-method-version.md"
+      - "docs/garpa-current-surface.md"
+      - "mcp/garpaCommonsSeededPublicRegistryTools.ts"
+      - "mcp/garpa-commons-seeded-public-registry-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-public-registry.json"
+      - "tsconfig.commons-seeded-public-registry.json"
+      - ".github/workflows/garpa-commons-seeded-public-registry-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-public-registry-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  public-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Generate executable registry evidence
+        run: npx tsx scripts/generateCommonsSeededPublicRegistryExample.ts
+      - name: Run focused registry campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededPublicRegistry.test.ts \
+            tests/lib/garpaCommonsSeededRelease.test.ts \
+            tests/lib/garpaRegistry.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+      - name: Typecheck Commons-seeded public-registry surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-public-registry.json
+      - name: Run complete repository check
+        run: npm run check
+      - name: Build static workbench
+        run: npm run build
+      - run: npm ci
+        working-directory: mcp
+      - name: Typecheck dedicated public-registry MCP
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-public-registry.json
+        working-directory: mcp
+      - name: Typecheck complete GARPA MCP
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+      - name: Upload generated registry evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-commons-seeded-public-registry-evidence
+          path: examples/garpa-commons-seeded-public-registry
+          retention-days: 3
