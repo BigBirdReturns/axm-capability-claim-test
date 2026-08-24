@@ -1,0 +1,186 @@
+name: recover-build-manifest-fallback
+
+on:
+  push:
+    branches:
+      - "feature/garpa-recover-build-manifest-5f887"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: garpa-build-manifest-recovery
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout recovery controller
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm ci --prefix mcp
+
+      - name: Recover, qualify, and promote
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: BigBirdReturns/axm-capability-claim-test
+          BASE_BRANCH: feature/garpa-commons-seeded-qualification-v1
+          TARGET_BRANCH: feature/garpa-commons-seeded-build-manifest-v1
+          EXPECTED_TARGET_HEAD: 094a25d3877c3c5c1e9fe6067e4e070bde1bc71a
+          RECOVERY_BLOBS: d038f74e4255a30c4318b9bb6c414dcc4212c0e6 5f5412848133d6ccec8d3c7878faddd3f19557c0 5929c8381a0c1d8fa8909bdc69824ad25cdbbb0a ece011d50de263aef441af36b63258daf2b09a3a 71c541b814e47cd9c829d1b606a7649ded2713dc 4dc6962a3b15375a2d1f7d5b6cc8c656e0e380aa 79181191d4df65d500d3d68208743eb418f6ed32 a02ded02d2fa31f88afd998bb2e77ca96fe80f6b
+        run: |
+          set -euo pipefail
+
+          qualify() {
+            npx vitest run \
+              tests/lib/garpaCommonsSeededBuildManifest.test.ts \
+              tests/lib/garpaMethodVersion.test.ts \
+              tests/lib/garpaCaseWorkspace.test.ts
+            npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+            npm run build
+            (cd mcp && npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json)
+          }
+
+          promote_current_tree() {
+            git fetch origin "${TARGET_BRANCH}"
+            current="$(git rev-parse "origin/${TARGET_BRANCH}")"
+            if git show "origin/${TARGET_BRANCH}:app/src/lib/garpa/garpaVersion.ts" 2>/dev/null | grep -q '0.8.0-commons-seeded-build-manifest'; then
+              echo "Target branch already contains the qualified method version."
+              exit 0
+            fi
+            if [ "${current}" != "${EXPECTED_TARGET_HEAD}" ]; then
+              echo "Refusing to overwrite unexpected target head ${current}." >&2
+              exit 1
+            fi
+            git config user.name "GARPA recovery qualification"
+            git config user.email "actions@users.noreply.github.com"
+            git push origin "HEAD:${TARGET_BRANCH}" \
+              --force-with-lease="refs/heads/${TARGET_BRANCH}:${EXPECTED_TARGET_HEAD}"
+          }
+
+          echo "Testing the recovered candidate commit first."
+          if qualify; then
+            git rm -f .github/workflows/recover-build-manifest-5f887.yml \
+              .github/workflows/recover-build-manifest-fallback.yml || true
+            git commit -m "Remove temporary recovery qualification workflows" || true
+            promote_current_tree
+            exit 0
+          fi
+
+          echo "Candidate commit was incomplete. Recovering uploaded patch blobs."
+          mkdir -p /tmp/garpa-blobs /tmp/garpa-candidates
+          index=0
+          for sha in ${RECOVERY_BLOBS}; do
+            gh api "repos/${REPOSITORY}/git/blobs/${sha}" --jq .content \
+              | tr -d '\n' | base64 -d > "/tmp/garpa-blobs/${index}.raw"
+            index=$((index + 1))
+          done
+
+          python - <<'PY'
+          from __future__ import annotations
+          import base64, gzip, itertools, pathlib, re, zipfile, io
+
+          source = pathlib.Path('/tmp/garpa-blobs')
+          out = pathlib.Path('/tmp/garpa-candidates')
+          raws = [p.read_bytes() for p in sorted(source.glob('*.raw'), key=lambda p: int(p.stem))]
+
+          def variants(data: bytes):
+              seen = set()
+              queue = [data]
+              for _ in range(4):
+                  next_queue = []
+                  for item in queue:
+                      if item in seen:
+                          continue
+                      seen.add(item)
+                      yield item
+                      compact = re.sub(rb'\s+', b'', item)
+                      try:
+                          decoded = base64.b64decode(compact, validate=True)
+                          if decoded and decoded not in seen:
+                              next_queue.append(decoded)
+                      except Exception:
+                          pass
+                      try:
+                          decoded = gzip.decompress(item)
+                          if decoded and decoded not in seen:
+                              next_queue.append(decoded)
+                      except Exception:
+                          pass
+                  queue = next_queue
+
+          candidates = []
+          for i, raw in enumerate(raws):
+              for j, value in enumerate(variants(raw)):
+                  candidates.append((f'blob-{i}-variant-{j}', value))
+
+          for mode, chunks in (
+              ('raw-concat', raws),
+              ('b64-concat', [next((v for v in variants(r) if b'diff --git' in v or b'--- /dev/null' in v), r) for r in raws]),
+          ):
+              joined = b''.join(chunks)
+              for j, value in enumerate(variants(joined)):
+                  candidates.append((f'{mode}-variant-{j}', value))
+
+          written = 0
+          for name, value in candidates:
+              if b'diff --git ' in value or (b'--- ' in value and b'+++ ' in value):
+                  start = value.find(b'diff --git ')
+                  if start < 0:
+                      start = max(0, value.find(b'--- '))
+                  path = out / f'{written:03d}-{name}.patch'
+                  path.write_bytes(value[start:])
+                  written += 1
+              if value.startswith(b'PK\x03\x04'):
+                  path = out / f'{written:03d}-{name}.zip'
+                  path.write_bytes(value)
+                  written += 1
+          print(f'wrote {written} recovery candidates')
+          PY
+
+          git fetch origin "${BASE_BRANCH}"
+          for candidate in /tmp/garpa-candidates/*; do
+            [ -e "${candidate}" ] || continue
+            echo "Trying ${candidate}"
+            git checkout --detach "origin/${BASE_BRANCH}"
+            git reset --hard
+            git clean -fdx -e node_modules -e mcp/node_modules
+
+            case "${candidate}" in
+              *.patch)
+                git apply --index --binary --whitespace=nowarn "${candidate}" || continue
+                ;;
+              *.zip)
+                rm -rf /tmp/qualified-source
+                mkdir -p /tmp/qualified-source
+                unzip -q "${candidate}" -d /tmp/qualified-source || continue
+                root="$(find /tmp/qualified-source -name package.json -type f -print0 | xargs -0 -n1 dirname | while read d; do [ -d "$d/app/src" ] && [ -d "$d/tests" ] && echo "$d"; done | head -1)"
+                [ -n "${root}" ] || continue
+                rsync -a --delete --exclude=.git/ --exclude=node_modules/ --exclude=mcp/node_modules/ "${root}/" ./
+                git add -A
+                ;;
+            esac
+
+            if qualify; then
+              git config user.name "GARPA recovery qualification"
+              git config user.email "actions@users.noreply.github.com"
+              git commit -m "Bind Commons-seeded qualification into target build manifests"
+              promote_current_tree
+              exit 0
+            fi
+          done
+
+          echo "No recovered candidate passed qualification." >&2
+          exit 1
