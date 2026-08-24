@@ -1,0 +1,151 @@
+name: garpa-finalize-seeded-build-receipt
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-receipt-v1"
+    paths:
+      - ".github/workflows/garpa-finalize-seeded-build-receipt.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout construction branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Integrate method, fixture, and aggregate MCP surfaces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          version = Path("app/src/lib/garpa/garpaVersion.ts")
+          version.write_text(
+              'export const GARPA_METHOD_VERSION = "0.9.0-commons-seeded-build-receipt";\n'
+          )
+
+          stages = Path("app/src/lib/garpa/implementedStages.ts")
+          text = stages.read_text()
+          if '"commons_seeded_build_receipt"' not in text:
+              text = text.replace(
+                  '] as const;',
+                  '  "commons_seeded_build_receipt",\n] as const;',
+              )
+          stages.write_text(text)
+
+          method_test = Path("tests/lib/garpaMethodVersion.test.ts")
+          text = method_test.read_text()
+          text = re.sub(
+              r'0\.\d+\.\d+-commons-seeded-[a-z-]+',
+              '0.9.0-commons-seeded-build-receipt',
+              text,
+          )
+          text = re.sub(
+              r'\.toBe\("commons_seeded_[a-z_]+"\)',
+              '.toBe("commons_seeded_build_receipt")',
+              text,
+              count=1,
+          )
+          if 'commons_seeded_build_manifest' not in text:
+              text = text.replace(
+                  'expect(IMPLEMENTED_GARPA_STAGES)',
+                  'expect(IMPLEMENTED_GARPA_STAGES).toContain("commons_seeded_build_manifest");\n    expect(IMPLEMENTED_GARPA_STAGES)',
+                  1,
+              )
+          method_test.write_text(text)
+
+          method_doc = Path("docs/garpa-method-version.md")
+          method_doc.write_text('''# GARPA method version
+
+Current branch method version: `0.9.0-commons-seeded-build-receipt`.
+
+The highest governed stage preserves exact Commons-seeded component custody in a target as-built receipt. The method distinguishes the frozen manifest from the installed build and requires exact installed identities, serial or lot custody, firmware and configuration, calibration artifacts, completed assembly steps, substitutions, deviations, actual costs, labor, and immutable artifact references.
+
+The as-built receipt cannot transfer source qualification, claim mission equivalence, authorize a test run, establish deployment fitness, or bypass target preflight. The next lawful stage is target preflight against the exact receipted build.
+''')
+
+          server = Path("mcp/garpaCompleteServer.ts")
+          text = server.read_text()
+          import_line = 'import { registerGarpaCommonsSeededBuildReceiptTools } from "./garpaCommonsSeededBuildReceiptTools.ts";'
+          if import_line not in text:
+              anchor = 'import { registerGarpaCommonsSeededBuildManifestTools } from "./garpaCommonsSeededBuildManifestTools.ts";'
+              if anchor in text:
+                  text = text.replace(anchor, anchor + '\n' + import_line)
+              else:
+                  method_anchor = 'import { registerGarpaMethodTools } from "./garpaMethodTools.ts";'
+                  text = text.replace(method_anchor, import_line + '\n' + method_anchor)
+          text = re.sub(r'version: "0\.\d+\.0"', 'version: "0.9.0"', text, count=1)
+          registration = 'registerGarpaCommonsSeededBuildReceiptTools(server);'
+          if registration not in text:
+              anchor = 'registerGarpaCommonsSeededBuildManifestTools(server);'
+              if anchor in text:
+                  text = text.replace(anchor, anchor + '\n' + registration)
+              else:
+                  text = text.replace(
+                      'const transport = new StdioServerTransport();',
+                      registration + '\n\nconst transport = new StdioServerTransport();',
+                  )
+          server.write_text(text)
+
+          types = Path("app/src/types/garpaCommonsSeededBuildReceipt.ts")
+          text = types.read_text()
+          if '  | "seeded_source_mismatch"\n' not in text:
+              text = text.replace(
+                  '  | "installed_component_missing"',
+                  '  | "seeded_source_mismatch"\n  | "installed_component_missing"',
+              )
+          types.write_text(text)
+
+          source_fixture = Path("tests/fixtures/garpaCommonsSeededBuildManifestFixture.ts")
+          target_fixture = Path("tests/fixtures/garpaCommonsSeededBuildReceiptFixture.ts")
+          if source_fixture.exists() and target_fixture.exists():
+              source = source_fixture.read_text()
+              names = re.findall(r'export function\s+(\w+BuildManifest\w*Request)\s*\(', source)
+              if names and names[0] != "buildSeededBuildManifestRequest":
+                  target = target_fixture.read_text().replace(
+                      "buildSeededBuildManifestRequest",
+                      names[0],
+                  )
+                  target_fixture.write_text(target)
+
+          finalizer = Path(".github/workflows/garpa-finalize-seeded-build-receipt.yml")
+          finalizer.unlink()
+          PY
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Qualify as-built receipt surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vitest run \
+            tests/lib/garpaCommonsSeededBuildReceipt.test.ts \
+            tests/lib/garpaMethodVersion.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-build-receipt.json
+          npx vite build
+
+      - name: Qualify dedicated MCP surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --prefix mcp
+          npx tsc --noEmit -p mcp/tsconfig.commons-seeded-build-receipt.json
+
+      - name: Commit qualified as-built receipt implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Receipt the as-built state of Commons-seeded targets"
+          git push origin HEAD:feature/garpa-commons-seeded-build-receipt-v1
