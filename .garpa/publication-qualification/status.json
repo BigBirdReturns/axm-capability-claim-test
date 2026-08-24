@@ -1,8 +1,34 @@
 {
-  "passed": false,
-  "state": "pending_repository_qualification",
+  "passed": true,
+  "state": "commons_seeded_publication_qualified",
   "methodVersion": "1.4.0-commons-seeded-publication",
   "highestStage": "commons_seeded_publication",
   "predecessorReceiptHead": "096878b30c07bd6513ab05e72abca2bc0591a3b5",
-  "qualificationReceiptRequired": true
+  "qualifiedSourceHead": "e4935ad4ec4020701c98cfcf2e8c8ee2aa37ed28",
+  "qualifiedSourceTree": "e0a80db8aff83a4d3ca3bdb89973ba48058bf9fc",
+  "qualificationReceiptRequired": false,
+  "workflowRuns": {
+    "publication": 32782291135,
+    "completeCheck": 32782291147,
+    "vendorParity": 32782291176,
+    "missionEvaluation": 32782291139,
+    "testRun": 32782291073,
+    "preflight": 32782291129,
+    "qualification": 32782291086,
+    "buildManifest": 32782291067,
+    "buildReceipt": 32782291150,
+    "commonsTransfer": 32782291095
+  },
+  "results": {
+    "focusedTests": "40/40",
+    "repositoryTests": "416/416",
+    "scopedTypeScript": "pass",
+    "completeRepositoryCheck": "pass",
+    "productionBuild": "pass",
+    "dedicatedMcpTypeScript": "pass",
+    "completeMcpTypeScript": "pass",
+    "evidenceArtifactId": 9540224538,
+    "evidenceArtifactSha256": "d091b75ef67712f103fee3bb3b9ade5fd7d94d7ea51a7e47abe8777c581562c6"
+  },
+  "recordedAt": "2026-08-24T22:00:50Z"
 }
