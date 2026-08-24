@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededTestRun.ts",
+    "app/src/lib/garpa/commonsSeededTestRunDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededTestRun.ts",
+    "app/src/lib/garpa/runCommonsSeededTestRunGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededTestRun.ts",
+    "tests/fixtures/garpaCommonsSeededTestRunFixture.ts",
+    "tests/lib/garpaCommonsSeededTestRun.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts"
+  ]
+}
