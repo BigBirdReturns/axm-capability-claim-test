@@ -1,7 +1,7 @@
 # GARPA method version
 
-Current branch method version: `1.3.0-commons-seeded-vendor-parity`.
+Current branch method version: `1.4.0-commons-seeded-publication`.
 
-The highest governed stage is `commons_seeded_vendor_parity`. It recomputes the complete Commons-seeded mission campaign, deterministically derives the target parity observations under the frozen qualification methods, binds exact-version vendor evidence and artifacts, and delegates the substantive comparison to the existing vendor-parity evaluator.
+The highest governed stage is `commons_seeded_publication`. It recomputes the exact mission and vendor-parity chain, deterministically generates every mission, residual, and parity claim, binds the current case index and upstream receipt set, preserves rights, safety, audience, artifact, and redaction custody, and delegates publication readiness to the existing publication gate.
 
-Vendor-parity admission records a bounded comparison. It does not establish unrestricted product equivalence, deployment authority, or publication authority.
+Publication-package admission and `publication_ready` are distinct. Neither establishes immutable release integrity, registry currency, deployment authority, or unrestricted product equivalence.
