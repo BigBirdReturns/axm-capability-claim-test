@@ -1,0 +1,326 @@
+name: garpa-preflight-delegation-repair
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-preflight-v1"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/garpa-commons-seeded-preflight-v1
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Restore unsupported-artifact safety custody
+        run: |
+          git fetch origin feature/garpa-commons-seeded-build-manifest-v1
+          git show origin/feature/garpa-commons-seeded-build-manifest-v1:mcp/garpaArtifactAdapters.ts > mcp/garpaArtifactAdapters.ts
+
+      - name: Delegate detailed readiness to the ordinary preflight gate
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+
+          repo = Path('.')
+
+          p = repo / 'app/src/types/garpaCommonsSeededPreflight.ts'
+          s = p.read_text()
+          if 'PreflightGateResult' not in s:
+              s = 'import type { PreflightGateResult } from "./garpaExecution";\n' + s
+          if '| "ordinary_preflight_gate_failed"' not in s:
+              marker = '  | "preflight_state_not_ready"\n'
+              assert marker in s
+              s = s.replace(marker, marker + '  | "ordinary_preflight_gate_failed"\n', 1)
+          if 'ordinaryPreflightGate?: PreflightGateResult;' not in s:
+              marker = '  preflightReceipt?: CommonsSeededPreflightReceipt;\n'
+              assert marker in s
+              s = s.replace(marker, marker + '  ordinaryPreflightGate?: PreflightGateResult;\n', 1)
+          p.write_text(s)
+
+          p = repo / 'app/src/lib/garpa/runCommonsSeededPreflightGate.ts'
+          s = p.read_text()
+          if 'import type { BuildReceipt' not in s:
+              marker = 'import type {\n  CommonsSeededPreflightFinding,'
+              assert marker in s
+              s = s.replace(marker, 'import type { BuildReceipt, LaborReceipt } from "../../types/garpaExecution";\n' + marker, 1)
+          if 'import { runPreflightGate }' not in s:
+              marker = 'import { runCommonsSeededBuildReceiptGate } from "./runCommonsSeededBuildReceiptGate";\n'
+              assert marker in s
+              s = s.replace(marker, marker + 'import { runPreflightGate } from "./runPreflightGate";\n', 1)
+
+          helper_marker = 'function referencedEvidenceIds(receipt: CommonsSeededPreflightReceipt): string[] {'
+          if 'function projectOrdinaryBuildReceipt(' not in s:
+              assert helper_marker in s
+              helper = '''function projectLaborCategory(
+            category: string,
+          ): LaborReceipt["category"] {
+            if (category === "procurement") return "procurement";
+            if (category === "assembly") return "assembly";
+            if (category === "configuration") return "configuration";
+            if (category === "integration") return "integration";
+            if (category === "debugging") return "debugging";
+            if (category === "documentation") return "documentation";
+            return "test_preparation";
+          }
+
+          function projectOrdinaryBuildReceipt(
+            request: CommonsSeededPreflightRequest,
+          ): BuildReceipt {
+            const receipt = request.seededBuildReceiptRequest.asBuiltReceipt;
+            return {
+              schemaVersion: 1,
+              caseId: receipt.caseId,
+              buildId: receipt.receiptId,
+              manifestDigest: receipt.buildManifestDigest,
+              architectureDigest: receipt.candidateArchitectureDigest,
+              qualificationContractDigest: receipt.qualificationContractDigest,
+              startedAt: receipt.startedAt,
+              completedAt: receipt.completedAt,
+              installedHardware: [],
+              installedSoftware: [],
+              codeCommits: [],
+              substitutions: [],
+              deviations: receipt.deviations.map((deviation) => ({
+                id: deviation.deviationId,
+                description: deviation.description,
+                severity: "material",
+                affectedFunctionIds: [],
+                affectedMetricIds: [],
+                closureState:
+                  deviation.disposition === "reworked" ? "closed" : "accepted",
+                evidenceArtifactIds: [...deviation.evidenceArtifactIds],
+              })),
+              actualCostLines: receipt.actualCosts.map((cost) => ({
+                id: cost.costLineId,
+                category: "other",
+                description: `Commons-seeded actual cost ${cost.costLineId}`,
+                amount: cost.amount,
+                currency: cost.currency,
+                incurredAt: receipt.completedAt,
+                evidenceArtifactIds: [...cost.evidenceArtifactIds],
+              })),
+              actualLabor: receipt.labor.map((labor) => ({
+                id: labor.laborId,
+                actor: labor.actor,
+                category: projectLaborCategory(labor.category),
+                hours: labor.hours,
+              })),
+              artifacts: [],
+              buildDigest: receipt.receiptDigest,
+              state: receipt.state === "assembled" ? "assembled" : "blocked",
+            };
+          }
+
+          function hasFinding(
+            findings: CommonsSeededPreflightFinding[],
+            states: ReadonlySet<CommonsSeededPreflightFinding["state"]>,
+          ): boolean {
+            return findings.some((finding) => states.has(finding.state));
+          }
+
+          '''
+              s = s.replace(helper_marker, helper + helper_marker, 1)
+
+          ordinary_marker = '  const blockingStates = new Set<CommonsSeededPreflightFinding["state"]>([\n'
+          if 'const ordinaryPreflightGate = runPreflightGate' not in s:
+              assert ordinary_marker in s
+              block = '''  const ordinaryPreflightGate = runPreflightGate({
+            expectedManifestDigest: receipt.buildManifestDigest,
+            expectedQualificationContractDigest:
+              receipt.qualificationContractDigest,
+            buildReceipt: projectOrdinaryBuildReceipt(request),
+            readiness: {
+              fixtureReady: !hasFinding(
+                findings,
+                new Set([
+                  "fixture_check_missing",
+                  "fixture_not_ready",
+                  "fixture_configuration_mismatch",
+                ]),
+              ),
+              instrumentationReady: !hasFinding(
+                findings,
+                new Set([
+                  "instrumentation_check_missing",
+                  "instrumentation_identity_mismatch",
+                  "instrumentation_configuration_mismatch",
+                  "instrumentation_storage_unverified",
+                ]),
+              ),
+              calibrationReady: !hasFinding(
+                findings,
+                new Set(["instrumentation_calibration_invalid"]),
+              ),
+              storageReady: !hasFinding(
+                findings,
+                new Set([
+                  "instrumentation_storage_unverified",
+                  "storage_check_incomplete",
+                ]),
+              ),
+              clocksReady: !hasFinding(
+                findings,
+                new Set(["clock_check_incomplete"]),
+              ),
+              authorityReady: !hasFinding(
+                findings,
+                new Set([
+                  "authorization_check_missing",
+                  "authorization_not_satisfied",
+                  "authorization_scope_mismatch",
+                ]),
+              ),
+              hazardControlsReady: !hasFinding(
+                findings,
+                new Set(["hazard_control_open"]),
+              ),
+              abortPathReady: !hasFinding(
+                findings,
+                new Set(["abort_check_incomplete"]),
+              ),
+              operatorRolesReady: !hasFinding(
+                findings,
+                new Set([
+                  "operator_check_missing",
+                  "operator_not_ready",
+                  "operator_scope_mismatch",
+                ]),
+              ),
+              runIdReserved:
+                receipt.runReservations.length > 0 &&
+                !hasFinding(
+                  findings,
+                  new Set([
+                    "run_reservation_missing",
+                    "run_reservation_duplicate",
+                    "run_reservation_scenario_invalid",
+                  ]),
+                ),
+            },
+          });
+          if (!ordinaryPreflightGate.passed) {
+            addFinding(
+              findings,
+              "ordinary_preflight_gate_failed",
+              `The repository preflight gate refused readiness: ${ordinaryPreflightGate.blockingReasons.join("; ")}.`,
+              "Resolve the detailed readiness findings and rerun the ordinary preflight gate.",
+            );
+          }
+
+          '''
+              s = s.replace(ordinary_marker, block + ordinary_marker, 1)
+
+          if '"ordinary_preflight_gate_failed",' not in s.split(ordinary_marker, 1)[1]:
+              marker = '    "mission_equivalence_attempted",\n'
+              idx = s.rfind(marker)
+              assert idx != -1
+              idx += len(marker)
+              s = s[:idx] + '    "ordinary_preflight_gate_failed",\n' + s[idx:]
+          if 'ordinaryPreflightGate,\n    pullList:' not in s:
+              marker = '    preflightReceipt: receipt,\n    pullList:'
+              assert marker in s
+              s = s.replace(marker, '    preflightReceipt: receipt,\n    ordinaryPreflightGate,\n    pullList:', 1)
+          p.write_text(s)
+
+          p = repo / 'schemas/garpa/commons-seeded-preflight-result.schema.json'
+          data = json.loads(p.read_text())
+          data['properties']['ordinaryPreflightGate'] = {'type': 'object'}
+          p.write_text(json.dumps(data, indent=2) + '\n')
+
+          p = repo / 'app/src/lib/garpa/renderCommonsSeededPreflight.ts'
+          s = p.read_text()
+          if 'Ordinary preflight gate' not in s:
+              for marker in (
+                  '    `- State: ${result.state}`,',
+                  '    `- Result state: ${result.state}`,',
+              ):
+                  if marker in s:
+                      s = s.replace(
+                          marker,
+                          marker + '\n    `- Ordinary preflight gate: ${result.ordinaryPreflightGate?.passed ?? false}`,',
+                          1,
+                      )
+                      break
+              else:
+                  raise AssertionError('Could not locate renderer state line')
+          p.write_text(s)
+
+          p = repo / 'tests/lib/garpaCommonsSeededPreflight.test.ts'
+          s = p.read_text()
+          if 'ordinaryPreflightGate?.passed' not in s:
+              marker = '    expect(result.preflightReceipt?.missionEquivalenceClaimed).toBe(false);\n'
+              assert marker in s
+              s = s.replace(marker, marker + '    expect(result.ordinaryPreflightGate?.passed).toBe(true);\n', 1)
+          if 'delegates detailed readiness to the ordinary preflight gate' not in s:
+              marker = '  it("blocks a forged predecessor result digest", () => {\n'
+              assert marker in s
+              test = '''  it("delegates detailed readiness to the ordinary preflight gate", () => {
+            const request = buildSeededPreflightRequest();
+            request.preflightReceipt.storageCheck.writable = false;
+            request.preflightReceipt.storageCheck.state = "blocked";
+            refreshReceiptDigest(request);
+            const result = runCommonsSeededPreflightGate(request);
+            expect(result.ordinaryPreflightGate?.passed).toBe(false);
+            expect(result.ordinaryPreflightGate?.readiness.storageReady).toBe(false);
+            expect(
+              result.findings.some(
+                (finding) => finding.state === "ordinary_preflight_gate_failed",
+              ),
+            ).toBe(true);
+          });
+
+          '''
+              s = s.replace(marker, test + marker, 1)
+          p.write_text(s)
+
+          p = repo / 'docs/garpa-commons-seeded-preflight.md'
+          s = p.read_text()
+          if 'ordinary `runPreflightGate`' not in s:
+              s += '''
+          ## Ordinary preflight delegation
+
+          After detailed Commons custody checks, the stage projects the admitted as-built receipt and readiness booleans into the repository ordinary `runPreflightGate`. The ordinary gate must also pass. This preserves one terminal readiness authority for manifest currency, qualification currency, assembled state, material-deviation closure, fixture, instrumentation, calibration, storage, clocks, authority, hazards, abort path, operators, and run reservation.
+          '''
+          p.write_text(s)
+          PY
+
+      - name: Qualify complete preflight surface
+        run: |
+          npm ci
+          npx vitest run \
+            tests/lib/garpaCommonsSeededPreflight.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
+          npm run check
+          npm run build
+
+      - name: Qualify MCP surfaces
+        run: |
+          npm ci
+          npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
+          npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+
+      - name: Commit qualified repair and remove this workflow
+        run: |
+          rm .github/workflows/garpa-preflight-delegation-repair.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Delegate Commons-seeded readiness to ordinary preflight"
+          git push origin HEAD:feature/garpa-commons-seeded-preflight-v1
