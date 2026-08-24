@@ -1,5 +1,6 @@
 import type { GarpaValidationResult } from "../../types/garpa";
 import type {
+  CommonsSeededMissionBoundary,
   CommonsSeededMissionEvaluationEnvelope,
   CommonsSeededMissionEvaluationRequest,
 } from "../../types/garpaCommonsSeededMissionEvaluation";
@@ -19,6 +20,28 @@ function validDate(value: unknown): value is string {
   return nonEmpty(value) && Number.isFinite(Date.parse(value));
 }
 
+function validateMissionBoundary(
+  value: unknown,
+): GarpaValidationResult<CommonsSeededMissionBoundary> {
+  if (!isRecord(value)) {
+    return { ok: false, errors: ["missionBoundary must be an object."] };
+  }
+  const errors: string[] = [];
+  if (typeof value.fullMissionBoundary !== "boolean") {
+    errors.push("missionBoundary.fullMissionBoundary must be a boolean.");
+  }
+  if (!nonEmpty(value.boundaryDescription)) {
+    errors.push("missionBoundary.boundaryDescription is required.");
+  }
+  return errors.length > 0
+    ? { ok: false, errors }
+    : {
+        ok: true,
+        errors: [],
+        value: value as unknown as CommonsSeededMissionBoundary,
+      };
+}
+
 function validateEnvelope(
   value: unknown,
 ): GarpaValidationResult<CommonsSeededMissionEvaluationEnvelope> {
@@ -32,9 +55,11 @@ function validateEnvelope(
   for (const field of [
     "evaluationId",
     "caseId",
+    "missionOutcomeDigest",
     "qualificationContractDigest",
     "asBuiltReceiptDigest",
-    "preflightReceiptDigest",
+    "campaignPreflightReceiptDigest",
+    "runSetDigest",
     "evaluatedAt",
     "envelopeDigest",
   ]) {
@@ -43,9 +68,11 @@ function validateEnvelope(
     }
   }
   for (const field of [
+    "missionOutcomeDigest",
     "qualificationContractDigest",
     "asBuiltReceiptDigest",
-    "preflightReceiptDigest",
+    "campaignPreflightReceiptDigest",
+    "runSetDigest",
     "envelopeDigest",
   ]) {
     if (nonEmpty(value[field]) && !SHA256.test(value[field])) {
@@ -66,28 +93,36 @@ function validateEnvelope(
   } else {
     const runIds = new Set<string>();
     value.runBindings.forEach((binding, index) => {
+      const path = `evaluationEnvelope.runBindings.${index}`;
       if (!isRecord(binding)) {
-        errors.push(`evaluationEnvelope.runBindings.${index} must be an object.`);
+        errors.push(`${path} must be an object.`);
         return;
       }
       for (const field of [
         "runId",
+        "scenarioId",
+        "reservationReceiptId",
         "expectedTestRunResultDigest",
         "expectedTestRunReceiptDigest",
-        "scenarioId",
+        "expectedSeededPreflightResultDigest",
+        "expectedPreflightReceiptDigest",
+        "expectedAsBuiltReceiptDigest",
+        "expectedQualificationContractDigest",
       ]) {
         if (!nonEmpty(binding[field])) {
-          errors.push(`evaluationEnvelope.runBindings.${index}.${field} is required.`);
+          errors.push(`${path}.${field} is required.`);
         }
       }
       for (const field of [
         "expectedTestRunResultDigest",
         "expectedTestRunReceiptDigest",
+        "expectedSeededPreflightResultDigest",
+        "expectedPreflightReceiptDigest",
+        "expectedAsBuiltReceiptDigest",
+        "expectedQualificationContractDigest",
       ]) {
         if (nonEmpty(binding[field]) && !SHA256.test(binding[field])) {
-          errors.push(
-            `evaluationEnvelope.runBindings.${index}.${field} must be a SHA-256 hex digest.`,
-          );
+          errors.push(`${path}.${field} must be a SHA-256 hex digest.`);
         }
       }
       const runId = String(binding.runId ?? "");
@@ -122,9 +157,10 @@ export function validateCommonsSeededMissionEvaluationRequest(
   if (!isRecord(value)) {
     return {
       ok: false,
-      errors: ["Seeded mission-evaluation request must be an object."],
+      errors: ["Commons-seeded mission-evaluation request must be an object."],
     };
   }
+
   const errors: string[] = [];
   if (value.schemaVersion !== 1) errors.push("schemaVersion must equal 1.");
   if (!validDate(value.admittedAt)) {
@@ -144,17 +180,16 @@ export function validateCommonsSeededMissionEvaluationRequest(
         return validated.value;
       })
     : [];
-  if (
-    !Array.isArray(value.custodiedMissionEvaluationArgs) ||
-    value.custodiedMissionEvaluationArgs.length === 0
-  ) {
-    errors.push("custodiedMissionEvaluationArgs must be a non-empty array.");
-  }
+
+  const missionBoundary = validateMissionBoundary(value.missionBoundary);
+  errors.push(...missionBoundary.errors);
   const envelope = validateEnvelope(value.evaluationEnvelope);
   errors.push(...envelope.errors);
+
   if (
     errors.length > 0 ||
     requests.some((request) => !request) ||
+    !missionBoundary.value ||
     !envelope.value
   ) {
     return { ok: false, errors: Array.from(new Set(errors)) };
@@ -166,8 +201,7 @@ export function validateCommonsSeededMissionEvaluationRequest(
       schemaVersion: 1,
       testRunRequests:
         requests as CommonsSeededMissionEvaluationRequest["testRunRequests"],
-      custodiedMissionEvaluationArgs:
-        value.custodiedMissionEvaluationArgs as unknown[],
+      missionBoundary: missionBoundary.value,
       evaluationEnvelope: envelope.value,
       admittedAt: value.admittedAt as string,
     },
