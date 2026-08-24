@@ -45,14 +45,15 @@ function aggregate(
 ): { value?: number | string | boolean; reason?: string } {
   if (values.length === 0) return { reason: "No valid measured values exist." };
   if (metric.aggregation === "all_runs") {
-    const first = canonicalStringify(values[0]);
+    const firstValue = values[0]!;
+    const first = canonicalStringify(firstValue);
     if (!values.every((value) => canonicalStringify(value) === first)) {
       return {
         reason:
           "The all-runs aggregation contains non-identical values and cannot be reduced to one parity observation without changing the frozen method.",
       };
     }
-    return { value: values[0] };
+    return { value: firstValue };
   }
   if (metric.aggregation === "proportion") {
     if (values.every((value) => typeof value === "boolean")) {
@@ -67,7 +68,10 @@ function aggregate(
         value: numbers.reduce((sum, value) => sum + value, 0) / numbers.length,
       };
     }
-    return { reason: "Proportion aggregation requires boolean or zero-to-one numeric values." };
+    return {
+      reason:
+        "Proportion aggregation requires boolean or zero-to-one numeric values.",
+    };
   }
   const numbers = numeric(values);
   if (!numbers) {
@@ -75,9 +79,13 @@ function aggregate(
   }
   const ordered = [...numbers].sort((left, right) => left - right);
   if (metric.aggregation === "minimum") return { value: ordered[0]! };
-  if (metric.aggregation === "maximum") return { value: ordered[ordered.length - 1]! };
+  if (metric.aggregation === "maximum") {
+    return { value: ordered[ordered.length - 1]! };
+  }
   if (metric.aggregation === "mean") {
-    return { value: numbers.reduce((sum, value) => sum + value, 0) / numbers.length };
+    return {
+      value: numbers.reduce((sum, value) => sum + value, 0) / numbers.length,
+    };
   }
   if (metric.aggregation === "median") {
     const middle = Math.floor(ordered.length / 2);
@@ -96,7 +104,10 @@ function aggregate(
       percentile <= 0 ||
       percentile > 100
     ) {
-      return { reason: "Percentile aggregation requires a parameter greater than zero and no greater than 100." };
+      return {
+        reason:
+          "Percentile aggregation requires a parameter greater than zero and no greater than 100.",
+      };
     }
     const rank = Math.max(1, Math.ceil((percentile / 100) * ordered.length));
     return { value: ordered[rank - 1]! };
@@ -184,7 +195,9 @@ export function deriveCommonsSeededGarpaParityObservations(
       });
       continue;
     }
-    const fixtureStates = runs.map((receipt) => canonicalStringify(receipt.fixtureState));
+    const fixtureStates = runs.map((receipt) =>
+      canonicalStringify(receipt.fixtureState),
+    );
     if (fixtureStates.some((state) => state !== fixtureStates[0])) {
       issues.push({
         metricId: metric.id,
@@ -201,7 +214,8 @@ export function deriveCommonsSeededGarpaParityObservations(
       issues.push({
         metricId: metric.id,
         scenarioId: scenario.id,
-        reason: aggregation.reason ?? "The frozen aggregation could not be evaluated.",
+        reason:
+          aggregation.reason ?? "The frozen aggregation could not be evaluated.",
       });
       continue;
     }
@@ -230,9 +244,7 @@ export function deriveCommonsSeededGarpaParityObservations(
       fixtureDigest,
       methodDigest: methodDigest(metric),
       buildReceiptDigest: asBuilt.receiptDigest,
-      qualificationContractDigest: qualificationOf(request).caseId
-        ? asBuilt.qualificationContractDigest
-        : asBuilt.qualificationContractDigest,
+      qualificationContractDigest: asBuilt.qualificationContractDigest,
       value: aggregation.value,
       unit: metric.unit,
       evidenceControl: "local_measured",

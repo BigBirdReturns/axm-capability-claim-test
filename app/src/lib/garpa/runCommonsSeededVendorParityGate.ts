@@ -1,7 +1,6 @@
 import type {
   ParityMetricComparator,
   ParityMetricDirection,
-  ParityMetricObservation,
 } from "../../types/garpaParity";
 import type { QualificationMetric } from "../../types/garpaQualification";
 import type {
@@ -106,7 +105,8 @@ function blockedResult(errors: string[]): CommonsSeededVendorParityResult {
     findings: errors.map((reason) => ({
       state: "vendor_parity_validation_failed" as const,
       reason,
-      requiredAction: "Repair the Commons-seeded vendor-parity request and rerun validation.",
+      requiredAction:
+        "Repair the Commons-seeded vendor-parity request and rerun validation.",
     })),
     validationErrors: errors,
     pullList: errors,
@@ -179,9 +179,7 @@ export function runCommonsSeededVendorParityGate(
       "Use the exact mission state returned by the custodied evaluator.",
     );
   }
-  if (
-    parityRequestDigest !== envelope.vendorParityRequestDigest
-  ) {
+  if (parityRequestDigest !== envelope.vendorParityRequestDigest) {
     addFinding(
       findings,
       "vendor_parity_request_digest_mismatch",
@@ -197,7 +195,10 @@ export function runCommonsSeededVendorParityGate(
       "Restore the immutable parity envelope and recompute its digest.",
     );
   }
-  if (parityRequest.caseId !== envelope.caseId || parityRequest.caseId !== asBuilt.caseId) {
+  if (
+    parityRequest.caseId !== envelope.caseId ||
+    parityRequest.caseId !== asBuilt.caseId
+  ) {
     addFinding(
       findings,
       "parity_case_mismatch",
@@ -245,7 +246,10 @@ export function runCommonsSeededVendorParityGate(
     .filter((metric) => metric.criticality === "essential")
     .map((metric) => metric.id);
   const comparatorByMetric = new Map(
-    parityRequest.comparators.map((comparator) => [comparator.metricId, comparator]),
+    parityRequest.comparators.map((comparator) => [
+      comparator.metricId,
+      comparator,
+    ]),
   );
   if (
     !exactSet(metricIds, parityRequest.requiredMetricIds) ||
@@ -397,7 +401,9 @@ export function runCommonsSeededVendorParityGate(
     "publication_authority_attempted",
   ]);
 
-  let parityEvaluation;
+  let parityEvaluation:
+    | ReturnType<typeof runVendorParityEvaluation>
+    | undefined;
   let parityEvaluationDigest = "";
   if (!findings.some((finding) => blockingStates.has(finding.state))) {
     try {
@@ -442,7 +448,9 @@ export function runCommonsSeededVendorParityGate(
     vendorParityEvaluationDigest: parityEvaluationDigest,
     derivedGarpaObservations: derivation.observations,
     vendorObservations,
-    vendorArtifactIds: envelope.vendorArtifacts.map((artifact) => artifact.artifactId),
+    vendorArtifactIds: envelope.vendorArtifacts.map(
+      (artifact) => artifact.artifactId,
+    ),
     findings,
     validationErrors: [],
     pullList: dedupe(findings.map((finding) => finding.requiredAction)),

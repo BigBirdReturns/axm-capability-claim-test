@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededVendorParity.ts",
+    "app/src/lib/garpa/commonsSeededVendorParityDigest.ts",
+    "app/src/lib/garpa/deriveCommonsSeededGarpaParity.ts",
+    "app/src/lib/garpa/validateCommonsSeededVendorParity.ts",
+    "app/src/lib/garpa/runCommonsSeededVendorParityGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededVendorParity.ts",
+    "tests/fixtures/garpaCommonsSeededVendorParityFixture.ts",
+    "tests/lib/garpaCommonsSeededVendorParity.test.ts"
+  ]
+}

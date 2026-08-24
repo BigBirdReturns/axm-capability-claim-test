@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "state": "pending_repository_qualification",
+  "methodVersion": "1.3.0-commons-seeded-vendor-parity",
+  "highestStage": "commons_seeded_vendor_parity",
+  "predecessorReceiptHead": "a66bc94f8fcd943ea3160e91bc327cc88f77b2aa",
+  "qualificationReceiptRequired": true
+}
