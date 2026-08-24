@@ -1,8 +1,38 @@
 {
-  "passed": false,
-  "state": "pending_repository_qualification",
+  "passed": true,
+  "state": "commons_seeded_public_registry_qualified",
   "methodVersion": "1.6.0-commons-seeded-public-registry",
   "highestStage": "commons_seeded_public_registry",
   "predecessorReceiptHead": "17abebfeb8e97af269ef8810286e71e8ca594b09",
-  "qualificationReceiptRequired": true
+  "qualifiedSourceHead": "660cc8df7637322867940f2533ea064807de74b4",
+  "qualifiedSourceTree": "288c2e8d73dccd7c3ed70e969115352f019cd59a",
+  "qualificationReceiptRequired": false,
+  "workflowRuns": {
+    "publicRegistrySource": 32790261105,
+    "publicRegistryPullRequest": 32790267191,
+    "completeCheckSource": 32790261119,
+    "completeCheckPullRequest": 32790266904,
+    "release": 32790266985,
+    "publication": 32790266684,
+    "vendorParity": 32790266894,
+    "missionEvaluation": 32790267138,
+    "testRun": 32790266753,
+    "preflight": 32790267119,
+    "qualification": 32790267088,
+    "buildManifest": 32790266675,
+    "buildReceipt": 32790266917,
+    "commonsTransfer": 32790266810
+  },
+  "results": {
+    "focusedTests": "45/45",
+    "repositoryTests": "440/440",
+    "scopedTypeScript": "pass",
+    "completeRepositoryCheck": "pass",
+    "productionBuild": "pass",
+    "dedicatedMcpTypeScript": "pass",
+    "completeMcpTypeScript": "pass",
+    "evidenceArtifactId": 9543046325,
+    "evidenceArtifactSha256": "90413558fee3223ff1ea8f04b3ca637676b2a07d8764b0dc23b157184941eeb4"
+  },
+  "recordedAt": "2026-08-24T23:46:15Z"
 }
