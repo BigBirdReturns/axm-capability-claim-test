@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-publication-result.schema.json",
+  "title": "GARPA Commons-Seeded Publication Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "publicationReady",
+    "seededVendorParityResultDigest",
+    "publicationPackageDigest",
+    "publicationEnvelopeDigest",
+    "claimSetDigest",
+    "upstreamDigestSetDigest",
+    "artifactSetDigest",
+    "ordinaryPublicationGateResultDigest",
+    "expectedUpstreamDigests",
+    "expectedClaims",
+    "publicationArtifactIds",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_publication_blocked",
+        "seeded_publication_incomplete",
+        "seeded_publication_admitted"
+      ]
+    },
+    "publicationReady": { "type": "boolean" },
+    "publicationState": {
+      "enum": [
+        "claim_support_incomplete",
+        "scope_overstated",
+        "cost_boundary_misaligned",
+        "vendor_parity_unsupported",
+        "rights_unresolved",
+        "safety_review_blocked",
+        "redaction_invalidates_claim",
+        "upstream_receipt_stale",
+        "publication_ready"
+      ]
+    },
+    "seededVendorParityResult": { "type": "object" },
+    "seededVendorParityResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "publicationPackageDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "publicationEnvelopeDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "claimSetDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "upstreamDigestSetDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "artifactSetDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "ordinaryPublicationGate": { "type": "object" },
+    "ordinaryPublicationGateResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "expectedUpstreamDigests": { "type": "object", "additionalProperties": { "type": "string" } },
+    "expectedClaims": { "type": "array", "items": { "type": "object" } },
+    "publicationPackage": { "type": "object" },
+    "publicationArtifactIds": { "$ref": "#/$defs/stringArray" },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "validationErrors": { "$ref": "#/$defs/stringArray" },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

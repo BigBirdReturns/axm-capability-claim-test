@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededPublication.ts",
+    "app/src/lib/garpa/commonsSeededPublicationDigest.ts",
+    "app/src/lib/garpa/deriveCommonsSeededPublication.ts",
+    "app/src/lib/garpa/validateCommonsSeededPublication.ts",
+    "app/src/lib/garpa/runCommonsSeededPublicationGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededPublication.ts",
+    "app/src/lib/garpa/garpaVersion.ts",
+    "app/src/lib/garpa/implementedStages.ts",
+    "tests/fixtures/garpaCommonsSeededPublicationFixture.ts",
+    "tests/lib/garpaCommonsSeededPublication.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts"
+  ]
+}

@@ -1,0 +1,69 @@
+name: garpa-commons-seeded-publication-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededPublication.ts"
+      - "app/src/lib/garpa/commonsSeededPublication*.ts"
+      - "app/src/lib/garpa/deriveCommonsSeededPublication.ts"
+      - "app/src/lib/garpa/validateCommonsSeededPublication.ts"
+      - "app/src/lib/garpa/runCommonsSeededPublicationGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededPublication.ts"
+      - "tests/fixtures/garpaCommonsSeededPublicationFixture.ts"
+      - "tests/lib/garpaCommonsSeededPublication.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-publication-*.schema.json"
+      - "docs/garpa-commons-seeded-publication.md"
+      - "mcp/garpaCommonsSeededPublicationTools.ts"
+      - "mcp/garpa-commons-seeded-publication-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-publication.json"
+      - "tsconfig.commons-seeded-publication.json"
+      - ".github/workflows/garpa-commons-seeded-publication-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-publication-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  publication:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Generate executable publication evidence
+        run: npx tsx scripts/generateCommonsSeededPublicationExample.ts
+      - name: Run focused publication campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededPublication.test.ts \
+            tests/lib/garpaCommonsSeededVendorParity.test.ts \
+            tests/lib/garpaPublication.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+      - name: Typecheck Commons-seeded publication surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-publication.json
+      - name: Run complete repository check
+        run: npm run check
+      - name: Build static workbench
+        run: npm run build
+      - run: npm ci
+        working-directory: mcp
+      - name: Typecheck dedicated publication MCP
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-publication.json
+        working-directory: mcp
+      - name: Typecheck complete GARPA MCP
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+      - name: Upload generated publication evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-commons-seeded-publication-evidence
+          path: examples/garpa-commons-seeded-publication
+          retention-days: 3
