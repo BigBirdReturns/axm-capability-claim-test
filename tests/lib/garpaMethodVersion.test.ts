@@ -3,18 +3,18 @@ import { GARPA_METHOD_VERSION } from "../../app/src/lib/garpa/garpaVersion";
 import { IMPLEMENTED_GARPA_STAGES } from "../../app/src/lib/garpa/implementedStages";
 
 describe("GARPA method version", () => {
-  it("names the Commons-seeded release-verification surface", () => {
+  it("names the Commons-seeded public-registry surface", () => {
     expect(GARPA_METHOD_VERSION).toBe(
-      "1.5.0-commons-seeded-release-verification",
+      "1.6.0-commons-seeded-public-registry",
     );
     expect(
       IMPLEMENTED_GARPA_STAGES[IMPLEMENTED_GARPA_STAGES.length - 1],
-    ).toBe("commons_seeded_release_verification");
+    ).toBe("commons_seeded_public_registry");
     expect(IMPLEMENTED_GARPA_STAGES).toContain(
-      "commons_seeded_publication",
+      "commons_seeded_release_verification",
     );
     expect(IMPLEMENTED_GARPA_STAGES).toContain(
-      "commons_seeded_vendor_parity",
+      "commons_seeded_publication",
     );
   });
 });

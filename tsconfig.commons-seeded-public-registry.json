@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededPublicRegistry.ts",
+    "app/src/lib/garpa/commonsSeededPublicRegistryDigest.ts",
+    "app/src/lib/garpa/deriveCommonsSeededPublicRegistry.ts",
+    "app/src/lib/garpa/validateCommonsSeededPublicRegistry.ts",
+    "app/src/lib/garpa/runCommonsSeededPublicRegistryGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededPublicRegistry.ts",
+    "tests/fixtures/garpaCommonsSeededPublicRegistryFixture.ts",
+    "tests/lib/garpaCommonsSeededPublicRegistry.test.ts"
+  ]
+}

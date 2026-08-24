@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-public-registry-result.schema.json",
+  "title": "GARPA Commons-Seeded Public Registry Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "registryUpdateApplied",
+    "seededReleaseResultDigest",
+    "currentEntryDigest",
+    "registryUpdateRequestDigest",
+    "registryEnvelopeDigest",
+    "identityPatchDigest",
+    "registryUpdateGateResultDigest",
+    "nextEntryDigest",
+    "releaseHistoryDigest",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_public_registry_blocked",
+        "seeded_public_registry_incomplete",
+        "seeded_public_registry_admitted"
+      ]
+    },
+    "registryUpdateApplied": { "type": "boolean" },
+    "registryState": {
+      "enum": [
+        "case_mismatch",
+        "current_release_conflict",
+        "release_number_gap",
+        "release_lineage_mismatch",
+        "release_identity_reused",
+        "identity_lineage_missing",
+        "release_not_current_valid",
+        "invalid_case_transition",
+        "registry_update_admitted"
+      ]
+    },
+    "seededReleaseResult": { "type": "object" },
+    "seededReleaseResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "currentEntryDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "registryUpdateRequestDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "registryEnvelopeDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "identityPatchDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "registryUpdateGateResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "nextEntryDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "releaseHistoryDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "ordinaryRegistryUpdate": { "type": "object" },
+    "currentEntry": { "type": "object" },
+    "nextEntry": { "type": "object" },
+    "identityPatch": { "type": "object" },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "validationErrors": { "$ref": "#/$defs/stringArray" },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

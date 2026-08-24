@@ -36,6 +36,7 @@ const FileRecordSchema = z
       "asset",
       "other",
     ]),
+    required: z.boolean().optional(),
   })
   .strict();
 

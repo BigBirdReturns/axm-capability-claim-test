@@ -1,7 +1,7 @@
 # GARPA method version
 
-Current branch method version: `1.5.0-commons-seeded-release-verification`.
+Current branch method version: `1.6.0-commons-seeded-public-registry`.
 
-The highest governed stage is `commons_seeded_release_verification`. It recomputes the exact publication-ready chain, generates every mandatory public and evidentiary release file, recomputes UTF-8 byte lengths and SHA-256 digests, binds the initial current R1 manifest, and delegates integrity decisions to the existing release-manifest and release-bundle verifiers.
+The highest governed stage is `commons_seeded_public_registry`. It recomputes the exact verified R1 release result, derives the deterministic empty initial registry entry and manifest-bound identity patch, binds the complete registry update request and resulting release history, and delegates admission to the existing registry update and application gate.
 
-Release verification establishes the integrity of one exact candidate bundle. It does not mean that public release occurred, the public registry was updated, deployment was authorized, or unrestricted product equivalence was established.
+Registry admission establishes one governing release pointer inside the case record. It does not mean that an external public registry was published, that the verified bundle was distributed, that deployment was authorized, or that unrestricted product equivalence was established.
