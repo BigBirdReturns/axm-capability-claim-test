@@ -31,6 +31,7 @@ export const IMPLEMENTED_GARPA_STAGES = [
   "commons_seeded_mission_evaluation",
   "commons_seeded_vendor_parity",
   "commons_seeded_publication",
+  "commons_seeded_release_verification",
 ] as const;
 
 export type ImplementedGarpaStage = (typeof IMPLEMENTED_GARPA_STAGES)[number];

@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededReleaseTools.ts",
+    "garpa-commons-seeded-release-server.ts"
+  ]
+}
