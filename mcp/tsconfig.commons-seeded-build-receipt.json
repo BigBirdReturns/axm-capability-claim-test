@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededBuildReceiptTools.ts",
+    "garpa-commons-seeded-build-receipt-server.ts"
+  ]
+}
