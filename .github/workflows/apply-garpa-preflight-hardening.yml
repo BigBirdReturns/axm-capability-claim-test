@@ -1,0 +1,71 @@
+name: apply-garpa-preflight-hardening
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-preflight-v1"
+    paths:
+      - ".garpa-preflight-update/**"
+      - ".github/workflows/apply-garpa-preflight-hardening.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Reconstruct and verify update archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .garpa-preflight-update/chunk-*.txt > /tmp/garpa-preflight-update.b64
+          base64 --decode /tmp/garpa-preflight-update.b64 > /tmp/garpa-preflight-update.zip
+          echo "76ceb06b6cbc3947a48e0b2496a693338df590c4958bba4ec24aed1d2b4499db  /tmp/garpa-preflight-update.zip" | sha256sum --check --strict
+          unzip -oq /tmp/garpa-preflight-update.zip -d .
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Qualify reconstructed preflight surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vitest run \
+            tests/lib/garpaCommonsSeededPreflight.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
+          npx vite build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck dedicated preflight MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
+        working-directory: mcp
+
+      - name: Commit qualified update and remove transport scaffolding
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .garpa-preflight-update
+          rm -f .github/workflows/apply-garpa-preflight-hardening.yml
+          git config user.name "BigBirdReturns"
+          git config user.email "bigbirdreturns@proton.me"
+          git add -A
+          git diff --cached --check
+          git commit -m "Harden Commons-seeded preflight and delegate ordinary readiness"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
