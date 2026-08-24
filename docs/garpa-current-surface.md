@@ -1,6 +1,6 @@
 # GARPA implemented surface
 
-This branch contains executable contracts and gates through governed publication custody.
+This branch contains executable contracts and gates through immutable candidate-release verification.
 
 ```text
 claim packet
@@ -16,6 +16,7 @@ claim packet
   -> mission evaluation
   -> vendor parity
   -> publication custody
+  -> release verification
 ```
 
 The Vectus fixture remains blocked before architecture. The synthetic observation fixture exercises the downstream chain and reaches `bounded_match` for controlled observation and simulated response only.
@@ -36,4 +37,8 @@ The `commons_seeded_vendor_parity` stage derives GARPA observations from the com
 
 ## Commons-seeded publication
 
-The highest governed stage is `commons_seeded_publication`. It derives the complete public claim set from the admitted mission and parity records, requires exact support and limitation custody, and preserves the existing publication gate's ready or blocked state without converting readiness into release authority.
+The `commons_seeded_publication` stage derives the complete public claim set from the admitted mission and parity records, requires exact support and limitation custody, and preserves the existing publication gate's ready or blocked state.
+
+## Commons-seeded release verification
+
+The highest governed stage is `commons_seeded_release_verification`. It generates and verifies the exact initial R1 candidate bundle, manifest, file hashes, byte lengths, and required public and evidence records without converting bundle integrity into public release or registry authority.

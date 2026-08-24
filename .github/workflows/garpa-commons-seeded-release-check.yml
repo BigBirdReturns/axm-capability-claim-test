@@ -1,0 +1,69 @@
+name: garpa-commons-seeded-release-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededRelease.ts"
+      - "app/src/lib/garpa/commonsSeededRelease*.ts"
+      - "app/src/lib/garpa/deriveCommonsSeededRelease.ts"
+      - "app/src/lib/garpa/validateCommonsSeededRelease.ts"
+      - "app/src/lib/garpa/runCommonsSeededReleaseGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededRelease.ts"
+      - "tests/fixtures/garpaCommonsSeededReleaseFixture.ts"
+      - "tests/lib/garpaCommonsSeededRelease.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-release-*.schema.json"
+      - "docs/garpa-commons-seeded-release.md"
+      - "mcp/garpaCommonsSeededReleaseTools.ts"
+      - "mcp/garpa-commons-seeded-release-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-release.json"
+      - "tsconfig.commons-seeded-release.json"
+      - ".github/workflows/garpa-commons-seeded-release-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-release-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Generate executable release evidence
+        run: npx tsx scripts/generateCommonsSeededReleaseExample.ts
+      - name: Run focused release campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededRelease.test.ts \
+            tests/lib/garpaCommonsSeededPublication.test.ts \
+            tests/lib/garpaRelease.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+      - name: Typecheck Commons-seeded release surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-release.json
+      - name: Run complete repository check
+        run: npm run check
+      - name: Build static workbench
+        run: npm run build
+      - run: npm ci
+        working-directory: mcp
+      - name: Typecheck dedicated release MCP
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-release.json
+        working-directory: mcp
+      - name: Typecheck complete GARPA MCP
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+      - name: Upload generated release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-commons-seeded-release-evidence
+          path: examples/garpa-commons-seeded-release
+          retention-days: 3
