@@ -1,0 +1,47 @@
+name: garpa-source-archive-temp
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/garpa-source-archive-temp.yml"
+      - "app/**"
+      - "docs/**"
+      - "examples/**"
+      - "mcp/**"
+      - "schemas/**"
+      - "tests/**"
+      - "tsconfig*.json"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-manifest-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Upload dependency-complete source tree
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-seeded-build-manifest-source
+          path: .
+          include-hidden-files: true
+          retention-days: 1

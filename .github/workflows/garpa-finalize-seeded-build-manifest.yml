@@ -1,0 +1,52 @@
+name: garpa-finalize-seeded-build-manifest
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-manifest-v1"
+    paths:
+      - ".github/workflows/garpa-finalize-seeded-build-manifest.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout qualified branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify qualified build-manifest surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npx vitest run \
+            tests/lib/garpaCommonsSeededBuildManifest.test.ts \
+            tests/lib/garpaMethodVersion.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+          npx vite build
+          npm ci --prefix mcp
+          npx tsc --noEmit -p mcp/tsconfig.commons-seeded-build-manifest.json
+
+      - name: Remove construction-only workflows
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f \
+            .github/workflows/garpa-source-archive-temp.yml \
+            .github/workflows/garpa-apply-qualified-build-manifest.yml \
+            .github/workflows/garpa-finalize-seeded-build-manifest.yml
+
+      - name: Commit finalized qualified branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Finalize Commons-seeded build-manifest admission"
+          git push origin HEAD:feature/garpa-commons-seeded-build-manifest-v1

@@ -1,0 +1,130 @@
+name: garpa-commons-seeded-build-manifest-finalize
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-manifest-v1"
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededBuildManifest.ts"
+      - "app/src/lib/garpa/commonsSeededBuildManifestDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededBuildManifest.ts"
+      - "app/src/lib/garpa/runCommonsSeededBuildManifestGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededBuildManifest.ts"
+      - "tests/fixtures/garpaCommonsSeededQualificationFixture.ts"
+      - "tests/lib/garpaCommonsSeededBuildManifest.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-build-manifest-*.schema.json"
+      - "mcp/garpaCommonsSeededBuildManifestTools.ts"
+      - "mcp/garpa-commons-seeded-build-manifest-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "tsconfig.commons-seeded-build-manifest.json"
+      - "mcp/tsconfig.commons-seeded-build-manifest.json"
+      - ".github/workflows/garpa-commons-seeded-build-manifest-finalize.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run focused regression campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededBuildManifest.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+
+      - name: Typecheck governed surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+
+      - name: Build static workbench
+        run: npm run build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck dedicated MCP surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+        working-directory: mcp
+
+      - name: Remove temporary source-archive workflow
+        run: |
+          if [ -f .github/workflows/garpa-source-archive-temp.yml ]; then
+            git config user.name "GARPA qualification"
+            git config user.email "actions@users.noreply.github.com"
+            git rm .github/workflows/garpa-source-archive-temp.yml
+            git commit -m "Remove temporary source-archive workflow"
+            git push origin HEAD:${GITHUB_REF_NAME}
+          fi
+
+      - name: Update PR #24 qualification receipt
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > /tmp/pr-body.md <<'EOF'
+          ## What this builds
+
+          This stacked change binds an admitted Commons-seeded qualification result into an exact frozen target `BuildManifest`, preserves the complete source-to-target custody chain, and delegates substantive admission to the repository's existing build-manifest validator and gate.
+
+          ```text
+          Commons-seeded qualification result
+            + canonical target architecture digest
+            + canonical frozen qualification digest
+            + exact seeded-component build bindings
+            + canonical frozen BuildManifest
+            -> Commons-specific build-custody gate
+            -> existing build-manifest validator
+            -> existing build-manifest gate
+            -> admitted_for_assembly
+          ```
+
+          It is intentionally stacked on #22.
+
+          Every Commons-seeded component remains bound to its exact source catalog object, revision and object digest, architecture selection, qualification binding, target manifest component, replacement policy, compatibility edges, target regression metrics, instrumentation, calibration plan, and assembly steps. Model, firmware, configuration, quantity, target mapping, license, target price, and serial-or-lot custody cannot drift after qualification.
+
+          The Commons layer cannot waive the ordinary build-manifest requirements. The existing gate remains authoritative for complete component and custom-code identity, compatibility, roles, dependencies, instrumentation, calibration, governed substitutions, acyclic assembly coverage, architecture cost and schedule trace, and frozen-manifest state.
+
+          Hardware seeded from the Commons cannot use `equivalent_with_retest` as a local replacement shortcut. A changed model, firmware, source revision, mapping, or architecture configuration must return through projection, substitution, architecture, and qualification.
+
+          The synthetic target fixture reaches `admitted_for_assembly`. This permits controlled assembly only. It does not establish an as-built system, measured result, mission adequacy, vendor parity, deployment authority, or publication authority.
+
+          ## Method version
+
+          ```text
+          0.8.0-commons-seeded-build-manifest
+          ```
+
+          Highest governed stage: `commons_seeded_build_manifest`.
+
+          ## MCP surface
+
+          ```text
+          validate_garpa_commons_seeded_build_manifest
+          run_garpa_commons_seeded_build_manifest
+          ```
+
+          ## Qualification
+
+          The path-scoped repository workflow runs the focused build-manifest and method regressions, scoped TypeScript check, static Vite build, and dependency-backed dedicated MCP typecheck. The PR remains draft because it is stacked on #22.
+          EOF
+          gh api --method PATCH repos/BigBirdReturns/axm-capability-claim-test/pulls/24 \
+            -f title='Bind Commons-seeded qualification into target build manifests' \
+            -f body="$(cat /tmp/pr-body.md)"
