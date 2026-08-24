@@ -1,7 +1,7 @@
 # GARPA method version
 
-Current branch method version: `1.1.0-commons-seeded-test-run`.
+Current branch method version: `1.2.0-commons-seeded-mission-evaluation`.
 
-The highest governed stage is `commons_seeded_test_run`. It admits one exact reserved execution receipt while preserving pass, failure, abort, invalidation, and incomplete dispositions without converting them into mission adequacy.
+The highest governed stage is `commons_seeded_mission_evaluation`. It recomputes the complete target run ledger, retains every failure, abort, invalidation, incomplete run and explicit exclusion, verifies the frozen scenario and metric boundary, and delegates the bounded disposition to the existing custodied mission-evaluation gate.
 
-Automatic physical execution is not implemented or authorized. Test-run admission does not establish mission adequacy, vendor parity, deployment authority, or publication authority.
+Mission-evaluation admission does not establish vendor parity, deployment authority, or publication authority.

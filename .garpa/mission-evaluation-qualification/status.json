@@ -1,0 +1,17 @@
+{
+  "passed": false,
+  "methodVersion": "1.2.0-commons-seeded-mission-evaluation",
+  "highestStage": "commons_seeded_mission_evaluation",
+  "results": {
+    "npm_ci": 0,
+    "discovery": 1,
+    "generation": 1,
+    "focused": 1,
+    "scoped_tsc": 2,
+    "full_check": 2,
+    "build": 1,
+    "mcp_ci": 0,
+    "mcp_scoped": 2,
+    "mcp_complete": 2
+  }
+}
