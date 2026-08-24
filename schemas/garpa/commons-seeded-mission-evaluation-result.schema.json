@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-mission-evaluation-result.schema.json",
+  "title": "GARPA Commons-Seeded Mission-Evaluation Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "custodiedMissionEvaluationResultDigest",
+    "evaluationEnvelopeDigest",
+    "admittedTestRunResultDigests",
+    "admittedRunIds",
+    "validRunIds",
+    "failedMetricIds",
+    "abortedRunIds",
+    "invalidatedRunIds",
+    "incompleteRunIds",
+    "findings",
+    "validationErrors",
+    "testRunResults",
+    "testRunReceipts",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_mission_evaluation_blocked",
+        "seeded_mission_evaluation_incomplete",
+        "seeded_mission_evaluation_admitted"
+      ]
+    },
+    "missionState": {
+      "enum": [
+        "matched",
+        "bounded_match",
+        "partial",
+        "failed",
+        "incomparable",
+        "unassessed"
+      ]
+    },
+    "custodiedMissionEvaluationResult": {},
+    "custodiedMissionEvaluationResultDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "evaluationEnvelopeDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "admittedTestRunResultDigests": { "$ref": "#/$defs/stringArray" },
+    "admittedRunIds": { "$ref": "#/$defs/stringArray" },
+    "validRunIds": { "$ref": "#/$defs/stringArray" },
+    "failedMetricIds": { "$ref": "#/$defs/stringArray" },
+    "abortedRunIds": { "$ref": "#/$defs/stringArray" },
+    "invalidatedRunIds": { "$ref": "#/$defs/stringArray" },
+    "incompleteRunIds": { "$ref": "#/$defs/stringArray" },
+    "findings": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "validationErrors": { "$ref": "#/$defs/stringArray" },
+    "testRunResults": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "testRunReceipts": {
+      "type": "array",
+      "items": { "type": "object" }
+    },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
