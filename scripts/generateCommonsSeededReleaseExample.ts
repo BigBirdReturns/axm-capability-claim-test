@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 import { canonicalStringify } from "../app/src/lib/garpa/canonicalJson.ts";
 import { computeCommonsSeededReleaseResultDigest } from "../app/src/lib/garpa/commonsSeededReleaseDigest.ts";
 import { renderCommonsSeededReleaseMarkdown } from "../app/src/lib/garpa/renderCommonsSeededRelease.ts";
@@ -15,14 +16,18 @@ if (!result.passed || !result.releaseVerified) {
 }
 await writeFile(`${directory}/request.json`, `${JSON.stringify(request, null, 2)}\n`);
 await writeFile(`${directory}/result.json`, `${JSON.stringify(result, null, 2)}\n`);
-await writeFile(`${directory}/receipt.md`, renderCommonsSeededReleaseMarkdown(request, result));
-await writeFile(`${directory}/manifest.json`, `${JSON.stringify(request.releaseManifest, null, 2)}\n`);
+await writeFile(
+  `${directory}/receipt.md`,
+  renderCommonsSeededReleaseMarkdown(request, result),
+);
+await writeFile(
+  `${directory}/manifest.json`,
+  `${JSON.stringify(request.releaseManifest, null, 2)}\n`,
+);
 await mkdir(`${directory}/files`, { recursive: true });
 for (const file of request.releaseFiles) {
   const outputPath = `${directory}/files/${file.path}`;
-  await mkdir(outputPath.slice(0, outputPath.lastIndexOf("/")), {
-    recursive: true,
-  });
+  await mkdir(dirname(outputPath), { recursive: true });
   await writeFile(outputPath, file.content);
 }
 await writeFile(
