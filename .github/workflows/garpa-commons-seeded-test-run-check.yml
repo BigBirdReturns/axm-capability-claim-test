@@ -1,0 +1,72 @@
+name: garpa-commons-seeded-test-run-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededTestRun.ts"
+      - "app/src/lib/garpa/commonsSeededTestRunDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededTestRun.ts"
+      - "app/src/lib/garpa/runCommonsSeededTestRunGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededTestRun.ts"
+      - "tests/fixtures/garpaCommonsSeededTestRunFixture.ts"
+      - "tests/lib/garpaCommonsSeededTestRun.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-test-run-*.schema.json"
+      - "docs/garpa-commons-seeded-test-run.md"
+      - "mcp/garpaCommonsSeededTestRunTools.ts"
+      - "mcp/garpa-commons-seeded-test-run-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-test-run.json"
+      - "tsconfig.commons-seeded-test-run.json"
+      - ".github/workflows/garpa-commons-seeded-test-run-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-test-run-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  test-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run Commons-seeded test-run regressions
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededTestRun.test.ts \
+            tests/lib/garpaCommonsSeededPreflight.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+
+      - name: Typecheck Commons-seeded test-run surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-test-run.json
+
+      - name: Run complete repository check
+        run: npm run check
+
+      - name: Build static workbench bundle
+        run: npm run build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck Commons-seeded test-run MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-test-run.json
+        working-directory: mcp
+
+      - name: Typecheck complete GARPA MCP server
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
