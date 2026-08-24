@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-build-manifest-result.schema.json",
+  "title": "GARPA Commons-Seeded Build Manifest Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "seededQualificationResultDigest",
+    "candidateArchitectureDigest",
+    "qualificationContractDigest",
+    "buildManifestDigest",
+    "seededComponentIds",
+    "boundSeededComponentIds",
+    "findings",
+    "buildManifestValidationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_build_manifest_blocked",
+        "seeded_build_manifest_incomplete",
+        "seeded_build_manifest_admitted"
+      ]
+    },
+    "seededQualificationResult": { "type": "object" },
+    "seededQualificationResultDigest": { "type": "string" },
+    "candidateArchitectureDigest": { "type": "string" },
+    "qualificationContractDigest": { "type": "string" },
+    "buildManifestDigest": { "type": "string" },
+    "seededComponentIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "boundSeededComponentIds": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["state", "reason", "requiredAction"],
+        "properties": {
+          "state": {
+            "enum": [
+              "seeded_qualification_result_mismatch",
+              "seeded_qualification_not_admitted",
+              "build_manifest_case_mismatch",
+              "candidate_architecture_digest_mismatch",
+              "qualification_contract_digest_mismatch",
+              "build_manifest_digest_mismatch",
+              "build_manifest_freeze_time_mismatch",
+              "seeded_component_binding_missing",
+              "seeded_component_binding_unexpected",
+              "seeded_source_mismatch",
+              "qualification_binding_mismatch",
+              "architecture_selection_digest_mismatch",
+              "architecture_configuration_digest_mismatch",
+              "build_component_digest_mismatch",
+              "seeded_component_identity_mismatch",
+              "seeded_component_configuration_mismatch",
+              "seeded_component_mapping_mismatch",
+              "seeded_substitution_policy_mismatch",
+              "seeded_calibration_custody_mismatch",
+              "seeded_assembly_custody_mismatch",
+              "build_manifest_validation_failed"
+            ]
+          },
+          "bindingId": { "type": "string" },
+          "componentId": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 },
+          "requiredAction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "buildManifestValidationErrors": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "buildManifestGate": { "type": "object" },
+    "buildManifest": { "type": "object" },
+    "pullList": { "type": "array", "items": { "type": "string" } },
+    "prohibitedTransitions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

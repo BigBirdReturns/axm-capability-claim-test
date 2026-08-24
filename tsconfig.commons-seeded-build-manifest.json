@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededBuildManifest.ts",
+    "app/src/lib/garpa/commonsSeededBuildManifestDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededBuildManifest.ts",
+    "app/src/lib/garpa/runCommonsSeededBuildManifestGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededBuildManifest.ts",
+    "app/src/lib/garpa/garpaVersion.ts",
+    "app/src/lib/garpa/implementedStages.ts",
+    "tests/fixtures/garpaCommonsSeededBuildManifestFixture.ts",
+    "tests/lib/garpaCommonsSeededBuildManifest.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts",
+    "examples/garpa-commons-seeded-build-manifest/**/*.json"
+  ]
+}

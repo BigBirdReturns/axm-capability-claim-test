@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-build-receipt-result.schema.json",
+  "title": "GARPA Commons-Seeded Build Receipt Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "seededBuildManifestResultDigest",
+    "asBuiltReceiptDigest",
+    "buildManifestDigest",
+    "installedComponentIds",
+    "receiptedAssemblyStepIds",
+    "receiptedCalibrationPlanIds",
+    "substitutedComponentIds",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_build_receipt_blocked",
+        "seeded_build_receipt_incomplete",
+        "seeded_build_receipt_admitted"
+      ]
+    },
+    "seededBuildManifestResult": { "type": "object" },
+    "seededBuildManifestResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "asBuiltReceiptDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "buildManifestDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "installedComponentIds": { "$ref": "#/$defs/stringArray" },
+    "receiptedAssemblyStepIds": { "$ref": "#/$defs/stringArray" },
+    "receiptedCalibrationPlanIds": { "$ref": "#/$defs/stringArray" },
+    "substitutedComponentIds": { "$ref": "#/$defs/stringArray" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["state", "reason", "requiredAction"],
+        "properties": {
+          "state": { "type": "string", "minLength": 1 },
+          "componentId": { "type": "string" },
+          "customCodeId": { "type": "string" },
+          "assemblyStepId": { "type": "string" },
+          "calibrationPlanId": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 },
+          "requiredAction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "validationErrors": { "$ref": "#/$defs/stringArray" },
+    "asBuiltReceipt": { "type": "object" },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

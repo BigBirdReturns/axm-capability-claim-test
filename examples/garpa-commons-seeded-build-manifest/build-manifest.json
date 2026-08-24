@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-COMMONS-TARGET-0001",
+  "candidateArchitectureDigest": "3b9d40672218ce4040ade2b40206b55a127314246d9c0712775eb0a9759bb78a",
+  "qualificationContractDigest": "139d433e773d76cc7b820f9322c77a285f4a33246a992f6e3da51ec1cdcb2dc5",
+  "components": [
+    {
+      "componentId": "component-sensor-v1-target",
+      "kind": "hardware",
+      "exactModelOrVersion": "sensor-v1",
+      "quantity": 1,
+      "supplierOrSource": "Exact Commons revision observation-sensor-v1-controlled-fixture@1, acquired under target-case evidence",
+      "acquisitionState": "existing",
+      "unitCost": 250,
+      "currency": "USD",
+      "configurationDigest": "8d5af909504f05a0bedd5029b25bce7fdaaf8d369dcadc32ef7191697b32ba92",
+      "firmwareOrRuntimeVersion": "1.0.0",
+      "serialOrLotPolicy": "record_each",
+      "functionIds": [
+        "f-observe-target"
+      ],
+      "interfaceIds": [
+        "i-world-target",
+        "i-observation-target"
+      ],
+      "calibrationRequired": true
+    },
+    {
+      "componentId": "component-detector-target",
+      "kind": "software",
+      "exactModelOrVersion": "detector-1.0",
+      "quantity": 1,
+      "supplierOrSource": "Versioned target source snapshot",
+      "acquisitionState": "existing",
+      "unitCost": 0,
+      "currency": "USD",
+      "configurationDigest": "a413266f47432af28ed78cccf6e3e945c991c9e1686954db2ee447cbe917a1e5",
+      "license": "MIT",
+      "serialOrLotPolicy": "not_applicable",
+      "functionIds": [
+        "f-detect-target"
+      ],
+      "interfaceIds": [
+        "i-observation-target",
+        "i-detection-target"
+      ],
+      "calibrationRequired": false
+    },
+    {
+      "componentId": "component-ui-target",
+      "kind": "software",
+      "exactModelOrVersion": "ui-1.0",
+      "quantity": 1,
+      "supplierOrSource": "Versioned target source snapshot",
+      "acquisitionState": "existing",
+      "unitCost": 0,
+      "currency": "USD",
+      "configurationDigest": "44dddd1c9b7b30eb8605b40b05f9de37495ceac9cef9b1f6f5958289f45bf58f",
+      "license": "Apache-2.0",
+      "serialOrLotPolicy": "not_applicable",
+      "functionIds": [
+        "f-present-target"
+      ],
+      "interfaceIds": [
+        "i-detection-target",
+        "i-alert-target"
+      ],
+      "calibrationRequired": false
+    }
+  ],
+  "customCode": [],
+  "compatibilityEdges": [
+    {
+      "compatibilityEdgeId": "compat-observation-target",
+      "interfaceId": "i-observation-target",
+      "producerComponentIds": [
+        "component-sensor-v1-target"
+      ],
+      "consumerComponentIds": [
+        "component-detector-target"
+      ],
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "acceptanceTestIds": [
+        "q-target-detection",
+        "q-target-latency"
+      ]
+    },
+    {
+      "compatibilityEdgeId": "compat-detection-target",
+      "interfaceId": "i-detection-target",
+      "producerComponentIds": [
+        "component-detector-target"
+      ],
+      "consumerComponentIds": [
+        "component-ui-target"
+      ],
+      "adapterComponentIds": [],
+      "customCodeIds": [],
+      "acceptanceTestIds": [
+        "q-target-latency"
+      ]
+    }
+  ],
+  "humanRoles": [
+    {
+      "humanRoleId": "role-target-operator",
+      "staffing": "One trained operator for one controlled qualification window",
+      "requiredTraining": [
+        "Target fixture orientation",
+        "Alert acknowledgement",
+        "Abort and receipt-failure procedure"
+      ],
+      "responsibilities": [
+        "Monitor the target presentation surface",
+        "Acknowledge the notification",
+        "Record manual intervention"
+      ],
+      "authorityBoundary": "May acknowledge or abort; may not initiate an active response."
+    }
+  ],
+  "dependencies": [],
+  "instrumentation": [
+    {
+      "instrumentationId": "instrument-target-clock",
+      "exactModelOrVersion": "target-monotonic-clock-policy-v1",
+      "configurationDigest": "sha256:target-monotonic-clock-policy-v1-config",
+      "calibrationState": "not_required",
+      "calibrationEvidenceIds": [
+        "e5"
+      ],
+      "storagePath": "runs/<run-id>/target-clock-events.jsonl"
+    },
+    {
+      "instrumentationId": "instrument-target-recorder",
+      "exactModelOrVersion": "target-event-recorder-v1",
+      "configurationDigest": "sha256:target-event-recorder-v1-config",
+      "calibrationState": "current",
+      "calibrationEvidenceIds": [
+        "e-compat-observation",
+        "e-compat-detection"
+      ],
+      "storagePath": "runs/<run-id>/target-events.jsonl"
+    }
+  ],
+  "calibrationPlan": [
+    {
+      "id": "calibrate-sensor-v1-target",
+      "subjectId": "component-sensor-v1-target",
+      "method": "Run the frozen target observation fixture and compare timestamps and records against the known target sequence.",
+      "acceptanceCondition": "Every expected target observation is emitted with a usable timestamp and matching record digest.",
+      "evidenceArtifactPattern": "build/<build-id>/calibration/sensor-v1-target/*.jsonl",
+      "owner": "Target build owner"
+    },
+    {
+      "id": "verify-target-event-recorder",
+      "subjectId": "instrument-target-recorder",
+      "method": "Replay both target compatibility fixtures through the recorder and verify event count, order, timestamp fields, and record digests.",
+      "acceptanceCondition": "The recorder preserves every target fixture event without semantic or ordering loss.",
+      "evidenceArtifactPattern": "build/<build-id>/calibration/target-event-recorder-v1/*.jsonl",
+      "owner": "Target qualification owner"
+    }
+  ],
+  "substitutionPolicies": [
+    {
+      "componentId": "component-sensor-v1-target",
+      "policy": "no_substitution",
+      "equivalenceCriteria": [],
+      "requiredRegressionTestIds": [
+        "q-target-detection",
+        "q-target-latency"
+      ],
+      "prohibitedSubstitutions": [
+        "Any sensor other than exact model sensor-v1 with firmware 1.0.0",
+        "Any sensor lacking serial or lot custody"
+      ]
+    },
+    {
+      "componentId": "component-detector-target",
+      "policy": "no_substitution",
+      "equivalenceCriteria": [],
+      "requiredRegressionTestIds": [
+        "q-target-detection",
+        "q-target-latency"
+      ],
+      "prohibitedSubstitutions": [
+        "Any package other than detector-1.0"
+      ]
+    },
+    {
+      "componentId": "component-ui-target",
+      "policy": "equivalent_with_retest",
+      "equivalenceCriteria": [
+        "Same target detection-event contract",
+        "Same target timestamp custody",
+        "Same operator acknowledgement receipt"
+      ],
+      "requiredRegressionTestIds": [
+        "q-target-latency"
+      ],
+      "prohibitedSubstitutions": [
+        "UI without target event logging"
+      ]
+    }
+  ],
+  "assemblySteps": [
+    {
+      "id": "step-target-inventory",
+      "predecessorIds": [],
+      "componentIds": [
+        "component-sensor-v1-target",
+        "component-detector-target",
+        "component-ui-target"
+      ],
+      "customCodeIds": [],
+      "compatibilityEdgeIds": [],
+      "procedure": [
+        "Verify exact target versions and quantities",
+        "Record the sensor serial or lot identity",
+        "Verify licenses and architecture configuration digests"
+      ],
+      "acceptanceCondition": "All target manifest identities, versions, quantities, licenses, and digests match.",
+      "rollbackProcedure": [
+        "Quarantine any mismatched item",
+        "Return the manifest to the governing projection or architecture layer"
+      ],
+      "owner": "Target evidence custodian"
+    },
+    {
+      "id": "step-target-calibrate",
+      "predecessorIds": [
+        "step-target-inventory"
+      ],
+      "componentIds": [
+        "component-sensor-v1-target"
+      ],
+      "customCodeIds": [],
+      "compatibilityEdgeIds": [],
+      "procedure": [
+        "Execute calibrate-sensor-v1-target",
+        "Execute verify-target-event-recorder",
+        "Store calibration artifacts under the frozen build identifier"
+      ],
+      "acceptanceCondition": "Both calibration-plan items pass and every artifact resolves.",
+      "rollbackProcedure": [
+        "Restore the previous configuration",
+        "Quarantine the failing subject"
+      ],
+      "owner": "Target qualification owner"
+    },
+    {
+      "id": "step-target-integrate",
+      "predecessorIds": [
+        "step-target-calibrate"
+      ],
+      "componentIds": [
+        "component-sensor-v1-target",
+        "component-detector-target",
+        "component-ui-target"
+      ],
+      "customCodeIds": [],
+      "compatibilityEdgeIds": [
+        "compat-observation-target",
+        "compat-detection-target"
+      ],
+      "procedure": [
+        "Connect the target observation contract",
+        "Connect the target detection-event contract",
+        "Run both frozen compatibility falsification tests"
+      ],
+      "acceptanceCondition": "Both internal target compatibility edges pass with complete receipts.",
+      "rollbackProcedure": [
+        "Disconnect the failing edge",
+        "Restore the last admitted component configuration"
+      ],
+      "owner": "Target integration owner"
+    }
+  ],
+  "expectedCostLineIds": [
+    "cost-target-hardware",
+    "cost-target-software",
+    "cost-target-integration",
+    "cost-target-operator",
+    "cost-target-qualification",
+    "cost-target-contingency"
+  ],
+  "expectedScheduleLineIds": [
+    "schedule-target-procurement",
+    "schedule-target-integration",
+    "schedule-target-qualification"
+  ],
+  "manifestDigest": "107b119be2a3c1958964bfcf9b1d86de66262928058ffb7c0e9a48dfc683f757",
+  "frozenAt": "2026-08-23T20:20:00Z",
+  "state": "frozen"
+}

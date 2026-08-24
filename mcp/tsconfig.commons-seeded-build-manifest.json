@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpa-commons-seeded-build-manifest-server.ts",
+    "garpaCommonsSeededBuildManifestTools.ts"
+  ]
+}

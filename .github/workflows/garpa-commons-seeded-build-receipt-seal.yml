@@ -1,0 +1,41 @@
+name: garpa-commons-seeded-build-receipt-seal
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-receipt-v1"
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Requalify the exact as-built custody surface
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededBuildReceipt.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-build-receipt.json
+          npm run build
+      - run: npm ci
+        working-directory: mcp
+      - run: npx tsc --noEmit -p tsconfig.commons-seeded-build-receipt.json
+        working-directory: mcp
+      - name: Seal the qualified head and open the preflight successor
+        run: |
+          git tag -f garpa-build-receipt-qualified-v0.9.0 "$GITHUB_SHA"
+          git push origin refs/tags/garpa-build-receipt-qualified-v0.9.0 --force
+          if ! git ls-remote --exit-code --heads origin feature/garpa-commons-seeded-preflight-v1 >/dev/null 2>&1; then
+            git push origin "$GITHUB_SHA:refs/heads/feature/garpa-commons-seeded-preflight-v1"
+          fi

@@ -1,0 +1,79 @@
+name: garpa-seal-seeded-build-receipt
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-receipt-v1"
+    paths:
+      - ".github/workflows/garpa-seal-seeded-build-receipt.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate admitted as-built fixture and receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > /tmp/generate-seeded-build-receipt.ts <<'TS'
+          import { mkdirSync, writeFileSync } from "node:fs";
+          import { buildSeededBuildReceiptRequest } from `${process.cwd()}/tests/fixtures/garpaCommonsSeededBuildReceiptFixture.ts`;
+          import { runCommonsSeededBuildReceiptGate } from `${process.cwd()}/app/src/lib/garpa/runCommonsSeededBuildReceiptGate.ts`;
+          import { renderCommonsSeededBuildReceiptMarkdown } from `${process.cwd()}/app/src/lib/garpa/renderCommonsSeededBuildReceipt.ts`;
+
+          const request = buildSeededBuildReceiptRequest();
+          const result = runCommonsSeededBuildReceiptGate(request);
+          if (!result.passed) {
+            throw new Error(JSON.stringify(result, null, 2));
+          }
+          const out = "examples/garpa-commons-seeded-build-receipt";
+          mkdirSync(out, { recursive: true });
+          writeFileSync(`${out}/request.json`, `${JSON.stringify(request, null, 2)}\n`);
+          writeFileSync(`${out}/as-built-receipt.json`, `${JSON.stringify(request.asBuiltReceipt, null, 2)}\n`);
+          writeFileSync(`${out}/result.json`, `${JSON.stringify(result, null, 2)}\n`);
+          writeFileSync(
+            `${out}/receipt.md`,
+            renderCommonsSeededBuildReceiptMarkdown(request, result),
+          );
+          TS
+          npx tsx /tmp/generate-seeded-build-receipt.ts
+
+      - name: Requalify complete focused surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx vitest run \
+            tests/lib/garpaCommonsSeededBuildReceipt.test.ts \
+            tests/lib/garpaMethodVersion.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-build-receipt.json
+          npx vite build
+          npm ci --prefix mcp
+          npx tsc --noEmit -p mcp/tsconfig.commons-seeded-build-receipt.json
+
+      - name: Commit sealed fixture
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/garpa-seal-seeded-build-receipt.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Seal Commons-seeded as-built receipt fixture"
+          git push origin HEAD:feature/garpa-commons-seeded-build-receipt-v1
