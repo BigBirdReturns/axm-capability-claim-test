@@ -33,10 +33,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cp .github/workflows/garpa-commons-seeded-preflight-check.yml /tmp/garpa-commons-seeded-preflight-check.yml
           cat .garpa-preflight-update/chunk-*.txt > /tmp/garpa-preflight-update.b64
           base64 --decode /tmp/garpa-preflight-update.b64 > /tmp/garpa-preflight-update.zip
           echo "76ceb06b6cbc3947a48e0b2496a693338df590c4958bba4ec24aed1d2b4499db  /tmp/garpa-preflight-update.zip" | sha256sum --check --strict
           unzip -oq /tmp/garpa-preflight-update.zip -d .
+          cp /tmp/garpa-commons-seeded-preflight-check.yml .github/workflows/garpa-commons-seeded-preflight-check.yml
 
       - name: Install workbench dependencies
         run: npm ci
@@ -60,12 +62,11 @@ jobs:
         run: npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
         working-directory: mcp
 
-      - name: Commit qualified update and remove transport scaffolding
+      - name: Commit qualified code update and remove transport chunks
         shell: bash
         run: |
           set -euo pipefail
           rm -rf .garpa-preflight-update
-          rm -f .github/workflows/apply-garpa-preflight-hardening.yml
           git config user.name "BigBirdReturns"
           git config user.email "bigbirdreturns@proton.me"
           git add -A
