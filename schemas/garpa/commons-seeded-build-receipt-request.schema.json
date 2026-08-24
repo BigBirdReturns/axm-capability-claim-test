@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-build-receipt-request.schema.json",
+  "title": "GARPA Commons-Seeded Build Receipt Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededBuildManifestRequest",
+    "expectedSeededBuildManifestResultDigest",
+    "asBuiltReceipt",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededBuildManifestRequest": { "type": "object" },
+    "expectedSeededBuildManifestResultDigest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "admittedAt": { "type": "string", "format": "date-time" },
+    "asBuiltReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "receiptId",
+        "caseId",
+        "seededBuildManifestResultDigest",
+        "buildManifestDigest",
+        "candidateArchitectureDigest",
+        "qualificationContractDigest",
+        "installedComponents",
+        "installedCustomCode",
+        "calibrationReceipts",
+        "assemblyStepReceipts",
+        "substitutions",
+        "deviations",
+        "actualCosts",
+        "labor",
+        "artifacts",
+        "startedAt",
+        "completedAt",
+        "state",
+        "qualificationTransferred",
+        "missionEquivalenceClaimed",
+        "receiptDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "receiptId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "seededBuildManifestResultDigest": { "$ref": "#/$defs/digest" },
+        "buildManifestDigest": { "$ref": "#/$defs/digest" },
+        "candidateArchitectureDigest": { "$ref": "#/$defs/digest" },
+        "qualificationContractDigest": { "$ref": "#/$defs/digest" },
+        "installedComponents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/installedComponent" }
+        },
+        "installedCustomCode": { "type": "array", "items": { "type": "object" } },
+        "calibrationReceipts": { "type": "array", "items": { "type": "object" } },
+        "assemblyStepReceipts": { "type": "array", "items": { "type": "object" } },
+        "substitutions": { "type": "array", "items": { "type": "object" } },
+        "deviations": { "type": "array", "items": { "type": "object" } },
+        "actualCosts": { "type": "array", "items": { "type": "object" } },
+        "labor": { "type": "array", "items": { "type": "object" } },
+        "artifacts": { "type": "array", "items": { "$ref": "#/$defs/artifact" } },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "state": { "enum": ["assembled", "blocked", "superseded"] },
+        "qualificationTransferred": { "const": false },
+        "missionEquivalenceClaimed": { "const": false },
+        "receiptDigest": { "$ref": "#/$defs/digest" }
+      }
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "sha256", "mediaType", "path", "capturedAt"],
+      "properties": {
+        "artifactId": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "mediaType": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "capturedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "installedComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "componentId",
+        "exactModelOrVersion",
+        "quantity",
+        "serialOrLotIds",
+        "configurationDigest",
+        "supplierOrSource",
+        "actualUnitCost",
+        "currency",
+        "acquisitionRecordIds",
+        "installedAt",
+        "installedBy",
+        "evidenceArtifactIds"
+      ],
+      "properties": {
+        "componentId": { "type": "string", "minLength": 1 },
+        "bindingId": { "type": "string", "minLength": 1 },
+        "exactModelOrVersion": { "type": "string", "minLength": 1 },
+        "quantity": { "type": "number", "exclusiveMinimum": 0 },
+        "serialOrLotIds": { "$ref": "#/$defs/stringArray" },
+        "firmwareOrRuntimeVersion": { "type": "string" },
+        "configurationDigest": { "type": "string", "minLength": 1 },
+        "supplierOrSource": { "type": "string", "minLength": 1 },
+        "actualUnitCost": { "type": "number", "minimum": 0 },
+        "currency": { "type": "string", "minLength": 1 },
+        "acquisitionRecordIds": { "$ref": "#/$defs/stringArray" },
+        "installedAt": { "type": "string", "format": "date-time" },
+        "installedBy": { "type": "string", "minLength": 1 },
+        "evidenceArtifactIds": { "$ref": "#/$defs/stringArray" }
+      }
+    }
+  }
+}
