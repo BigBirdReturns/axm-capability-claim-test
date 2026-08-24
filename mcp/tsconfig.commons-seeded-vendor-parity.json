@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededVendorParityTools.ts",
+    "garpa-commons-seeded-vendor-parity-server.ts"
+  ]
+}
