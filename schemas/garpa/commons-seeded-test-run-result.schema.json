@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-test-run-result.schema.json",
+  "title": "GARPA Commons-Seeded Test-Run Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "seededPreflightResultDigest",
+    "preflightReceiptDigest",
+    "executionEnvelopeDigest",
+    "testRunResultDigest",
+    "runId",
+    "scenarioId",
+    "thresholdSummary",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_test_run_blocked",
+        "seeded_test_run_incomplete",
+        "seeded_test_run_admitted"
+      ]
+    },
+    "seededPreflightResult": { "type": "object" },
+    "seededPreflightResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "preflightReceiptDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "executionEnvelopeDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "testRunResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "runId": { "type": "string" },
+    "scenarioId": { "type": "string" },
+    "testRunState": {
+      "enum": ["valid", "invalidated", "aborted", "incomplete"]
+    },
+    "thresholdSummary": {
+      "type": "object",
+      "required": [
+        "passMetricIds",
+        "failMetricIds",
+        "inconclusiveMetricIds",
+        "notMeasuredMetricIds",
+        "byMetricId"
+      ],
+      "properties": {
+        "passMetricIds": { "type": "array", "items": { "type": "string" } },
+        "failMetricIds": { "type": "array", "items": { "type": "string" } },
+        "inconclusiveMetricIds": { "type": "array", "items": { "type": "string" } },
+        "notMeasuredMetricIds": { "type": "array", "items": { "type": "string" } },
+        "byMetricId": { "type": "object", "additionalProperties": { "enum": ["pass", "fail", "inconclusive", "not_measured"] } }
+      }
+    },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "validationErrors": { "type": "array", "items": { "type": "string" } },
+    "testRunReceipt": { "type": "object" },
+    "executionEnvelope": { "type": "object" },
+    "pullList": { "type": "array", "items": { "type": "string" } },
+    "prohibitedTransitions": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[a-fA-F0-9]{64}$"
+    }
+  }
+}
