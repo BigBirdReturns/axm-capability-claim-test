@@ -218,7 +218,7 @@ export function deriveCommonsSeededReleaseFiles(
 }
 
 export function deriveCommonsSeededReleaseManifest(
-  request: CommonsSeededPublicationRequest,
+  _request: CommonsSeededPublicationRequest,
   result: CommonsSeededPublicationResult,
   identity: CommonsSeededReleaseIdentity,
   files: CommonsSeededReleaseFilePayload[],
