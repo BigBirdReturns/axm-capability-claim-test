@@ -1,28 +1,40 @@
 import { describe, expect, it } from "vitest";
-import { canonicalStringify } from "../../app/src/lib/garpa/canonicalJson";
-import { computeCommonsSeededMissionEvaluationEnvelopeDigest } from "../../app/src/lib/garpa/commonsSeededMissionEvaluationDigest";
 import {
   computeCommonsSeededTestRunEnvelopeDigest,
   computeCommonsSeededTestRunReceiptDigest,
+  computeCommonsSeededTestRunResultDigest,
 } from "../../app/src/lib/garpa/commonsSeededTestRunDigest";
 import { renderCommonsSeededMissionEvaluationMarkdown } from "../../app/src/lib/garpa/renderCommonsSeededMissionEvaluation";
 import { runCommonsSeededMissionEvaluationGate } from "../../app/src/lib/garpa/runCommonsSeededMissionEvaluationGate";
 import { runCommonsSeededTestRunGate } from "../../app/src/lib/garpa/runCommonsSeededTestRunGate";
-import { sha256Hex } from "../../app/src/lib/garpa/sha256";
 import { validateCommonsSeededMissionEvaluationRequest } from "../../app/src/lib/garpa/validateCommonsSeededMissionEvaluation";
-import { buildCommonsSeededMissionEvaluationRequest } from "../fixtures/garpaCommonsSeededMissionEvaluationFixture";
+import {
+  buildCommonsSeededMissionEvaluationRequest,
+  refreshCommonsSeededMissionEvaluationEnvelope,
+} from "../fixtures/garpaCommonsSeededMissionEvaluationFixture";
 
-function refreshEnvelope(
+function refreshBoundRun(
   request: ReturnType<typeof buildCommonsSeededMissionEvaluationRequest>,
+  index: number,
 ): void {
-  request.evaluationEnvelope.envelopeDigest =
-    computeCommonsSeededMissionEvaluationEnvelopeDigest(
-      request.evaluationEnvelope,
-    );
+  const runRequest = request.testRunRequests[index]!;
+  runRequest.testRunReceipt.resultDigest =
+    computeCommonsSeededTestRunReceiptDigest(runRequest.testRunReceipt);
+  runRequest.executionEnvelope.envelopeDigest =
+    computeCommonsSeededTestRunEnvelopeDigest(runRequest.executionEnvelope);
+  const result = runCommonsSeededTestRunGate(runRequest);
+  const binding = request.evaluationEnvelope.runBindings[index]!;
+  binding.expectedTestRunResultDigest =
+    computeCommonsSeededTestRunResultDigest(result);
+  binding.expectedTestRunReceiptDigest = runRequest.testRunReceipt.resultDigest;
+  binding.expectedSeededPreflightResultDigest =
+    result.seededPreflightResultDigest;
+  binding.expectedPreflightReceiptDigest = result.preflightReceiptDigest;
+  refreshCommonsSeededMissionEvaluationEnvelope(request);
 }
 
 describe("GARPA Commons-seeded mission-evaluation validation", () => {
-  it("accepts the complete digest-bound evaluation request", () => {
+  it("accepts the complete typed campaign request", () => {
     const request = buildCommonsSeededMissionEvaluationRequest();
     const result = validateCommonsSeededMissionEvaluationRequest(request);
     expect(result.ok, result.errors.join("; ")).toBe(true);
@@ -33,7 +45,7 @@ describe("GARPA Commons-seeded mission-evaluation validation", () => {
     request.evaluationEnvelope.runBindings.push(
       structuredClone(request.evaluationEnvelope.runBindings[0]!),
     );
-    refreshEnvelope(request);
+    refreshCommonsSeededMissionEvaluationEnvelope(request);
     const result = validateCommonsSeededMissionEvaluationRequest(request);
     expect(result.ok).toBe(false);
     expect(result.errors.join(" ")).toContain("duplicate run id");
@@ -41,117 +53,125 @@ describe("GARPA Commons-seeded mission-evaluation validation", () => {
 });
 
 describe("GARPA Commons-seeded mission-evaluation gate", () => {
-  it("admits the complete target run set and delegates the conclusion", () => {
+  it("admits a complete ten-run bounded campaign", () => {
     const request = buildCommonsSeededMissionEvaluationRequest();
     const result = runCommonsSeededMissionEvaluationGate(request);
     expect(result.passed, JSON.stringify(result)).toBe(true);
     expect(result.state).toBe("seeded_mission_evaluation_admitted");
-    expect(result.missionState).toMatch(
-      /matched|bounded_match|partial|failed|incomparable|unassessed/,
+    expect(result.missionState).toBe("bounded_match");
+    expect(result.validRunIds).toHaveLength(10);
+    expect(result.submittedRunIds).toEqual(result.retainedRunIds);
+    expect(result.scenarioCoverage.every((item) => item.state === "complete")).toBe(
+      true,
     );
-    expect(result.custodiedMissionEvaluationResult).toBeDefined();
+    expect(result.metricCoverage.every((item) => item.state === "complete")).toBe(
+      true,
+    );
     expect(result.custodiedMissionEvaluationResultDigest).toMatch(
       /^[a-f0-9]{64}$/,
     );
-    expect(result.admittedRunIds.length).toBe(
-      request.testRunRequests.length,
-    );
   });
 
-  it("blocks a changed envelope after digest freeze", () => {
+  it("refuses omission of a reserved execution", () => {
     const request = buildCommonsSeededMissionEvaluationRequest();
-    request.evaluationEnvelope.evaluationId = "changed-evaluation";
+    const removed = request.testRunRequests.pop()!;
+    request.evaluationEnvelope.runBindings =
+      request.evaluationEnvelope.runBindings.filter(
+        (binding) => binding.runId !== removed.testRunReceipt.runId,
+      );
+    refreshCommonsSeededMissionEvaluationEnvelope(request);
     const result = runCommonsSeededMissionEvaluationGate(request);
+    expect(result.passed).toBe(false);
     expect(
       result.findings.some(
-        (finding) =>
-          finding.state === "evaluation_envelope_digest_mismatch",
+        (finding) => finding.state === "reserved_run_omitted",
       ),
     ).toBe(true);
   });
 
-  it("blocks a forged test-run result binding", () => {
+  it("blocks a forged deterministic run-result binding", () => {
     const request = buildCommonsSeededMissionEvaluationRequest();
     request.evaluationEnvelope.runBindings[0]!.expectedTestRunResultDigest =
       "a".repeat(64);
-    refreshEnvelope(request);
+    refreshCommonsSeededMissionEvaluationEnvelope(request);
     const result = runCommonsSeededMissionEvaluationGate(request);
+    expect(result.state).toBe("seeded_mission_evaluation_blocked");
     expect(
       result.findings.some(
-        (finding) => finding.state === "run_binding_mismatch",
+        (finding) => finding.state === "test_run_result_mismatch",
       ),
     ).toBe(true);
   });
 
-  it("refuses omission of a governed run from delegated evaluation", () => {
-    const request = buildCommonsSeededMissionEvaluationRequest();
-    request.custodiedMissionEvaluationArgs = [];
-    const validation = validateCommonsSeededMissionEvaluationRequest(request);
-    expect(validation.ok).toBe(false);
-  });
-
-  it("refuses an extra ungoverned run in delegated evaluation", () => {
-    const request = buildCommonsSeededMissionEvaluationRequest();
-    const extra = structuredClone(
-      runCommonsSeededTestRunGate(request.testRunRequests[0]!)
-        .testRunReceipt!,
-    );
-    extra.runId = "UNBOUND-RUN";
-    request.custodiedMissionEvaluationArgs.push(extra);
-    const result = runCommonsSeededMissionEvaluationGate(request);
-    expect(
-      result.findings.some(
-        (finding) =>
-          finding.state === "unbound_run_in_custodied_evaluation",
-      ),
-    ).toBe(true);
-  });
-
-  it("preserves a failed essential metric rather than laundering it", () => {
+  it("admits a complete campaign whose essential metric failed", () => {
     const request = buildCommonsSeededMissionEvaluationRequest();
     const runRequest = request.testRunRequests[0]!;
     runRequest.testRunReceipt.metricResults[0]!.thresholdResult = "fail";
-    runRequest.testRunReceipt.resultDigest =
-      computeCommonsSeededTestRunReceiptDigest(runRequest.testRunReceipt);
-    const envelope =
-      runRequest.executionEnvelope as unknown as Record<string, unknown>;
-    if ("testRunReceiptDigest" in envelope) {
-      envelope.testRunReceiptDigest = runRequest.testRunReceipt.resultDigest;
-    }
-    envelope.envelopeDigest =
-      computeCommonsSeededTestRunEnvelopeDigest(envelope as never);
-    const runResult = runCommonsSeededTestRunGate(runRequest);
-    request.evaluationEnvelope.runBindings[0]!.expectedTestRunResultDigest =
-      sha256Hex(canonicalStringify(runResult));
-    request.evaluationEnvelope.runBindings[0]!.expectedTestRunReceiptDigest =
-      runRequest.testRunReceipt.resultDigest;
-    refreshEnvelope(request);
+    refreshBoundRun(request, 0);
     const result = runCommonsSeededMissionEvaluationGate(request);
+    expect(result.passed, JSON.stringify(result)).toBe(true);
+    expect(result.missionState).toBe("failed");
     expect(result.failedMetricIds).toContain(
       runRequest.testRunReceipt.metricResults[0]!.metricId,
     );
   });
 
-  it("keeps incomplete run coverage out of an admitted final evaluation", () => {
-    const request = buildCommonsSeededMissionEvaluationRequest();
-    if (request.testRunRequests.length > 1) {
-      const removed = request.testRunRequests.pop()!;
-      const runId = removed.testRunReceipt.runId;
-      request.evaluationEnvelope.runBindings =
-        request.evaluationEnvelope.runBindings.filter(
-          (binding) => binding.runId !== runId,
-        );
-      refreshEnvelope(request);
-      const result = runCommonsSeededMissionEvaluationGate(request);
-      expect(result.passed).toBe(false);
-      expect(
-        result.findings.some(
-          (finding) =>
-            finding.state === "run_set_incomplete" ||
-            finding.state === "unbound_run_in_custodied_evaluation",
+  it("retains a receipted abort while ten other valid runs satisfy coverage", () => {
+    const request = buildCommonsSeededMissionEvaluationRequest(11);
+    const runRequest = request.testRunRequests[0]!;
+    runRequest.testRunReceipt.state = "aborted";
+    runRequest.testRunReceipt.aborts = [
+      {
+        id: "abort:commons-eval:001",
+        occurredAt: runRequest.testRunReceipt.endedAt,
+        authority: runRequest.testRunReceipt.operators[0]!,
+        reason: "Synthetic regression abort retained as campaign evidence.",
+      },
+    ];
+    refreshBoundRun(request, 0);
+    const result = runCommonsSeededMissionEvaluationGate(request);
+    expect(result.passed, JSON.stringify(result)).toBe(true);
+    expect(result.missionState).toBe("bounded_match");
+    expect(result.abortedRunIds).toContain(runRequest.testRunReceipt.runId);
+    expect(result.excludedRunIds).toContain(runRequest.testRunReceipt.runId);
+    expect(result.validRunIds).toHaveLength(10);
+  });
+
+  it("retains a receipted invalidation while ten valid runs satisfy coverage", () => {
+    const request = buildCommonsSeededMissionEvaluationRequest(11);
+    const runRequest = request.testRunRequests[0]!;
+    runRequest.testRunReceipt.state = "invalidated";
+    runRequest.testRunReceipt.anomalies = [
+      {
+        id: "anomaly:commons-eval:001",
+        occurredAt: runRequest.testRunReceipt.endedAt,
+        description: "Synthetic invalidating anomaly retained for regression.",
+        affectedMetricIds: runRequest.testRunReceipt.metricResults.map(
+          (metric) => metric.metricId,
         ),
-      ).toBe(true);
-    }
+        disposition: "invalidates_run",
+      },
+    ];
+    refreshBoundRun(request, 0);
+    const result = runCommonsSeededMissionEvaluationGate(request);
+    expect(result.passed, JSON.stringify(result)).toBe(true);
+    expect(result.invalidatedRunIds).toContain(
+      runRequest.testRunReceipt.runId,
+    );
+    expect(result.excludedRunIds).toContain(runRequest.testRunReceipt.runId);
+    expect(result.validRunIds).toHaveLength(10);
+  });
+
+  it("refuses a full-mission declaration over frozen exclusions", () => {
+    const request = buildCommonsSeededMissionEvaluationRequest();
+    request.missionBoundary.fullMissionBoundary = true;
+    const result = runCommonsSeededMissionEvaluationGate(request);
+    expect(result.state).toBe("seeded_mission_evaluation_blocked");
+    expect(
+      result.findings.some(
+        (finding) => finding.state === "mission_boundary_mismatch",
+      ),
+    ).toBe(true);
   });
 
   it("refuses qualification or unrestricted equivalence transfer", () => {
@@ -166,12 +186,12 @@ describe("GARPA Commons-seeded mission-evaluation gate", () => {
         missionEquivalenceClaimed: boolean;
       }
     ).missionEquivalenceClaimed = true;
-    refreshEnvelope(request);
+    refreshCommonsSeededMissionEvaluationEnvelope(request);
     const result = runCommonsSeededMissionEvaluationGate(request);
     expect(result.state).toBe("seeded_mission_evaluation_blocked");
   });
 
-  it("renders run dispositions and the downstream boundary", () => {
+  it("renders run dispositions, coverage, and downstream boundary", () => {
     const request = buildCommonsSeededMissionEvaluationRequest();
     const result = runCommonsSeededMissionEvaluationGate(request);
     const markdown = renderCommonsSeededMissionEvaluationMarkdown(
@@ -181,7 +201,8 @@ describe("GARPA Commons-seeded mission-evaluation gate", () => {
     expect(markdown).toContain(
       "# GARPA Commons-Seeded Mission Evaluation",
     );
-    expect(markdown).toContain("Mission state:");
+    expect(markdown).toContain("Mission state: bounded_match");
+    expect(markdown).toContain("Metric coverage");
     expect(markdown).toContain("does not establish vendor parity");
   });
 });
