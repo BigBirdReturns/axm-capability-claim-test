@@ -1,0 +1,76 @@
+name: garpa-commons-seeded-build-receipt-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededBuildReceipt.ts"
+      - "app/src/lib/garpa/commonsSeededBuildReceiptDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededBuildReceipt.ts"
+      - "app/src/lib/garpa/runCommonsSeededBuildReceiptGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededBuildReceipt.ts"
+      - "tests/fixtures/garpaCommonsSeededBuildReceiptFixture.ts"
+      - "tests/lib/garpaCommonsSeededBuildReceipt.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-build-receipt-*.schema.json"
+      - "docs/garpa-commons-seeded-build-receipt.md"
+      - "docs/garpa-method-version.md"
+      - "mcp/garpaCommonsSeededBuildReceiptTools.ts"
+      - "mcp/garpa-commons-seeded-build-receipt-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-build-receipt.json"
+      - "tsconfig.commons-seeded-build-receipt.json"
+      - ".github/workflows/garpa-commons-seeded-build-receipt-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-receipt-v1"
+    paths:
+      - "app/src/types/garpaCommonsSeededBuildReceipt.ts"
+      - "app/src/lib/garpa/**"
+      - "tests/fixtures/garpaCommonsSeededBuildReceiptFixture.ts"
+      - "tests/lib/garpaCommonsSeededBuildReceipt.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-build-receipt-*.schema.json"
+      - "docs/garpa-commons-seeded-build-receipt.md"
+      - "docs/garpa-method-version.md"
+      - "mcp/garpaCommonsSeededBuildReceiptTools.ts"
+      - "mcp/garpa-commons-seeded-build-receipt-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-build-receipt.json"
+      - "tsconfig.commons-seeded-build-receipt.json"
+      - ".github/workflows/garpa-commons-seeded-build-receipt-check.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  seeded-build-receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run Commons-seeded as-built receipt tests
+        run: npx vitest run tests/lib/garpaCommonsSeededBuildReceipt.test.ts tests/lib/garpaMethodVersion.test.ts
+
+      - name: Typecheck Commons-seeded as-built receipt surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-receipt.json
+
+      - name: Build static workbench bundle
+        run: npx vite build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck Commons-seeded as-built receipt MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-receipt.json
+        working-directory: mcp
