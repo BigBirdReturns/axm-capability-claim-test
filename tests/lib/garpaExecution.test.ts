@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import buildReceiptRaw from "../../examples/garpa-synthetic-observation/build-receipt.json";
 import testRunReceiptRaw from "../../examples/garpa-synthetic-observation/test-run-receipt.json";
-import type { BuildReceipt } from "../../app/src/types/garpaExecution";
+import type {
+  BuildReceipt,
+  TestRunReceipt,
+} from "../../app/src/types/garpaExecution";
 import {
   validateBuildReceipt,
   validateTestRunReceipt,
@@ -35,15 +38,15 @@ describe("GARPA build receipt validation", () => {
   });
 
   it("requires completedAt for an assembled build", () => {
-    const raw = structuredClone(buildReceiptRaw);
-    delete (raw as { completedAt?: string }).completedAt;
+    const raw = structuredClone(buildReceiptRaw) as unknown as BuildReceipt;
+    delete raw.completedAt;
     const result = validateBuildReceipt(raw);
     expect(result.ok).toBe(false);
     expect(result.errors.join(" ")).toContain("assembled builds require completedAt");
   });
 
   it("rejects substitutions that point to an absent installed item", () => {
-    const raw = structuredClone(buildReceiptRaw);
+    const raw = structuredClone(buildReceiptRaw) as unknown as BuildReceipt;
     raw.substitutions.push({
       id: "sub-1",
       originalManifestItemId: "camera-1",
@@ -65,7 +68,7 @@ describe("GARPA test run receipt validation", () => {
   });
 
   it("rejects a metric that cites raw data absent from the run receipt", () => {
-    const raw = structuredClone(testRunReceiptRaw);
+    const raw = structuredClone(testRunReceiptRaw) as unknown as TestRunReceipt;
     raw.metricResults[0]!.rawSampleArtifactIds = ["ghost-raw-data"];
     const result = validateTestRunReceipt(raw);
     expect(result.ok).toBe(false);
@@ -73,7 +76,7 @@ describe("GARPA test run receipt validation", () => {
   });
 
   it("does not permit an invalidating anomaly inside a valid run", () => {
-    const raw = structuredClone(testRunReceiptRaw);
+    const raw = structuredClone(testRunReceiptRaw) as unknown as TestRunReceipt;
     raw.anomalies.push({
       id: "anomaly-1",
       occurredAt: "2026-08-23T05:05:00Z",
@@ -87,7 +90,7 @@ describe("GARPA test run receipt validation", () => {
   });
 
   it("requires an abort receipt when the run state is aborted", () => {
-    const raw = structuredClone(testRunReceiptRaw);
+    const raw = structuredClone(testRunReceiptRaw) as unknown as TestRunReceipt;
     raw.state = "aborted";
     raw.metricResults = [];
     const result = validateTestRunReceipt(raw);
