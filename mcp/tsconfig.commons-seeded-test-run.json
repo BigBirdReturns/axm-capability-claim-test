@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededTestRunTools.ts",
+    "garpa-commons-seeded-test-run-server.ts"
+  ]
+}
