@@ -1,0 +1,102 @@
+name: garpa-apply-qualified-build-manifest
+
+on:
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-build-manifest-v1"
+    paths:
+      - ".github/workflows/garpa-apply-qualified-build-manifest.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-qualified-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact construction branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Recover qualified patch payload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PATCH_BLOB_SHA: a02ded02d2fa31f88afd998bb2e77ca96fe80f6b
+        shell: bash
+        run: |
+          set -euo pipefail
+          api="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/blobs/${PATCH_BLOB_SHA}"
+          curl --fail --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "${api}" > /tmp/blob.json
+          jq -r '.content' /tmp/blob.json | tr -d '\n' | base64 --decode > /tmp/payload
+
+          select_patch() {
+            local candidate="$1"
+            if git apply --check --binary "$candidate" >/dev/null 2>&1; then
+              cp "$candidate" /tmp/qualified.patch
+              return 0
+            fi
+            return 1
+          }
+
+          select_patch /tmp/payload || true
+
+          if [ ! -s /tmp/qualified.patch ]; then
+            if base64 --decode /tmp/payload > /tmp/decoded 2>/dev/null; then
+              select_patch /tmp/decoded || true
+              if [ ! -s /tmp/qualified.patch ] && gzip --test /tmp/decoded 2>/dev/null; then
+                gzip --decompress --stdout /tmp/decoded > /tmp/decoded-gzip
+                select_patch /tmp/decoded-gzip || true
+              fi
+            fi
+          fi
+
+          if [ ! -s /tmp/qualified.patch ] && gzip --test /tmp/payload 2>/dev/null; then
+            gzip --decompress --stdout /tmp/payload > /tmp/payload-gzip
+            select_patch /tmp/payload-gzip || true
+          fi
+
+          if [ ! -s /tmp/qualified.patch ]; then
+            echo "The qualified patch object could not be decoded into an applicable Git patch." >&2
+            echo "Payload prefix:" >&2
+            head -c 96 /tmp/payload | od -An -tx1c >&2 || true
+            exit 1
+          fi
+
+          sha256sum /tmp/qualified.patch
+          git apply --stat /tmp/qualified.patch
+
+      - name: Apply qualified build-manifest implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git apply --index --binary /tmp/qualified.patch
+          git status --short
+
+      - name: Install and qualify focused surface
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npx vitest run \
+            tests/lib/garpaCommonsSeededBuildManifest.test.ts \
+            tests/lib/garpaMethodVersion.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+          npx vite build
+          npm ci --prefix mcp
+          npx tsc --noEmit -p mcp/tsconfig.commons-seeded-build-manifest.json
+
+      - name: Commit and push qualified implementation
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Bind Commons-seeded qualification into target build manifests"
+          git push origin HEAD:feature/garpa-commons-seeded-build-manifest-v1
