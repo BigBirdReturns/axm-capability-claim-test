@@ -10,7 +10,6 @@ import type {
 } from "../../types/garpaCommonsSeededRelease";
 import { canonicalStringify } from "./canonicalJson";
 import {
-  canonicalReleaseFilePayloads,
   canonicalReleaseFileRecords,
   computeCommonsSeededReleaseBundleDigest,
   computeCommonsSeededReleaseEnvelopeDigest,
