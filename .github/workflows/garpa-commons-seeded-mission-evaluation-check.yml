@@ -1,0 +1,63 @@
+name: garpa-commons-seeded-mission-evaluation-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededMissionEvaluation.ts"
+      - "app/src/lib/garpa/commonsSeededMissionEvaluationDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededMissionEvaluation.ts"
+      - "app/src/lib/garpa/runCommonsSeededMissionEvaluationGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededMissionEvaluation.ts"
+      - "app/src/lib/garpa/garpaVersion.ts"
+      - "app/src/lib/garpa/implementedStages.ts"
+      - "tests/fixtures/garpaCommonsSeededMissionEvaluationFixture.ts"
+      - "tests/lib/garpaCommonsSeededMissionEvaluation.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-mission-evaluation-*.schema.json"
+      - "docs/garpa-commons-seeded-mission-evaluation.md"
+      - "docs/garpa-method-version.md"
+      - "mcp/garpaCommonsSeededMissionEvaluationTools.ts"
+      - "mcp/garpa-commons-seeded-mission-evaluation-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-mission-evaluation.json"
+      - "tsconfig.commons-seeded-mission-evaluation.json"
+      - ".github/workflows/garpa-commons-seeded-mission-evaluation-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-mission-evaluation-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  mission-evaluation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Run focused mission-evaluation campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededMissionEvaluation.test.ts \
+            tests/lib/garpaCommonsSeededTestRun.test.ts \
+            tests/lib/garpaCommonsSeededPreflight.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+      - name: Typecheck mission-evaluation surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-mission-evaluation.json
+      - name: Run repository check
+        run: npm run check
+      - name: Build static workbench
+        run: npm run build
+      - run: npm ci
+        working-directory: mcp
+      - name: Typecheck dedicated mission-evaluation MCP
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-mission-evaluation.json
+        working-directory: mcp
+      - name: Typecheck complete GARPA MCP
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
