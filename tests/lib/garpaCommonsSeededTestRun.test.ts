@@ -180,7 +180,6 @@ describe("GARPA Commons-seeded test-run gate", () => {
       occurredAt: request.testRunReceipt.endedAt,
       authority: "Target operator",
       reason: "Synthetic abort",
-      evidenceArtifactIds: [],
     });
     refreshSeededTestRunDigests(request);
     const result = runCommonsSeededTestRunGate(request);
@@ -200,7 +199,6 @@ describe("GARPA Commons-seeded test-run gate", () => {
       occurredAt: request.testRunReceipt.endedAt,
       authority: "Target operator",
       reason: "Synthetic safety abort",
-      evidenceArtifactIds: [],
     });
     refreshSeededTestRunDigests(request);
     const result = runCommonsSeededTestRunGate(request);

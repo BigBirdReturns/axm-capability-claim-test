@@ -3,7 +3,7 @@ import type {
   CommonsSeededTestRunEnvelope,
   CommonsSeededTestRunRequest,
 } from "../../types/garpaCommonsSeededTestRun";
-import { validateTestRunReceipt } from "./validateExecutionReceipts";
+import { validateCommonsSeededTestRunReceipt } from "./validateCommonsSeededTestRunReceipt";
 import { validateCommonsSeededPreflightRequest } from "./validateCommonsSeededPreflight";
 
 const SHA256 = /^[a-f0-9]{64}$/i;
@@ -164,7 +164,7 @@ export function validateCommonsSeededTestRunRequest(
   errors.push(
     ...preflight.errors.map((error) => `seededPreflightRequest: ${error}`),
   );
-  const receipt = validateTestRunReceipt(value.testRunReceipt);
+  const receipt = validateCommonsSeededTestRunReceipt(value.testRunReceipt);
   errors.push(...receipt.errors.map((error) => `testRunReceipt: ${error}`));
   const envelope = validateEnvelope(value.executionEnvelope);
   errors.push(...envelope.errors);
