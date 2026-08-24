@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "state": "pending_repository_qualification",
+  "methodVersion": "1.4.0-commons-seeded-publication",
+  "highestStage": "commons_seeded_publication",
+  "predecessorReceiptHead": "096878b30c07bd6513ab05e72abca2bc0591a3b5",
+  "qualificationReceiptRequired": true
+}
