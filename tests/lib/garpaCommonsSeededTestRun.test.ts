@@ -19,8 +19,8 @@ describe("GARPA Commons-seeded test-run validation", () => {
     request.executionEnvelope.artifacts.push({
       ...request.executionEnvelope.artifacts[0]!,
     });
-    request.executionEnvelope.qualificationTransferred = true as false;
-    request.executionEnvelope.missionEquivalenceClaimed = true as false;
+    (request.executionEnvelope as unknown as { qualificationTransferred: boolean }).qualificationTransferred = true;
+    (request.executionEnvelope as unknown as { missionEquivalenceClaimed: boolean }).missionEquivalenceClaimed = true;
     const result = validateCommonsSeededTestRunRequest(request);
     expect(result.ok).toBe(false);
     expect(result.errors.join(" ")).toContain("duplicate id");

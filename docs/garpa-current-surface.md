@@ -19,3 +19,7 @@ claim packet
 The Vectus fixture remains blocked before architecture. The synthetic observation fixture exercises the downstream chain and reaches `bounded_match` for controlled observation and simulated response only.
 
 The dedicated MCP entrypoint is `mcp/garpaServer.ts`. The bounded CLI is `mcp/garpaCli.ts`.
+
+## Commons-seeded test run
+
+The highest governed stage is `commons_seeded_test_run`. It admits the evidence receipt for one exact reserved execution while preserving pass, fail, abort, invalidation, and incomplete dispositions.

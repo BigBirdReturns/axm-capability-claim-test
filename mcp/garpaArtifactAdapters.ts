@@ -129,7 +129,7 @@ export async function extractArtifact(input: {
   const failures: string[] = [];
   let textBlocks: ExtractedBlock[] = [];
   let adapterId = "unsupported-passive-adapter";
-  let safetyState: ArtifactEnvelope["safetyState"] = "not_inspected";
+  let safetyState: ArtifactEnvelope["safetyState"] = "passive_content";
   let extractionState: ArtifactEnvelope["extractionState"] = "unsupported";
 
   if (
