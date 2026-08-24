@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededBuildReceipt.ts",
+    "app/src/lib/garpa/commonsSeededBuildReceiptDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededBuildReceipt.ts",
+    "app/src/lib/garpa/runCommonsSeededBuildReceiptGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededBuildReceipt.ts",
+    "tests/fixtures/garpaCommonsSeededBuildReceiptFixture.ts",
+    "tests/lib/garpaCommonsSeededBuildReceipt.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts"
+  ]
+}
