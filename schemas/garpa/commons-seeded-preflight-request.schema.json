@@ -1,0 +1,262 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-preflight-request.schema.json",
+  "title": "GARPA Commons-Seeded Preflight Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededBuildReceiptRequest",
+    "expectedSeededBuildReceiptResultDigest",
+    "preflightReceipt",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "seededBuildReceiptRequest": {
+      "type": "object"
+    },
+    "expectedSeededBuildReceiptResultDigest": {
+      "$ref": "#/$defs/digest"
+    },
+    "admittedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "preflightReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "receiptId",
+        "caseId",
+        "seededBuildReceiptResultDigest",
+        "asBuiltReceiptDigest",
+        "buildManifestDigest",
+        "qualificationContractDigest",
+        "fixtureChecks",
+        "instrumentationChecks",
+        "operatorChecks",
+        "authorizationChecks",
+        "hazardControls",
+        "clockCheck",
+        "storageCheck",
+        "abortCheck",
+        "runReservations",
+        "evidence",
+        "preflightAt",
+        "state",
+        "qualificationTransferred",
+        "missionEquivalenceClaimed",
+        "receiptDigest"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "receiptId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "caseId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seededBuildReceiptResultDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "asBuiltReceiptDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "buildManifestDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "qualificationContractDigest": {
+          "$ref": "#/$defs/digest"
+        },
+        "fixtureChecks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "instrumentationChecks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "operatorChecks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "authorizationChecks": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "hazardControls": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object"
+          }
+        },
+        "clockCheck": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "clockPolicy",
+            "clockSource",
+            "synchronizedInstrumentationIds",
+            "maximumAllowedSkewMs",
+            "measuredSkewMs",
+            "state",
+            "evidenceIds"
+          ],
+          "properties": {
+            "clockPolicy": {
+              "type": "string",
+              "minLength": 1
+            },
+            "clockSource": {
+              "type": "string",
+              "minLength": 1
+            },
+            "synchronizedInstrumentationIds": {
+              "$ref": "#/$defs/stringArray"
+            },
+            "maximumAllowedSkewMs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "measuredSkewMs": {
+              "type": "number",
+              "minimum": 0
+            },
+            "state": {
+              "enum": [
+                "ready",
+                "blocked",
+                "unknown"
+              ]
+            },
+            "evidenceIds": {
+              "$ref": "#/$defs/stringArray"
+            }
+          }
+        },
+        "storageCheck": {
+          "type": "object"
+        },
+        "abortCheck": {
+          "type": "object"
+        },
+        "runReservations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "runId",
+              "scenarioId",
+              "reservedAt",
+              "reservationReceiptId",
+              "uniquenessEvidenceIds"
+            ],
+            "properties": {
+              "runId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "scenarioId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "reservedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "reservationReceiptId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uniquenessEvidenceIds": {
+                "$ref": "#/$defs/stringArray"
+              }
+            }
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidenceId",
+              "sha256",
+              "path",
+              "capturedAt"
+            ],
+            "properties": {
+              "evidenceId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "sha256": {
+                "$ref": "#/$defs/digest"
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "capturedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "preflightAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "state": {
+          "enum": [
+            "ready",
+            "blocked",
+            "superseded"
+          ]
+        },
+        "qualificationTransferred": {
+          "const": false
+        },
+        "missionEquivalenceClaimed": {
+          "const": false
+        },
+        "receiptDigest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

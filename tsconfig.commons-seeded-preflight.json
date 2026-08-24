@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededPreflight.ts",
+    "app/src/lib/garpa/commonsSeededPreflightDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededPreflight.ts",
+    "app/src/lib/garpa/runCommonsSeededPreflightGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededPreflight.ts",
+    "tests/fixtures/garpaCommonsSeededPreflightFixture.ts",
+    "tests/lib/garpaCommonsSeededPreflight.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts"
+  ]
+}

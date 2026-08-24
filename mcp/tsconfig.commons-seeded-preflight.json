@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededPreflightTools.ts",
+    "garpa-commons-seeded-preflight-server.ts"
+  ]
+}
