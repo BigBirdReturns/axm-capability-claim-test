@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededMissionEvaluationTools.ts",
+    "garpa-commons-seeded-mission-evaluation-server.ts"
+  ]
+}
