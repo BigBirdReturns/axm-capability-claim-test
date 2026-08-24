@@ -1,6 +1,17 @@
 name: garpa-mission-evaluation-source
 
 on:
+  pull_request:
+    branches:
+      - "feature/garpa-commons-seeded-test-run-v1"
+    paths:
+      - ".github/workflows/garpa-mission-evaluation-source.yml"
+      - "app/**"
+      - "tests/**"
+      - "mcp/**"
+      - "schemas/**"
+      - "docs/**"
+      - "tsconfig*.json"
   push:
     branches:
       - "feature/garpa-commons-seeded-mission-evaluation-v1"
