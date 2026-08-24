@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-test-run-request.schema.json",
+  "title": "GARPA Commons-Seeded Test-Run Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededPreflightRequest",
+    "expectedSeededPreflightResultDigest",
+    "testRunReceipt",
+    "executionEnvelope",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededPreflightRequest": { "type": "object" },
+    "expectedSeededPreflightResultDigest": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "testRunReceipt": { "type": "object" },
+    "executionEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "receiptId",
+        "caseId",
+        "seededPreflightResultDigest",
+        "preflightReceiptDigest",
+        "asBuiltReceiptDigest",
+        "qualificationContractDigest",
+        "runReservationReceiptId",
+        "artifacts",
+        "executedAt",
+        "qualificationTransferred",
+        "missionEquivalenceClaimed",
+        "envelopeDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "receiptId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "seededPreflightResultDigest": { "$ref": "#/$defs/sha256" },
+        "preflightReceiptDigest": { "$ref": "#/$defs/sha256" },
+        "asBuiltReceiptDigest": { "$ref": "#/$defs/sha256" },
+        "qualificationContractDigest": { "$ref": "#/$defs/sha256" },
+        "runReservationReceiptId": { "type": "string", "minLength": 1 },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["artifactId", "sha256", "mediaType", "path", "capturedAt"],
+            "properties": {
+              "artifactId": { "type": "string", "minLength": 1 },
+              "sha256": { "$ref": "#/$defs/sha256" },
+              "mediaType": { "type": "string", "minLength": 1 },
+              "path": { "type": "string", "minLength": 1 },
+              "capturedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "executedAt": { "type": "string", "format": "date-time" },
+        "qualificationTransferred": { "const": false },
+        "missionEquivalenceClaimed": { "const": false },
+        "envelopeDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "admittedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    }
+  }
+}
