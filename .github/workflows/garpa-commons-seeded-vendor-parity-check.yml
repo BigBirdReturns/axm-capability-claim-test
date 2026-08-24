@@ -1,0 +1,69 @@
+name: garpa-commons-seeded-vendor-parity-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededVendorParity.ts"
+      - "app/src/lib/garpa/commonsSeededVendorParity*.ts"
+      - "app/src/lib/garpa/deriveCommonsSeededGarpaParity.ts"
+      - "app/src/lib/garpa/validateCommonsSeededVendorParity.ts"
+      - "app/src/lib/garpa/runCommonsSeededVendorParityGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededVendorParity.ts"
+      - "tests/fixtures/garpaCommonsSeededVendorParityFixture.ts"
+      - "tests/lib/garpaCommonsSeededVendorParity.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-vendor-parity-*.schema.json"
+      - "docs/garpa-commons-seeded-vendor-parity.md"
+      - "mcp/garpaCommonsSeededVendorParityTools.ts"
+      - "mcp/garpa-commons-seeded-vendor-parity-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-vendor-parity.json"
+      - "tsconfig.commons-seeded-vendor-parity.json"
+      - ".github/workflows/garpa-commons-seeded-vendor-parity-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-vendor-parity-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  vendor-parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Generate executable parity evidence
+        run: npx tsx scripts/generateCommonsSeededVendorParityExample.ts
+      - name: Run focused vendor-parity campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededVendorParity.test.ts \
+            tests/lib/garpaCommonsSeededMissionEvaluation.test.ts \
+            tests/lib/garpaVendorParity.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+      - name: Typecheck Commons-seeded vendor-parity surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-vendor-parity.json
+      - name: Run complete repository check
+        run: npm run check
+      - name: Build static workbench
+        run: npm run build
+      - run: npm ci
+        working-directory: mcp
+      - name: Typecheck dedicated vendor-parity MCP
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-vendor-parity.json
+        working-directory: mcp
+      - name: Typecheck complete GARPA MCP
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+      - name: Upload generated parity evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-commons-seeded-vendor-parity-evidence
+          path: examples/garpa-commons-seeded-vendor-parity
+          retention-days: 3

@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-vendor-parity-result.schema.json",
+  "title": "GARPA Commons-Seeded Vendor-Parity Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "seededMissionEvaluationResultDigest",
+    "vendorParityRequestDigest",
+    "parityEnvelopeDigest",
+    "garpaObservationSetDigest",
+    "vendorObservationSetDigest",
+    "vendorParityEvaluationDigest",
+    "derivedGarpaObservations",
+    "vendorObservations",
+    "vendorArtifactIds",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_vendor_parity_blocked",
+        "seeded_vendor_parity_incomplete",
+        "seeded_vendor_parity_admitted"
+      ]
+    },
+    "parityState": {
+      "enum": [
+        "same_fixture_match",
+        "same_fixture_miss",
+        "evidence_only_comparison",
+        "vendor_baseline_missing",
+        "scenario_mismatch",
+        "accounting_boundary_mismatch",
+        "incomparable",
+        "not_attempted"
+      ]
+    },
+    "seededMissionEvaluationResult": { "type": "object" },
+    "seededMissionEvaluationResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "vendorParityRequestDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "parityEnvelopeDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "garpaObservationSetDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "vendorObservationSetDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "vendorParityEvaluation": { "type": "object" },
+    "vendorParityEvaluationDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "derivedGarpaObservations": { "type": "array", "items": { "type": "object" } },
+    "vendorObservations": { "type": "array", "items": { "type": "object" } },
+    "vendorArtifactIds": { "$ref": "#/$defs/stringArray" },
+    "findings": { "type": "array", "items": { "type": "object" } },
+    "validationErrors": { "$ref": "#/$defs/stringArray" },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

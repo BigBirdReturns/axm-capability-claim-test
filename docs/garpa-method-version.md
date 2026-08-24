@@ -1,7 +1,7 @@
 # GARPA method version
 
-Current branch method version: `1.2.0-commons-seeded-mission-evaluation`.
+Current branch method version: `1.3.0-commons-seeded-vendor-parity`.
 
-The highest governed stage is `commons_seeded_mission_evaluation`. It recomputes the complete target run ledger, retains every failure, abort, invalidation, incomplete run and explicit exclusion, verifies the frozen scenario and metric boundary, and delegates the bounded disposition to the existing custodied mission-evaluation gate.
+The highest governed stage is `commons_seeded_vendor_parity`. It recomputes the complete Commons-seeded mission campaign, deterministically derives the target parity observations under the frozen qualification methods, binds exact-version vendor evidence and artifacts, and delegates the substantive comparison to the existing vendor-parity evaluator.
 
-Mission-evaluation admission does not establish vendor parity, deployment authority, or publication authority.
+Vendor-parity admission records a bounded comparison. It does not establish unrestricted product equivalence, deployment authority, or publication authority.

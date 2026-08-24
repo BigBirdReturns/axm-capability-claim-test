@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-vendor-parity-request.schema.json",
+  "title": "GARPA Commons-Seeded Vendor-Parity Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededMissionEvaluationRequest",
+    "expectedSeededMissionEvaluationResultDigest",
+    "vendorParityRequest",
+    "parityEnvelope",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededMissionEvaluationRequest": { "type": "object" },
+    "expectedSeededMissionEvaluationResultDigest": { "$ref": "#/$defs/digest" },
+    "vendorParityRequest": { "$ref": "vendor-parity-request.schema.json" },
+    "parityEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "parityId",
+        "caseId",
+        "missionOutcomeDigest",
+        "qualificationContractDigest",
+        "asBuiltReceiptDigest",
+        "campaignPreflightReceiptDigest",
+        "runSetDigest",
+        "seededMissionEvaluationResultDigest",
+        "seededMissionEvaluationEnvelopeDigest",
+        "custodiedMissionEvaluationResultDigest",
+        "vendorParityRequestDigest",
+        "garpaObservationSetDigest",
+        "vendorObservationSetDigest",
+        "vendorOffering",
+        "vendorArtifacts",
+        "evaluatedAt",
+        "qualificationTransferred",
+        "unrestrictedEquivalenceClaimed",
+        "deploymentAuthorityClaimed",
+        "publicationAuthorityClaimed",
+        "envelopeDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "parityId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "missionOutcomeDigest": { "$ref": "#/$defs/digest" },
+        "qualificationContractDigest": { "$ref": "#/$defs/digest" },
+        "asBuiltReceiptDigest": { "$ref": "#/$defs/digest" },
+        "campaignPreflightReceiptDigest": { "$ref": "#/$defs/digest" },
+        "runSetDigest": { "$ref": "#/$defs/digest" },
+        "seededMissionEvaluationResultDigest": { "$ref": "#/$defs/digest" },
+        "seededMissionEvaluationEnvelopeDigest": { "$ref": "#/$defs/digest" },
+        "custodiedMissionEvaluationResultDigest": { "$ref": "#/$defs/digest" },
+        "vendorParityRequestDigest": { "$ref": "#/$defs/digest" },
+        "garpaObservationSetDigest": { "$ref": "#/$defs/digest" },
+        "vendorObservationSetDigest": { "$ref": "#/$defs/digest" },
+        "vendorOffering": { "type": "string", "minLength": 1 },
+        "vendorVersion": { "type": "string", "minLength": 1 },
+        "vendorArtifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["artifactId", "sha256", "mediaType", "path", "capturedAt"],
+            "properties": {
+              "artifactId": { "type": "string", "minLength": 1 },
+              "sha256": { "$ref": "#/$defs/digest" },
+              "mediaType": { "type": "string", "minLength": 1 },
+              "path": { "type": "string", "minLength": 1 },
+              "capturedAt": { "type": "string", "format": "date-time" }
+            }
+          }
+        },
+        "evaluatedAt": { "type": "string", "format": "date-time" },
+        "qualificationTransferred": { "const": false },
+        "unrestrictedEquivalenceClaimed": { "const": false },
+        "deploymentAuthorityClaimed": { "const": false },
+        "publicationAuthorityClaimed": { "const": false },
+        "envelopeDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "admittedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    }
+  }
+}
