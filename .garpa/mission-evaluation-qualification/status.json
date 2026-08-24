@@ -1,17 +1,9 @@
 {
   "passed": false,
+  "state": "pending_repository_qualification",
   "methodVersion": "1.2.0-commons-seeded-mission-evaluation",
   "highestStage": "commons_seeded_mission_evaluation",
-  "results": {
-    "npm_ci": 0,
-    "discovery": 1,
-    "generation": 1,
-    "focused": 1,
-    "scoped_tsc": 2,
-    "full_check": 2,
-    "build": 1,
-    "mcp_ci": 0,
-    "mcp_scoped": 2,
-    "mcp_complete": 2
-  }
+  "supersedesDiagnosticHead": "1b6bc215003c6abe3c7ec05e527a5519b8f219b4",
+  "qualificationReceiptRequired": true,
+  "note": "The deterministic campaign repair is present, but admission remains false until the repository and MCP qualification workflow passes on the exact branch head."
 }
