@@ -1,0 +1,149 @@
+name: garpa-test-run-finalize-pr
+
+on:
+  pull_request:
+    branches:
+      - "feature/garpa-commons-seeded-preflight-v1"
+    paths:
+      - ".github/workflows/garpa-test-run-finalize-pr.yml"
+      - "app/src/types/garpaCommonsSeededTestRun.ts"
+      - "app/src/lib/garpa/commonsSeededTestRunDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededTestRun.ts"
+      - "app/src/lib/garpa/runCommonsSeededTestRunGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededTestRun.ts"
+      - "tests/fixtures/garpaCommonsSeededTestRunFixture.ts"
+      - "tests/lib/garpaCommonsSeededTestRun.test.ts"
+      - "mcp/garpaCommonsSeededTestRunTools.ts"
+
+permissions:
+  contents: write
+
+jobs:
+  finalize:
+    if: github.event.pull_request.head.ref == 'feature/garpa-commons-seeded-test-run-v1'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact head branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/garpa-commons-seeded-test-run-v1
+          fetch-depth: 0
+
+      - name: Merge latest preflight predecessor and restore adapter custody
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin feature/garpa-commons-seeded-preflight-v1
+          git merge --no-edit origin/feature/garpa-commons-seeded-preflight-v1
+          git fetch origin feature/garpa-commons-seeded-build-manifest-v1
+          git show origin/feature/garpa-commons-seeded-build-manifest-v1:mcp/garpaArtifactAdapters.ts > mcp/garpaArtifactAdapters.ts
+
+      - name: Finalize method and aggregate MCP surfaces
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          Path('app/src/lib/garpa/garpaVersion.ts').write_text(
+              'export const GARPA_METHOD_VERSION = "1.1.0-commons-seeded-test-run";\n'
+          )
+
+          p = Path('app/src/lib/garpa/implementedStages.ts')
+          s = p.read_text()
+          if '"commons_seeded_test_run"' not in s:
+              marker = '] as const;'
+              assert marker in s
+              s = s.replace(marker, '  "commons_seeded_test_run",\n' + marker, 1)
+          p.write_text(s)
+
+          Path('tests/lib/garpaMethodVersion.test.ts').write_text('''import { describe, expect, it } from "vitest";
+          import { GARPA_METHOD_VERSION } from "../../app/src/lib/garpa/garpaVersion";
+          import { IMPLEMENTED_GARPA_STAGES } from "../../app/src/lib/garpa/implementedStages";
+
+          describe("GARPA method version", () => {
+            it("names the Commons-seeded test-run surface", () => {
+              expect(GARPA_METHOD_VERSION).toBe("1.1.0-commons-seeded-test-run");
+              expect(
+                IMPLEMENTED_GARPA_STAGES[IMPLEMENTED_GARPA_STAGES.length - 1],
+              ).toBe("commons_seeded_test_run");
+              expect(IMPLEMENTED_GARPA_STAGES).toContain("commons_seeded_preflight");
+              expect(IMPLEMENTED_GARPA_STAGES).toContain("commons_seeded_build_receipt");
+            });
+          });
+          '''.replace('          ', ''))
+
+          Path('docs/garpa-method-version.md').write_text('''# GARPA method version
+
+          Current branch method version: `1.1.0-commons-seeded-test-run`.
+
+          The highest governed stage is `commons_seeded_test_run`. It binds an exact reserved target execution to the admitted Commons-seeded preflight, as-built receipt, qualification contract, configuration, operators, fixture, environment, metrics, and immutable raw artifacts. Receipt admission preserves pass, failure, abort, invalidation, and incomplete states without converting them into mission adequacy.
+
+          Automatic physical execution is not implemented or authorized. Test-run admission does not establish mission adequacy, vendor parity, deployment authority, or publication authority.
+          '''.replace('          ', ''))
+
+          p = Path('docs/garpa-current-surface.md')
+          s = p.read_text() if p.exists() else '# GARPA current surface\n'
+          if 'commons_seeded_test_run' not in s:
+              s += '\n## Commons-seeded test run\n\nThe highest governed stage is `commons_seeded_test_run`. It admits the evidence receipt for one exact reserved execution while preserving pass, fail, abort, invalidation, and incomplete dispositions.\n'
+          p.write_text(s)
+
+          p = Path('mcp/garpaCompleteServer.ts')
+          s = p.read_text()
+          imp = 'import { registerGarpaCommonsSeededTestRunTools } from "./garpaCommonsSeededTestRunTools.ts";\n'
+          if imp not in s:
+              marker = 'import { registerGarpaMethodTools } from "./garpaMethodTools.ts";\n'
+              assert marker in s
+              s = s.replace(marker, imp + marker, 1)
+          s = re.sub(r'version: "[^"]+"', 'version: "1.1.0"', s, count=1)
+          call = 'registerGarpaCommonsSeededTestRunTools(server);\n'
+          if call not in s:
+              marker = 'registerGarpaMethodTools(server);\n'
+              assert marker in s
+              s = s.replace(marker, marker + call, 1)
+          p.write_text(s)
+
+          p = Path('tests/lib/garpaCommonsSeededTestRun.test.ts')
+          s = p.read_text()
+          s = s.replace(
+              'request.executionEnvelope.qualificationTransferred = true as false;',
+              '(request.executionEnvelope as unknown as { qualificationTransferred: boolean }).qualificationTransferred = true;',
+          )
+          s = s.replace(
+              'request.executionEnvelope.missionEquivalenceClaimed = true as false;',
+              '(request.executionEnvelope as unknown as { missionEquivalenceClaimed: boolean }).missionEquivalenceClaimed = true;',
+          )
+          p.write_text(s)
+          PY
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Qualify complete workbench surface
+        run: |
+          npm ci
+          npx vitest run \
+            tests/lib/garpaCommonsSeededTestRun.test.ts \
+            tests/lib/garpaCommonsSeededPreflight.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-test-run.json
+          npm run check
+          npm run build
+
+      - name: Qualify MCP surfaces
+        run: |
+          npm ci
+          npx tsc --noEmit -p tsconfig.commons-seeded-test-run.json
+          npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+
+      - name: Commit qualified surface and remove temporary finalizers
+        run: |
+          rm -f .github/workflows/garpa-test-run-finalize.yml
+          rm -f .github/workflows/garpa-test-run-finalize-pr.yml
+          git add -A
+          git commit -m "Admit Commons-seeded target test-run receipts"
+          git push origin HEAD:feature/garpa-commons-seeded-test-run-v1
