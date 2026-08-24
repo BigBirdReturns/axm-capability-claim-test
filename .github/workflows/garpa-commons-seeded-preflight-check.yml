@@ -1,0 +1,76 @@
+name: garpa-commons-seeded-preflight-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededPreflight.ts"
+      - "app/src/lib/garpa/commonsSeededPreflightDigest.ts"
+      - "app/src/lib/garpa/validateCommonsSeededPreflight.ts"
+      - "app/src/lib/garpa/runCommonsSeededPreflightGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededPreflight.ts"
+      - "app/src/lib/garpa/garpaVersion.ts"
+      - "app/src/lib/garpa/implementedStages.ts"
+      - "tests/fixtures/garpaCommonsSeededPreflightFixture.ts"
+      - "tests/lib/garpaCommonsSeededPreflight.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-preflight-*.schema.json"
+      - "docs/garpa-commons-seeded-preflight.md"
+      - "docs/garpa-method-version.md"
+      - "mcp/garpaCommonsSeededPreflightTools.ts"
+      - "mcp/garpa-commons-seeded-preflight-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-preflight.json"
+      - "tsconfig.commons-seeded-preflight.json"
+      - ".github/workflows/garpa-commons-seeded-preflight-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-preflight-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run Commons-seeded preflight regressions
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededPreflight.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+
+      - name: Typecheck Commons-seeded preflight surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
+
+      - name: Build static workbench bundle
+        run: npm run build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck Commons-seeded preflight MCP server
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-preflight.json
+        working-directory: mcp
+
+      - name: Upload dependency-complete qualified tree
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: garpa-commons-seeded-preflight-qualified-tree
+          path: .
+          include-hidden-files: true
+          retention-days: 1
