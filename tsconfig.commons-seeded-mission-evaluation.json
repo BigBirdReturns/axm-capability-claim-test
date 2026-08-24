@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededMissionEvaluation.ts",
+    "app/src/lib/garpa/commonsSeededMissionEvaluationDigest.ts",
+    "app/src/lib/garpa/commonsSeededMissionEvaluationGateSupport.ts",
+    "app/src/lib/garpa/commonsSeededMissionEvaluationCoverage.ts",
+    "app/src/lib/garpa/validateCommonsSeededMissionEvaluation.ts",
+    "app/src/lib/garpa/runCommonsSeededMissionEvaluationGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededMissionEvaluation.ts",
+    "tests/fixtures/garpaCommonsSeededMissionEvaluationFixture.ts",
+    "tests/lib/garpaCommonsSeededMissionEvaluation.test.ts",
+    "tests/lib/garpaMethodVersion.test.ts"
+  ]
+}

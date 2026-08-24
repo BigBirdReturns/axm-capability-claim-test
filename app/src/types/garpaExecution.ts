@@ -1,5 +1,27 @@
 import type { ArtifactRef, GarpaValidationResult } from "./garpa";
 
+export type ExecutionClass =
+  | "E0_analysis_only"
+  | "E1_simulation_or_replay"
+  | "E2_bench_passive"
+  | "E3_controlled_field_inert"
+  | "E4_regulated_active"
+  | "E5_operational_environment";
+
+export interface ExecutionAuthority {
+  authorityId: string;
+  executionClass: ExecutionClass;
+  venueId: string;
+  permittedActivities: string[];
+  prohibitedActivities: string[];
+  requiredAuthorizationRefs: string[];
+  receivedAuthorizationRefs: string[];
+  abortAuthority: string[];
+  validFrom?: string;
+  expiresAt?: string;
+  evidenceArtifactIds: string[];
+}
+
 export type BuildExecutionState =
   | "in_progress"
   | "assembled"
@@ -141,6 +163,7 @@ export interface ExcludedSample {
 
 export interface MetricResult {
   metricId: string;
+  criticality?: "essential" | "secondary" | "diagnostic";
   rawSampleArtifactIds: string[];
   calculationMethod: string;
   codeDigest?: string;
@@ -150,6 +173,7 @@ export interface MetricResult {
   uncertainty?: string;
   thresholdResult: ThresholdResult;
   analystNotes: string[];
+  notes?: string[];
 }
 
 export interface OperatorIntervention {
@@ -174,6 +198,7 @@ export interface TestAbort {
   occurredAt: string;
   authority: string;
   reason: string;
+  evidenceArtifactIds?: string[];
 }
 
 export type TestRunState =
@@ -182,14 +207,25 @@ export type TestRunState =
   | "aborted"
   | "incomplete";
 
+export interface ExecutionInstrumentationState {
+  instrumentId: string;
+  required: boolean;
+  present: boolean;
+  calibrationState: "current" | "expired" | "not_required" | "unknown";
+  clockSynchronized: boolean;
+}
+
 export interface TestRunReceipt {
   schemaVersion: 1;
   caseId: string;
   runId: string;
   buildDigest: string;
+  buildReceiptDigest?: string;
   qualificationContractDigest: string;
   scenarioId: string;
   testId: string;
+  executionClass?: ExecutionClass;
+  authorityId?: string;
   startedAt: string;
   endedAt: string;
   operators: string[];
@@ -197,6 +233,7 @@ export interface TestRunReceipt {
   configurationDigest: string;
   fixtureState: Record<string, string>;
   environmentObserved: Record<string, string>;
+  instrumentation?: ExecutionInstrumentationState[];
   rawDataArtifactIds: string[];
   logArtifactIds: string[];
   observationArtifactIds: string[];
@@ -236,6 +273,61 @@ export interface PreflightGateResult {
   materialDeviationsClosed: boolean;
   readiness: PreflightReadiness;
   blockingReasons: string[];
+}
+
+export interface PreflightRequest {
+  expectedArchitectureDigest: string;
+  expectedBuildManifestDigest: string;
+  expectedQualificationContractDigest: string;
+  requiredExecutionClass: ExecutionClass;
+  requiredActivities: string[];
+  requiredOperatorRoles: string[];
+  buildReceipt: BuildReceipt;
+  authority: ExecutionAuthority;
+  instrumentation: ExecutionInstrumentationState[];
+  fixtureReady: boolean;
+  storageReady: boolean;
+  clocksReady: boolean;
+  abortPathReady: boolean;
+  runIdReserved: boolean;
+  assignedOperatorRoles: string[];
+  now: string;
+}
+
+export type MissionAdequacyState =
+  | "matched"
+  | "bounded_match"
+  | "partial"
+  | "failed"
+  | "incomparable"
+  | "unassessed";
+
+export interface MissionEvaluationRequest {
+  caseId: string;
+  qualificationContractDigest: string;
+  buildReceiptDigest: string;
+  requiredScenarioIds: string[];
+  requiredMetricIds: string[];
+  essentialMetricIds: string[];
+  requiredRunsByMetric: Record<string, number>;
+  scopeIsFullMission: boolean;
+  runs: TestRunReceipt[];
+}
+
+export interface MissionEvaluation {
+  caseId: string;
+  qualificationContractDigest: string;
+  evaluatedBuildReceiptDigest: string;
+  state: MissionAdequacyState;
+  validRunIds: string[];
+  excludedRunIds: string[];
+  missingScenarioIds: string[];
+  missingMetricIds: string[];
+  insufficientRunMetricIds: string[];
+  failedEssentialMetricIds: string[];
+  inconclusiveEssentialMetricIds: string[];
+  residuals: string[];
+  falsificationLine: string;
 }
 
 export type ExecutionValidationResult<T> = GarpaValidationResult<T>;

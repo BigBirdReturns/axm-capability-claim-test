@@ -4,7 +4,7 @@ import type {
   MissionEvaluationInput,
   ScenarioEvaluation,
 } from "../../types/garpaEvaluation";
-import type { TestRunReceipt, ThresholdResult } from "../../types/garpaExecution";
+import type { TestRunReceipt } from "../../types/garpaExecution";
 
 function unique(values: string[]): string[] {
   return Array.from(new Set(values));

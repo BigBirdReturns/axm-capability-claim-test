@@ -1,5 +1,5 @@
 import type { EvidenceControl } from "./garpa";
-import type { MissionAdequacyState } from "./garpaExecution";
+import type { MissionAdequacyState } from "./garpaEvaluation";
 
 export type ParityMetricDirection =
   | "higher_is_better"

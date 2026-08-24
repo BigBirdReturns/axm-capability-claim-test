@@ -5,7 +5,6 @@ import type {
   CommonsSeededTestRunResult,
   CommonsSeededThresholdSummary,
 } from "../../types/garpaCommonsSeededTestRun";
-import { canonicalStringify } from "./canonicalJson";
 import {
   computeCommonsSeededTestRunEnvelopeDigest,
   computeCommonsSeededTestRunReceiptDigest,
@@ -21,30 +20,14 @@ export const COMMONS_SEEDED_TEST_RUN_PROHIBITED_TRANSITIONS = [
   "Any run identity, scenario, as-built digest, configuration, fixture, environment, operator, instrumentation, clock, storage, authority, or preflight change requires a new reservation and preflight receipt.",
 ] as const;
 
-type RecordValue = Record<string, unknown>;
-
-function isRecord(value: unknown): value is RecordValue {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function records(value: unknown): RecordValue[] {
-  return Array.isArray(value) ? value.filter(isRecord) : [];
-}
-
-function strings(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === "string")
-    : [];
+function dedupe(values: string[]): string[] {
+  return Array.from(new Set(values));
 }
 
 function exactSet(left: string[], right: string[]): boolean {
-  const a = [...new Set(left)].sort();
-  const b = [...new Set(right)].sort();
-  return a.length === b.length && a.every((item, index) => item === b[index]);
-}
-
-function dedupe(values: string[]): string[] {
-  return Array.from(new Set(values));
+  const a = dedupe(left).sort();
+  const b = dedupe(right).sort();
+  return a.length === b.length && a.every((value, index) => value === b[index]);
 }
 
 function addFinding(
@@ -57,41 +40,6 @@ function addFinding(
   findings.push({ state, reason, requiredAction, ...coordinates });
 }
 
-function findObject(
-  root: unknown,
-  predicate: (value: RecordValue) => boolean,
-  seen = new Set<unknown>(),
-): RecordValue | undefined {
-  if (seen.has(root)) return undefined;
-  seen.add(root);
-  if (isRecord(root)) {
-    if (predicate(root)) return root;
-    for (const value of Object.values(root)) {
-      const found = findObject(value, predicate, seen);
-      if (found) return found;
-    }
-  } else if (Array.isArray(root)) {
-    for (const value of root) {
-      const found = findObject(value, predicate, seen);
-      if (found) return found;
-    }
-  }
-  return undefined;
-}
-
-function qualificationContract(request: CommonsSeededTestRunRequest): RecordValue {
-  return (
-    findObject(
-      request.seededPreflightRequest,
-      (value) =>
-        Array.isArray(value.scenarios) &&
-        Array.isArray(value.metrics) &&
-        Array.isArray(value.instrumentation) &&
-        isRecord(value.acceptanceRule),
-    ) ?? {}
-  );
-}
-
 function thresholdSummary(receipt: TestRunReceipt): CommonsSeededThresholdSummary {
   const byMetricId: Record<string, ThresholdResult> = {};
   for (const result of receipt.metricResults) {
@@ -99,17 +47,17 @@ function thresholdSummary(receipt: TestRunReceipt): CommonsSeededThresholdSummar
   }
   return {
     passMetricIds: receipt.metricResults
-      .filter((item) => item.thresholdResult === "pass")
-      .map((item) => item.metricId),
+      .filter((result) => result.thresholdResult === "pass")
+      .map((result) => result.metricId),
     failMetricIds: receipt.metricResults
-      .filter((item) => item.thresholdResult === "fail")
-      .map((item) => item.metricId),
+      .filter((result) => result.thresholdResult === "fail")
+      .map((result) => result.metricId),
     inconclusiveMetricIds: receipt.metricResults
-      .filter((item) => item.thresholdResult === "inconclusive")
-      .map((item) => item.metricId),
+      .filter((result) => result.thresholdResult === "inconclusive")
+      .map((result) => result.metricId),
     notMeasuredMetricIds: receipt.metricResults
-      .filter((item) => item.thresholdResult === "not_measured")
-      .map((item) => item.metricId),
+      .filter((result) => result.thresholdResult === "not_measured")
+      .map((result) => result.metricId),
     byMetricId,
   };
 }
@@ -119,17 +67,19 @@ function referencedArtifactIds(receipt: TestRunReceipt): string[] {
     ...receipt.rawDataArtifactIds,
     ...receipt.logArtifactIds,
     ...receipt.observationArtifactIds,
-    ...receipt.metricResults.flatMap((item) => item.rawSampleArtifactIds),
+    ...receipt.metricResults.flatMap((result) => result.rawSampleArtifactIds),
+    ...receipt.aborts.flatMap((abort) => abort.evidenceArtifactIds ?? []),
   ]);
 }
 
-function observedEnvironmentMatches(
-  observed: Record<string, string>,
-  expected: RecordValue,
-): boolean {
-  return Object.entries(expected).every(
-    ([key, value]) => observed[key] === String(value),
-  );
+function emptyThresholdSummary(): CommonsSeededThresholdSummary {
+  return {
+    passMetricIds: [],
+    failMetricIds: [],
+    inconclusiveMetricIds: [],
+    notMeasuredMetricIds: [],
+    byMetricId: {},
+  };
 }
 
 export function runCommonsSeededTestRunGate(
@@ -146,17 +96,12 @@ export function runCommonsSeededTestRunGate(
       testRunResultDigest: "",
       runId: "",
       scenarioId: "",
-      thresholdSummary: {
-        passMetricIds: [],
-        failMetricIds: [],
-        inconclusiveMetricIds: [],
-        notMeasuredMetricIds: [],
-        byMetricId: {},
-      },
+      thresholdSummary: emptyThresholdSummary(),
       findings: validated.errors.map((reason) => ({
         state: "test_run_validation_failed" as const,
         reason,
-        requiredAction: "Repair the Commons-seeded test-run request and rerun validation.",
+        requiredAction:
+          "Repair the Commons-seeded test-run request and rerun validation.",
       })),
       validationErrors: validated.errors,
       pullList: validated.errors,
@@ -177,12 +122,15 @@ export function runCommonsSeededTestRunGate(
   const resultDigest = computeCommonsSeededTestRunReceiptDigest(run);
   const asBuilt =
     request.seededPreflightRequest.seededBuildReceiptRequest.asBuiltReceipt;
-  const qualification = qualificationContract(request);
-  const scenarios = records(qualification.scenarios);
-  const metrics = records(qualification.metrics);
-  const scenario = scenarios.find((item) => String(item.id) === run.scenarioId);
+  const qualification =
+    request.seededPreflightRequest.seededBuildReceiptRequest
+      .seededBuildManifestRequest.seededQualificationRequest
+      .qualificationContract;
+  const scenario = qualification.scenarios.find(
+    (candidate) => candidate.id === run.scenarioId,
+  );
   const reservation = preflightReceipt.runReservations.find(
-    (item) => item.runId === run.runId,
+    (candidate) => candidate.runId === run.runId,
   );
   const findings: CommonsSeededTestRunFinding[] = [];
 
@@ -298,8 +246,8 @@ export function runCommonsSeededTestRunGate(
   }
 
   const assignedOperators = preflightReceipt.operatorChecks
-    .filter((item) => item.state === "ready")
-    .map((item) => item.actor);
+    .filter((check) => check.state === "ready")
+    .map((check) => check.actor);
   if (!exactSet(run.operators, assignedOperators)) {
     addFinding(
       findings,
@@ -321,6 +269,7 @@ export function runCommonsSeededTestRunGate(
       );
     }
   }
+
   if (!scenario) {
     addFinding(
       findings,
@@ -330,10 +279,11 @@ export function runCommonsSeededTestRunGate(
       { runId: run.runId, scenarioId: run.scenarioId },
     );
   } else {
-    const expectedEnvironment = isRecord(scenario.environment)
-      ? scenario.environment
-      : {};
-    if (!observedEnvironmentMatches(run.environmentObserved, expectedEnvironment)) {
+    const environmentMatches = Object.entries(scenario.environment).every(
+      ([dimension, expected]) =>
+        run.environmentObserved[dimension] === String(expected),
+    );
+    if (!environmentMatches) {
       addFinding(
         findings,
         "environment_observation_mismatch",
@@ -343,11 +293,10 @@ export function runCommonsSeededTestRunGate(
       );
     }
 
-    const requiredMetricIds = strings(scenario.metricIds);
     const resultByMetric = new Map(
-      run.metricResults.map((item) => [item.metricId, item]),
+      run.metricResults.map((result) => [result.metricId, result]),
     );
-    for (const metricId of requiredMetricIds) {
+    for (const metricId of scenario.metricIds) {
       const result = resultByMetric.get(metricId);
       if (!result) {
         addFinding(
@@ -359,19 +308,15 @@ export function runCommonsSeededTestRunGate(
         );
         continue;
       }
-      const contractMetric = metrics.find(
-        (item) => String(item.id) === metricId,
+      const contractMetric = qualification.metrics.find(
+        (metric) => metric.id === metricId,
       );
-      const requiredRuns = Number(contractMetric?.requiredRuns ?? 0);
-      if (
-        run.state === "valid" &&
-        Number.isFinite(requiredRuns) &&
-        result.sampleCount < requiredRuns
-      ) {
+      const requiredSamples = contractMetric?.requiredRuns ?? 0;
+      if (run.state === "valid" && result.sampleCount < requiredSamples) {
         addFinding(
           findings,
           "required_sample_count_incomplete",
-          `Metric ${metricId} has ${result.sampleCount} samples but requires ${requiredRuns}.`,
+          `Metric ${metricId} has ${result.sampleCount} samples but requires ${requiredSamples}.`,
           "Collect the frozen number of valid samples or mark the run incomplete.",
           { runId: run.runId, metricId },
         );
@@ -379,21 +324,23 @@ export function runCommonsSeededTestRunGate(
     }
   }
 
-  const artifactIds = new Set(envelope.artifacts.map((item) => item.artifactId));
+  const artifactIds = new Set(
+    envelope.artifacts.map((artifact) => artifact.artifactId),
+  );
   for (const artifactId of referencedArtifactIds(run)) {
     if (!artifactIds.has(artifactId)) {
       addFinding(
         findings,
         "raw_artifact_custody_missing",
         `Run references artifact ${artifactId} without an immutable envelope record.`,
-        "Add a content-addressed artifact record for every raw, log, observation, and sample reference.",
+        "Add a content-addressed artifact record for every raw, log, observation, sample, and abort-evidence reference.",
         { runId: run.runId, artifactId },
       );
     }
   }
 
   const invalidatingAnomalies = run.anomalies.filter(
-    (item) => item.disposition === "invalidates_run",
+    (anomaly) => anomaly.disposition === "invalidates_run",
   );
   if (run.state === "valid" && run.aborts.length > 0) {
     addFinding(
@@ -418,7 +365,7 @@ export function runCommonsSeededTestRunGate(
       findings,
       "aborted_run_missing_abort_receipt",
       "An aborted run lacks an abort receipt.",
-      "Record the abort authority, time, and reason.",
+      "Record the abort authority, time, reason, and evidence custody.",
       { runId: run.runId },
     );
   }
@@ -454,7 +401,7 @@ export function runCommonsSeededTestRunGate(
       findings,
       "mission_equivalence_attempted",
       "The execution envelope attempts to claim mission equivalence from one run.",
-      "Keep mission equivalence structurally false until target evaluation and comparison gates pass.",
+      "Keep mission equivalence false until target evaluation and comparison gates pass.",
       { runId: run.runId },
     );
   }
@@ -471,7 +418,7 @@ export function runCommonsSeededTestRunGate(
     "qualification_transfer_attempted",
     "mission_equivalence_attempted",
   ]);
-  const state = findings.some((item) => blockingStates.has(item.state))
+  const state = findings.some((finding) => blockingStates.has(finding.state))
     ? "seeded_test_run_blocked"
     : findings.length > 0
       ? "seeded_test_run_incomplete"
@@ -493,7 +440,7 @@ export function runCommonsSeededTestRunGate(
     validationErrors: [],
     testRunReceipt: run,
     executionEnvelope: envelope,
-    pullList: dedupe(findings.map((item) => item.requiredAction)),
+    pullList: dedupe(findings.map((finding) => finding.requiredAction)),
     prohibitedTransitions: [...COMMONS_SEEDED_TEST_RUN_PROHIBITED_TRANSITIONS],
   };
 }

@@ -1,10 +1,8 @@
 import { z } from "zod";
 import type { GarpaValidationResult } from "../../types/garpa";
 import type { PreflightRequest } from "../../types/garpaExecution";
-import {
-  validateBuildReceipt,
-  validateExecutionAuthority,
-} from "./validateExecutionReceipts";
+import { validateBuildReceipt } from "./validateExecutionReceipts";
+import { validateExecutionAuthority } from "./validateExecutionAuthority";
 
 const Schema = z
   .object({

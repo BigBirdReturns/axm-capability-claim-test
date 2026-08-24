@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "state": "commons_seeded_mission_evaluation_qualified",
+  "methodVersion": "1.2.0-commons-seeded-mission-evaluation",
+  "highestStage": "commons_seeded_mission_evaluation",
+  "qualifiedSourceHead": "c0bf26d3be6ebc5a1996b1e50eb1218674b1b42f",
+  "qualifiedSourceTree": "241698304879180e0f167d5d195942c96fb74751",
+  "supersedesDiagnosticHead": "1b6bc215003c6abe3c7ec05e527a5519b8f219b4",
+  "qualificationReceiptRequired": false,
+  "workflowRuns": {
+    "missionEvaluation": 32778977962,
+    "completeCheck": 32778978079,
+    "testRun": 32778977839,
+    "execution": 32778977873,
+    "publication": 32778978058,
+    "preflight": 32778977950,
+    "qualification": 32778978032,
+    "buildManifest": 32778978025,
+    "buildReceipt": 32778977853,
+    "commonsTransfer": 32778977922,
+    "sourceArchive": 32778977872
+  },
+  "results": {
+    "focusedTests": "58/58",
+    "repositoryTests": "392/392",
+    "scopedTypeScript": "pass",
+    "completeRepositoryCheck": "pass",
+    "productionBuild": "pass",
+    "dedicatedMcpTypeScript": "pass",
+    "completeMcpTypeScript": "pass"
+  },
+  "recordedAt": "2026-08-24T21:24:58Z"
+}

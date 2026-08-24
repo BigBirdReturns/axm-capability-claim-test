@@ -23,3 +23,7 @@ The dedicated MCP entrypoint is `mcp/garpaServer.ts`. The bounded CLI is `mcp/ga
 ## Commons-seeded test run
 
 The highest governed stage is `commons_seeded_test_run`. It admits the evidence receipt for one exact reserved execution while preserving pass, fail, abort, invalidation, and incomplete dispositions.
+
+## Commons-seeded mission evaluation
+
+The highest governed stage is `commons_seeded_mission_evaluation`. It admits a bounded target disposition only after the complete known-run ledger and the existing custodied mission-evaluation gate agree.

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-mission-evaluation-request.schema.json",
+  "title": "GARPA Commons-Seeded Mission-Evaluation Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "testRunRequests",
+    "missionBoundary",
+    "evaluationEnvelope",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "testRunRequests": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "object" }
+    },
+    "missionBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["fullMissionBoundary", "boundaryDescription"],
+      "properties": {
+        "fullMissionBoundary": { "type": "boolean" },
+        "boundaryDescription": { "type": "string", "minLength": 1 }
+      }
+    },
+    "evaluationEnvelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "evaluationId",
+        "caseId",
+        "missionOutcomeDigest",
+        "qualificationContractDigest",
+        "asBuiltReceiptDigest",
+        "campaignPreflightReceiptDigest",
+        "runSetDigest",
+        "runBindings",
+        "evaluatedAt",
+        "qualificationTransferred",
+        "missionEquivalenceClaimed",
+        "envelopeDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "evaluationId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "missionOutcomeDigest": { "$ref": "#/$defs/digest" },
+        "qualificationContractDigest": { "$ref": "#/$defs/digest" },
+        "asBuiltReceiptDigest": { "$ref": "#/$defs/digest" },
+        "campaignPreflightReceiptDigest": { "$ref": "#/$defs/digest" },
+        "runSetDigest": { "$ref": "#/$defs/digest" },
+        "runBindings": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "runId",
+              "scenarioId",
+              "reservationReceiptId",
+              "expectedTestRunResultDigest",
+              "expectedTestRunReceiptDigest",
+              "expectedSeededPreflightResultDigest",
+              "expectedPreflightReceiptDigest",
+              "expectedAsBuiltReceiptDigest",
+              "expectedQualificationContractDigest"
+            ],
+            "properties": {
+              "runId": { "type": "string", "minLength": 1 },
+              "scenarioId": { "type": "string", "minLength": 1 },
+              "reservationReceiptId": { "type": "string", "minLength": 1 },
+              "expectedTestRunResultDigest": { "$ref": "#/$defs/digest" },
+              "expectedTestRunReceiptDigest": { "$ref": "#/$defs/digest" },
+              "expectedSeededPreflightResultDigest": { "$ref": "#/$defs/digest" },
+              "expectedPreflightReceiptDigest": { "$ref": "#/$defs/digest" },
+              "expectedAsBuiltReceiptDigest": { "$ref": "#/$defs/digest" },
+              "expectedQualificationContractDigest": { "$ref": "#/$defs/digest" }
+            }
+          }
+        },
+        "evaluatedAt": { "type": "string", "format": "date-time" },
+        "qualificationTransferred": { "const": false },
+        "missionEquivalenceClaimed": { "const": false },
+        "envelopeDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "admittedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "digest": {
+      "type": "string",
+      "pattern": "^[A-Fa-f0-9]{64}$"
+    }
+  }
+}
