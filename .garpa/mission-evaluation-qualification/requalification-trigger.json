@@ -1,6 +1,0 @@
-{
-  "schemaVersion": 1,
-  "purpose": "Force read-only repository requalification after the repository-hosted source and receipt seal.",
-  "requestedAt": "2026-08-24T20:30:00Z",
-  "admissionClaimed": false
-}
