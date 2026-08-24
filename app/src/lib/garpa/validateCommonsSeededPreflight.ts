@@ -64,7 +64,9 @@ function validateFixture(value: unknown, path: string): string[] {
     path,
     errors,
   );
-  if (!stringArray(value.evidenceIds)) errors.push(`${path}.evidenceIds must be an array of strings.`);
+  if (!stringArray(value.evidenceIds)) {
+    errors.push(`${path}.evidenceIds must be an array of strings.`);
+  }
   if (!["ready", "blocked", "unknown"].includes(String(value.state))) {
     errors.push(`${path}.state is invalid.`);
   }
@@ -91,10 +93,17 @@ function validateInstrument(value: unknown, path: string): string[] {
     errors,
   );
   for (const field of ["calibrationEvidenceIds", "evidenceIds"]) {
-    if (!stringArray(value[field])) errors.push(`${path}.${field} must be an array of strings.`);
+    if (!stringArray(value[field])) {
+      errors.push(`${path}.${field} must be an array of strings.`);
+    }
   }
   if (!["current", "not_required", "expired", "unknown"].includes(String(value.calibrationState))) {
     errors.push(`${path}.calibrationState is invalid.`);
+  }
+  if (value.calibrationState === "current" &&
+      Array.isArray(value.calibrationEvidenceIds) &&
+      value.calibrationEvidenceIds.length === 0) {
+    errors.push(`${path}.calibrationEvidenceIds must not be empty for current calibration.`);
   }
   if (!["ready", "blocked", "unknown"].includes(String(value.state))) {
     errors.push(`${path}.state is invalid.`);
@@ -110,7 +119,9 @@ function validateOperator(value: unknown, path: string): string[] {
   const errors: string[] = [];
   requireStrings(value, ["humanRoleId", "actor", "state"], path, errors);
   for (const field of ["trainingEvidenceIds", "responsibilitiesAcknowledged"]) {
-    if (!stringArray(value[field])) errors.push(`${path}.${field} must be an array of strings.`);
+    if (!stringArray(value[field])) {
+      errors.push(`${path}.${field} must be an array of strings.`);
+    }
   }
   if (typeof value.authorityBoundaryAcknowledged !== "boolean") {
     errors.push(`${path}.authorityBoundaryAcknowledged must be boolean.`);
@@ -131,10 +142,17 @@ function validateAuthorization(value: unknown, path: string): string[] {
     "prohibitedActivities",
     "evidenceIds",
   ]) {
-    if (!stringArray(value[field])) errors.push(`${path}.${field} must be an array of strings.`);
+    if (!stringArray(value[field])) {
+      errors.push(`${path}.${field} must be an array of strings.`);
+    }
   }
   if (!["satisfied", "not_required", "missing", "expired"].includes(String(value.state))) {
     errors.push(`${path}.state is invalid.`);
+  }
+  if (value.state === "satisfied" &&
+      Array.isArray(value.authorityRefs) &&
+      value.authorityRefs.length === 0) {
+    errors.push(`${path}.authorityRefs must not be empty when authority is satisfied.`);
   }
   return errors;
 }
@@ -143,7 +161,9 @@ function validateHazard(value: unknown, path: string): string[] {
   if (!isRecord(value)) return [`${path} must be an object.`];
   const errors: string[] = [];
   requireStrings(value, ["hazardId", "description", "control", "owner", "state"], path, errors);
-  if (!stringArray(value.evidenceIds)) errors.push(`${path}.evidenceIds must be an array of strings.`);
+  if (!stringArray(value.evidenceIds)) {
+    errors.push(`${path}.evidenceIds must be an array of strings.`);
+  }
   if (!["controlled", "open", "not_applicable"].includes(String(value.state))) {
     errors.push(`${path}.state is invalid.`);
   }
@@ -153,20 +173,16 @@ function validateHazard(value: unknown, path: string): string[] {
 function validateClock(value: unknown, path: string): string[] {
   if (!isRecord(value)) return [`${path} must be an object.`];
   const errors: string[] = [];
-  requireStrings(
-    value,
-    [
-      "clockPolicy",
-      "clockSource",
-      "maximumAllowedSkew",
-      "measuredSkew",
-      "state",
-    ],
-    path,
-    errors,
-  );
+  requireStrings(value, ["clockPolicy", "clockSource", "state"], path, errors);
   for (const field of ["synchronizedInstrumentationIds", "evidenceIds"]) {
-    if (!stringArray(value[field])) errors.push(`${path}.${field} must be an array of strings.`);
+    if (!stringArray(value[field])) {
+      errors.push(`${path}.${field} must be an array of strings.`);
+    }
+  }
+  for (const field of ["maximumAllowedSkewMs", "measuredSkewMs"]) {
+    if (typeof value[field] !== "number" || !Number.isFinite(value[field]) || value[field] < 0) {
+      errors.push(`${path}.${field} must be a finite nonnegative number.`);
+    }
   }
   if (!["ready", "blocked", "unknown"].includes(String(value.state))) {
     errors.push(`${path}.state is invalid.`);
@@ -179,7 +195,9 @@ function validateStorage(value: unknown, path: string): string[] {
   const errors: string[] = [];
   requireStrings(value, ["retentionPolicy", "capacityCheck", "state"], path, errors);
   for (const field of ["requiredPaths", "verifiedPaths", "evidenceIds"]) {
-    if (!stringArray(value[field])) errors.push(`${path}.${field} must be an array of strings.`);
+    if (!stringArray(value[field])) {
+      errors.push(`${path}.${field} must be an array of strings.`);
+    }
   }
   if (typeof value.writable !== "boolean") errors.push(`${path}.writable must be boolean.`);
   if (!["ready", "blocked", "unknown"].includes(String(value.state))) {
@@ -193,7 +211,9 @@ function validateAbort(value: unknown, path: string): string[] {
   const errors: string[] = [];
   requireStrings(value, ["mechanism", "testMethod", "testedAt", "state"], path, errors);
   for (const field of ["authorityActors", "evidenceIds"]) {
-    if (!stringArray(value[field])) errors.push(`${path}.${field} must be an array of strings.`);
+    if (!stringArray(value[field])) {
+      errors.push(`${path}.${field} must be an array of strings.`);
+    }
   }
   if (nonEmpty(value.testedAt) && !validDate(value.testedAt)) {
     errors.push(`${path}.testedAt must be a valid date-time.`);
@@ -222,8 +242,12 @@ function validateReservation(value: unknown, path: string): string[] {
   return errors;
 }
 
-function validateReceipt(value: unknown): GarpaValidationResult<CommonsSeededPreflightReceipt> {
-  if (!isRecord(value)) return { ok: false, errors: ["preflightReceipt must be an object."] };
+function validateReceipt(
+  value: unknown,
+): GarpaValidationResult<CommonsSeededPreflightReceipt> {
+  if (!isRecord(value)) {
+    return { ok: false, errors: ["preflightReceipt must be an object."] };
+  }
   const errors: string[] = [];
   if (value.schemaVersion !== 1) errors.push("preflightReceipt.schemaVersion must equal 1.");
   requireStrings(
@@ -253,7 +277,9 @@ function validateReceipt(value: unknown): GarpaValidationResult<CommonsSeededPre
       errors.push(`preflightReceipt.${field} must be a SHA-256 hex digest.`);
     }
   }
-  if (!validDate(value.preflightAt)) errors.push("preflightReceipt.preflightAt must be a valid date-time.");
+  if (!validDate(value.preflightAt)) {
+    errors.push("preflightReceipt.preflightAt must be a valid date-time.");
+  }
   if (!["ready", "blocked", "superseded"].includes(String(value.state))) {
     errors.push("preflightReceipt.state is invalid.");
   }
@@ -303,10 +329,23 @@ function validateReceipt(value: unknown): GarpaValidationResult<CommonsSeededPre
       );
     }
   }
+  if (Array.isArray(value.runReservations)) {
+    unique(
+      value.runReservations
+        .filter(isRecord)
+        .map((item) => String(item.reservationReceiptId)),
+      "preflightReceipt.runReservations.reservationReceiptId",
+      errors,
+    );
+  }
 
   return errors.length > 0
     ? { ok: false, errors }
-    : { ok: true, errors: [], value: value as unknown as CommonsSeededPreflightReceipt };
+    : {
+        ok: true,
+        errors: [],
+        value: value as unknown as CommonsSeededPreflightReceipt,
+      };
 }
 
 export function validateCommonsSeededPreflightRequest(
@@ -325,8 +364,10 @@ export function validateCommonsSeededPreflightRequest(
   }
   const errors: string[] = [];
   if (value.schemaVersion !== 1) errors.push("schemaVersion must equal 1.");
-  if (!nonEmpty(value.expectedSeededBuildReceiptResultDigest) ||
-      !SHA256.test(value.expectedSeededBuildReceiptResultDigest)) {
+  if (
+    !nonEmpty(value.expectedSeededBuildReceiptResultDigest) ||
+    !SHA256.test(value.expectedSeededBuildReceiptResultDigest)
+  ) {
     errors.push("expectedSeededBuildReceiptResultDigest must be a SHA-256 hex digest.");
   }
   if (!validDate(value.admittedAt)) errors.push("admittedAt must be a valid date-time.");

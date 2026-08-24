@@ -5,7 +5,7 @@ import { registerGarpaCommonsSeededPreflightTools } from "./garpaCommonsSeededPr
 
 const server = new McpServer({
   name: "garpa-commons-seeded-preflight",
-  version: "0.10.0",
+  version: "1.0.0",
 });
 
 registerGarpaCommonsSeededPreflightTools(server);

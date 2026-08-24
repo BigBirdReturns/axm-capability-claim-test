@@ -4,7 +4,6 @@ import type {
   CommonsSeededBuildReceiptFinding,
   CommonsSeededBuildReceiptRequest,
   CommonsSeededBuildReceiptResult,
-  InstalledComponentReceipt,
 } from "../../types/garpaCommonsSeededBuildReceipt";
 import { canonicalStringify } from "./canonicalJson";
 import { computeCommonsSeededAsBuiltReceiptDigest } from "./commonsSeededBuildReceiptDigest";

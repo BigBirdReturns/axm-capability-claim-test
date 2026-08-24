@@ -39,7 +39,7 @@ export function registerGarpaCommonsSeededPreflightTools(
     {
       title: "Run the GARPA Commons-seeded preflight gate",
       description:
-        "Recomputes the admitted as-built result, verifies the exact installed-state and qualification chain, checks every frozen fixture and instrument, requires trained operators, exact venue authority, controlled hazards, complete clock, storage, and abort paths, and reserves unique run identifiers for every frozen scenario. Passing authorizes only the reserved target execution. It is not a test result or mission-equivalence claim.",
+        "Recomputes the admitted as-built result, verifies the exact installed-state and qualification chain, checks frozen fixture, build-manifest instrumentation configuration, qualification identity, calibration, clock, storage, operator, authority, hazard, abort, evidence chronology, and unique run reservations, then delegates terminal readiness to the ordinary preflight gate. Passing authorizes only the reserved target execution. It is not a test result or mission-equivalence claim.",
       inputSchema: { request: JSON_INPUT },
     },
     async ({ request }) => {

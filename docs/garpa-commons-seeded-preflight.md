@@ -1,33 +1,28 @@
 # GARPA Commons-seeded preflight
 
-This stage binds readiness to one exact admitted as-built receipt before any test run may begin.
+This stage binds an admitted Commons-seeded as-built receipt to the exact readiness state required for one or more reserved target runs.
 
 ```text
-admitted Commons-seeded as-built receipt
+admitted as-built receipt
   + frozen qualification scenarios
   + exact fixture configuration
-  + exact instrumentation and calibration state
+  + build-manifest instrumentation configuration
+  + qualification instrument identity, calibration, storage, and clock source
   + trained operator assignments
-  + venue and activity authority
-  + hazard, clock, storage, and abort controls
-  + unique run reservations
-  -> preflight gate
-  -> reserved target execution
+  + exact venue and activity authority
+  + explicit hazard determination
+  + tested abort path
+  + unique run and reservation identifiers
+  + immutable readiness evidence
+  -> Commons-seeded preflight gate
+  -> ordinary preflight gate
+  -> reserved target execution only
 ```
 
-Preflight is not a reusable checklist. The receipt carries the exact as-built digest, build-manifest digest, qualification-contract digest, fixture state, instrument versions and configurations, storage paths, clock source, operator roles, authorization scope, hazard controls, and run identifiers. Any change to those coordinates invalidates the receipt.
+The Commons gate recomputes the as-built predecessor and verifies every source-specific and target-specific readiness assertion. Instrument checks must preserve both the build-manifest configuration digest and the qualification identity, calibration state, storage path, and clock source. Numeric clock skew must remain inside the frozen limit. Every satisfied authorization requires an authority reference. Passive scenarios still require an explicit `not_applicable` hazard determination with evidence.
 
-Every qualification fixture must be ready with an immutable configuration digest and evidence. Every frozen instrument must match the exact model or version, carry a preflight configuration digest, retain the frozen calibration state and storage path, and prove that the raw-data destination is writable. The shared clock policy must cover every frozen instrument.
+Readiness evidence cannot postdate preflight. Fixture verification, abort testing, and run reservation must occur after assembly completion and no later than preflight. Run identifiers and reservation-receipt identifiers must both be unique.
 
-Every architecture human role requires a named trained actor who acknowledges the complete responsibility and authority boundary. Every qualification authorization must preserve the exact permitted and prohibited activity scope. Applicable hazards must be controlled, and every frozen abort authority must be able to exercise a tested abort path.
+After those checks, the stage delegates terminal authority to the existing `runPreflightGate`. That gate remains authoritative for current manifest and qualification digests, assembled build state, material-deviation closure, and the complete readiness vector.
 
-At least one globally unique run identifier is reserved for every frozen scenario. A reservation is valid only under the exact preflight digest. It cannot be reused after the installed build, fixture, instrumentation, operator, authority, storage, clock, or hazard boundary changes.
-
-The following claims remain structurally false:
-
-```text
-qualificationTransferred   = false
-missionEquivalenceClaimed  = false
-```
-
-A passing preflight permits execution of the reserved target run only. It does not constitute a test result, qualification result, deployment result, vendor-parity result, publication claim, or mission-equivalence claim.
+A passing result authorizes only the exact reserved runs. It is not a test result, qualification result, mission-adequacy finding, vendor-parity result, deployment authority, or publication authority. Any change to the as-built identity or readiness boundary invalidates the preflight receipt.

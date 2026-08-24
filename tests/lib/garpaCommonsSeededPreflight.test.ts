@@ -29,6 +29,30 @@ describe("GARPA Commons-seeded preflight validation", () => {
     expect(result.ok).toBe(false);
     expect(result.errors.join(" ")).toContain("duplicate id");
   });
+
+  it("rejects duplicate reservation receipt identifiers", () => {
+    const request = buildSeededPreflightRequest();
+    const duplicate = structuredClone(request.preflightReceipt.runReservations[0]!);
+    duplicate.runId = "GARPA-COMMONS-TARGET-0001-RUN-999";
+    request.preflightReceipt.runReservations.push(duplicate);
+    refreshReceiptDigest(request);
+    const result = validateCommonsSeededPreflightRequest(request);
+    expect(result.ok).toBe(false);
+    expect(result.errors.join(" ")).toContain("reservationReceiptId");
+  });
+
+  it("requires authority references when an authorization is satisfied", () => {
+    const request = buildSeededPreflightRequest();
+    const authorization = request.preflightReceipt.authorizationChecks.find(
+      (item) => item.state === "satisfied",
+    );
+    if (!authorization) return;
+    authorization.authorityRefs = [];
+    refreshReceiptDigest(request);
+    const result = validateCommonsSeededPreflightRequest(request);
+    expect(result.ok).toBe(false);
+    expect(result.errors.join(" ")).toContain("authorityRefs");
+  });
 });
 
 describe("GARPA Commons-seeded preflight gate", () => {
@@ -42,6 +66,8 @@ describe("GARPA Commons-seeded preflight gate", () => {
     expect(result.readyInstrumentationIds.length).toBeGreaterThan(0);
     expect(result.preflightReceipt?.qualificationTransferred).toBe(false);
     expect(result.preflightReceipt?.missionEquivalenceClaimed).toBe(false);
+    expect(result.ordinaryPreflightGate?.passed).toBe(true);
+    expect(result.ordinaryPreflightGate?.materialDeviationsClosed).toBe(true);
   });
 
   it("blocks a forged predecessor result digest", () => {
@@ -59,7 +85,7 @@ describe("GARPA Commons-seeded preflight gate", () => {
 
   it("blocks a changed preflight receipt after digest freeze", () => {
     const request = buildSeededPreflightRequest();
-    request.preflightReceipt.clockCheck.measuredSkew = "99 milliseconds";
+    request.preflightReceipt.clockCheck.measuredSkewMs = 99;
     const result = runCommonsSeededPreflightGate(request);
     expect(
       result.findings.some(
@@ -234,6 +260,75 @@ describe("GARPA Commons-seeded preflight gate", () => {
     expect(
       result.findings.some(
         (finding) => finding.state === "preflight_time_order_invalid",
+      ),
+    ).toBe(true);
+  });
+
+  it("refuses measured clock skew above the frozen limit", () => {
+    const request = buildSeededPreflightRequest();
+    request.preflightReceipt.clockCheck.measuredSkewMs =
+      request.preflightReceipt.clockCheck.maximumAllowedSkewMs + 1;
+    refreshReceiptDigest(request);
+    const result = runCommonsSeededPreflightGate(request);
+    expect(result.state).toBe("seeded_preflight_incomplete");
+    expect(
+      result.findings.some(
+        (finding) => finding.state === "clock_check_incomplete",
+      ),
+    ).toBe(true);
+    expect(result.ordinaryPreflightGate?.readiness.clocksReady).toBe(false);
+  });
+
+  it("refuses instrument configuration drift from the frozen build manifest", () => {
+    const request = buildSeededPreflightRequest();
+    request.preflightReceipt.instrumentationChecks[0]!.configurationDigest =
+      "changed-after-build-manifest-freeze";
+    refreshReceiptDigest(request);
+    const result = runCommonsSeededPreflightGate(request);
+    expect(
+      result.findings.some(
+        (finding) =>
+          finding.state === "instrumentation_configuration_mismatch",
+      ),
+    ).toBe(true);
+  });
+
+  it("refuses instrument clock-source drift", () => {
+    const request = buildSeededPreflightRequest();
+    request.preflightReceipt.instrumentationChecks[0]!.clockSource =
+      "unfrozen-clock-source";
+    refreshReceiptDigest(request);
+    const result = runCommonsSeededPreflightGate(request);
+    expect(
+      result.findings.some(
+        (finding) =>
+          finding.state === "instrumentation_clock_source_mismatch",
+      ),
+    ).toBe(true);
+  });
+
+  it("requires an explicit hazard determination", () => {
+    const request = buildSeededPreflightRequest();
+    request.preflightReceipt.hazardControls = [];
+    refreshReceiptDigest(request);
+    const result = runCommonsSeededPreflightGate(request);
+    expect(
+      result.findings.some(
+        (finding) => finding.state === "hazard_control_missing",
+      ),
+    ).toBe(true);
+    expect(result.ordinaryPreflightGate?.readiness.hazardControlsReady).toBe(false);
+  });
+
+  it("refuses readiness evidence captured after preflight", () => {
+    const request = buildSeededPreflightRequest();
+    request.preflightReceipt.evidence[0]!.capturedAt =
+      "2099-01-01T00:00:00.000Z";
+    refreshReceiptDigest(request);
+    const result = runCommonsSeededPreflightGate(request);
+    expect(
+      result.findings.some(
+        (finding) => finding.state === "evidence_time_order_invalid",
       ),
     ).toBe(true);
   });

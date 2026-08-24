@@ -18,6 +18,8 @@ export function renderCommonsSeededPreflightMarkdown(
   const findings = result.findings.map(
     (finding) => `${finding.state}: ${finding.reason}`,
   );
+  const ordinaryReasons =
+    result.ordinaryPreflightGate?.blockingReasons ?? [];
 
   return [
     `# GARPA Commons-Seeded Preflight`,
@@ -27,6 +29,7 @@ export function renderCommonsSeededPreflightMarkdown(
     `- Receipt: ${receipt.receiptId}`,
     `- Gate state: ${result.state}`,
     `- Admitted for reserved target execution: ${result.passed}`,
+    `- Ordinary preflight gate passed: ${result.ordinaryPreflightGate?.passed ?? false}`,
     `- Preflight state: ${receipt.state}`,
     `- Qualification transferred: ${receipt.qualificationTransferred}`,
     `- Mission equivalence claimed: ${receipt.missionEquivalenceClaimed}`,
@@ -42,11 +45,16 @@ export function renderCommonsSeededPreflightMarkdown(
     `- Human roles ready: ${result.readyHumanRoleIds.length}`,
     `- Authorizations satisfied: ${result.satisfiedAuthorizationIds.length}`,
     `- Clock state: ${receipt.clockCheck.state}`,
+    `- Measured clock skew: ${receipt.clockCheck.measuredSkewMs} ms`,
+    `- Maximum clock skew: ${receipt.clockCheck.maximumAllowedSkewMs} ms`,
     `- Storage state: ${receipt.storageCheck.state}`,
     `- Abort state: ${receipt.abortCheck.state}`,
     ``,
     `## Reserved runs`,
     ...bullets(reservations),
+    ``,
+    `## Ordinary preflight findings`,
+    ...bullets(ordinaryReasons),
     ``,
     `## Findings`,
     ...bullets(findings),

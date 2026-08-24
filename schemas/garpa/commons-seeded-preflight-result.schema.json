@@ -21,7 +21,9 @@
     "prohibitedTransitions"
   ],
   "properties": {
-    "passed": { "type": "boolean" },
+    "passed": {
+      "type": "boolean"
+    },
     "state": {
       "enum": [
         "seeded_preflight_blocked",
@@ -29,36 +31,121 @@
         "seeded_preflight_admitted"
       ]
     },
-    "seededBuildReceiptResult": { "type": "object" },
-    "seededBuildReceiptResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
-    "preflightReceiptDigest": { "$ref": "#/$defs/digestOrEmpty" },
-    "asBuiltReceiptDigest": { "$ref": "#/$defs/digestOrEmpty" },
-    "readyFixtureIds": { "$ref": "#/$defs/stringArray" },
-    "readyInstrumentationIds": { "$ref": "#/$defs/stringArray" },
-    "readyHumanRoleIds": { "$ref": "#/$defs/stringArray" },
-    "satisfiedAuthorizationIds": { "$ref": "#/$defs/stringArray" },
-    "reservedRunIds": { "$ref": "#/$defs/stringArray" },
+    "seededBuildReceiptResult": {
+      "type": "object"
+    },
+    "seededBuildReceiptResultDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "preflightReceiptDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "asBuiltReceiptDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "readyFixtureIds": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "readyInstrumentationIds": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "readyHumanRoleIds": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "satisfiedAuthorizationIds": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "reservedRunIds": {
+      "$ref": "#/$defs/stringArray"
+    },
     "findings": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["state", "reason", "requiredAction"],
+        "required": [
+          "state",
+          "reason",
+          "requiredAction"
+        ],
         "properties": {
-          "state": { "type": "string", "minLength": 1 },
-          "fixtureId": { "type": "string" },
-          "instrumentationId": { "type": "string" },
-          "humanRoleId": { "type": "string" },
-          "authorizationId": { "type": "string" },
-          "runId": { "type": "string" },
-          "reason": { "type": "string", "minLength": 1 },
-          "requiredAction": { "type": "string", "minLength": 1 }
+          "state": {
+            "type": "string",
+            "minLength": 1
+          },
+          "fixtureId": {
+            "type": "string"
+          },
+          "instrumentationId": {
+            "type": "string"
+          },
+          "humanRoleId": {
+            "type": "string"
+          },
+          "authorizationId": {
+            "type": "string"
+          },
+          "runId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "requiredAction": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     },
-    "validationErrors": { "$ref": "#/$defs/stringArray" },
-    "preflightReceipt": { "type": "object" },
-    "pullList": { "$ref": "#/$defs/stringArray" },
-    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+    "validationErrors": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "preflightReceipt": {
+      "type": "object"
+    },
+    "pullList": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "prohibitedTransitions": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "ordinaryPreflightGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "passed",
+        "manifestCurrent",
+        "qualificationContractCurrent",
+        "buildStateAdmissible",
+        "materialDeviationsClosed",
+        "readiness",
+        "blockingReasons"
+      ],
+      "properties": {
+        "passed": {
+          "type": "boolean"
+        },
+        "manifestCurrent": {
+          "type": "boolean"
+        },
+        "qualificationContractCurrent": {
+          "type": "boolean"
+        },
+        "buildStateAdmissible": {
+          "type": "boolean"
+        },
+        "materialDeviationsClosed": {
+          "type": "boolean"
+        },
+        "readiness": {
+          "type": "object"
+        },
+        "blockingReasons": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    }
   },
   "$defs": {
     "digestOrEmpty": {
@@ -67,7 +154,9 @@
     },
     "stringArray": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": {
+        "type": "string"
+      }
     }
   }
 }

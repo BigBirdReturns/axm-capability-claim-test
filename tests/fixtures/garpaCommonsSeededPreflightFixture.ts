@@ -74,10 +74,24 @@ export function buildSeededPreflightRequest(): CommonsSeededPreflightRequest {
       Array.isArray(value.humanRoleSelections) &&
       Array.isArray(value.risks),
   )!;
+  const buildManifest = findObject(
+    seededBuildReceiptRequest,
+    (value) =>
+      typeof value.manifestDigest === "string" &&
+      Array.isArray(value.components) &&
+      Array.isArray(value.instrumentation) &&
+      Array.isArray(value.assemblySteps),
+  )!;
   const scenarios = records(qualification.scenarios);
   const instruments = records(qualification.instrumentation);
   const authorizations = records(qualification.authorizations);
   const roles = records(architecture.humanRoleSelections);
+  const manifestInstruments = new Map(
+    records(buildManifest.instrumentation).map((instrument) => [
+      String(instrument.instrumentationId),
+      instrument,
+    ]),
+  );
   const preflightAt = after(asBuilt.completedAt, 10);
   const admittedAt = after(asBuilt.completedAt, 15);
 
@@ -112,7 +126,9 @@ export function buildSeededPreflightRequest(): CommonsSeededPreflightRequest {
     return {
       instrumentationId: id,
       exactModelOrVersion: String(instrument.modelOrVersion),
-      configurationDigest: sha256Hex(`instrument-config:${id}`),
+      configurationDigest: String(
+        manifestInstruments.get(id)?.configurationDigest ?? "",
+      ),
       calibrationState: String(instrument.calibrationState) as
         | "current"
         | "not_required",
@@ -189,8 +205,8 @@ export function buildSeededPreflightRequest(): CommonsSeededPreflightRequest {
       clockPolicy: "one monotonic target run clock",
       clockSource: "instrument-target-clock",
       synchronizedInstrumentationIds: instrumentIds,
-      maximumAllowedSkew: "10 milliseconds",
-      measuredSkew: "2 milliseconds",
+      maximumAllowedSkewMs: 10,
+      measuredSkewMs: 2,
       state: "ready",
       evidenceIds: [ensureEvidence("clock-readiness")],
     },

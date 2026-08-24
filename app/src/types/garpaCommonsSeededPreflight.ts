@@ -2,6 +2,7 @@ import type {
   CommonsSeededBuildReceiptRequest,
   CommonsSeededBuildReceiptResult,
 } from "./garpaCommonsSeededBuildReceipt";
+import type { PreflightGateResult } from "./garpaExecution";
 
 export interface PreflightEvidenceRef {
   evidenceId: string;
@@ -63,8 +64,8 @@ export interface PreflightClockCheck {
   clockPolicy: string;
   clockSource: string;
   synchronizedInstrumentationIds: string[];
-  maximumAllowedSkew: string;
-  measuredSkew: string;
+  maximumAllowedSkewMs: number;
+  measuredSkewMs: number;
   state: "ready" | "blocked" | "unknown";
   evidenceIds: string[];
 }
@@ -136,12 +137,14 @@ export type CommonsSeededPreflightFindingState =
   | "preflight_case_mismatch"
   | "preflight_upstream_digest_mismatch"
   | "preflight_time_order_invalid"
+  | "evidence_time_order_invalid"
   | "fixture_check_missing"
   | "fixture_not_ready"
   | "fixture_configuration_mismatch"
   | "instrumentation_check_missing"
   | "instrumentation_identity_mismatch"
   | "instrumentation_configuration_mismatch"
+  | "instrumentation_clock_source_mismatch"
   | "instrumentation_calibration_invalid"
   | "instrumentation_storage_unverified"
   | "operator_check_missing"
@@ -150,6 +153,7 @@ export type CommonsSeededPreflightFindingState =
   | "authorization_check_missing"
   | "authorization_not_satisfied"
   | "authorization_scope_mismatch"
+  | "hazard_control_missing"
   | "hazard_control_open"
   | "clock_check_incomplete"
   | "storage_check_incomplete"
@@ -159,6 +163,7 @@ export type CommonsSeededPreflightFindingState =
   | "run_reservation_scenario_invalid"
   | "evidence_custody_missing"
   | "preflight_state_not_ready"
+  | "ordinary_preflight_not_admitted"
   | "qualification_transfer_attempted"
   | "mission_equivalence_attempted"
   | "preflight_validation_failed";
@@ -193,6 +198,7 @@ export interface CommonsSeededPreflightResult {
   reservedRunIds: string[];
   findings: CommonsSeededPreflightFinding[];
   validationErrors: string[];
+  ordinaryPreflightGate?: PreflightGateResult;
   preflightReceipt?: CommonsSeededPreflightReceipt;
   pullList: string[];
   prohibitedTransitions: string[];
