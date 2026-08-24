@@ -1,0 +1,60 @@
+name: recover-build-manifest-5f887
+
+on:
+  push:
+    branches:
+      - "feature/garpa-recover-build-manifest-5f887"
+
+permissions:
+  contents: write
+
+jobs:
+  qualify-and-promote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout recovery candidate
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install workbench dependencies
+        run: npm ci
+
+      - name: Run focused build-manifest campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededBuildManifest.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+
+      - name: Typecheck governed build-manifest surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+
+      - name: Build static workbench bundle
+        run: npm run build
+
+      - name: Install MCP dependencies
+        run: npm ci
+        working-directory: mcp
+
+      - name: Typecheck dedicated MCP surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-build-manifest.json
+        working-directory: mcp
+
+      - name: Promote only the qualified candidate
+        env:
+          TARGET_BRANCH: feature/garpa-commons-seeded-build-manifest-v1
+          EXPECTED_TARGET_HEAD: 094a25d3877c3c5c1e9fe6067e4e070bde1bc71a
+        run: |
+          git config user.name "GARPA recovery qualification"
+          git config user.email "actions@users.noreply.github.com"
+          git rm .github/workflows/recover-build-manifest-5f887.yml
+          git commit -m "Remove temporary recovery qualification workflow"
+          git push origin "HEAD:${TARGET_BRANCH}" \
+            --force-with-lease="refs/heads/${TARGET_BRANCH}:${EXPECTED_TARGET_HEAD}"
