@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-preflight-result.schema.json",
+  "title": "GARPA Commons-Seeded Preflight Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "seededBuildReceiptResultDigest",
+    "preflightReceiptDigest",
+    "asBuiltReceiptDigest",
+    "readyFixtureIds",
+    "readyInstrumentationIds",
+    "readyHumanRoleIds",
+    "satisfiedAuthorizationIds",
+    "reservedRunIds",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_preflight_blocked",
+        "seeded_preflight_incomplete",
+        "seeded_preflight_admitted"
+      ]
+    },
+    "seededBuildReceiptResult": { "type": "object" },
+    "seededBuildReceiptResultDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "preflightReceiptDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "asBuiltReceiptDigest": { "$ref": "#/$defs/digestOrEmpty" },
+    "readyFixtureIds": { "$ref": "#/$defs/stringArray" },
+    "readyInstrumentationIds": { "$ref": "#/$defs/stringArray" },
+    "readyHumanRoleIds": { "$ref": "#/$defs/stringArray" },
+    "satisfiedAuthorizationIds": { "$ref": "#/$defs/stringArray" },
+    "reservedRunIds": { "$ref": "#/$defs/stringArray" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["state", "reason", "requiredAction"],
+        "properties": {
+          "state": { "type": "string", "minLength": 1 },
+          "fixtureId": { "type": "string" },
+          "instrumentationId": { "type": "string" },
+          "humanRoleId": { "type": "string" },
+          "authorizationId": { "type": "string" },
+          "runId": { "type": "string" },
+          "reason": { "type": "string", "minLength": 1 },
+          "requiredAction": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "validationErrors": { "$ref": "#/$defs/stringArray" },
+    "preflightReceipt": { "type": "object" },
+    "pullList": { "$ref": "#/$defs/stringArray" },
+    "prohibitedTransitions": { "$ref": "#/$defs/stringArray" }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}
