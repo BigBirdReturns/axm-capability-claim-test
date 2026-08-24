@@ -1,0 +1,31 @@
+name: cleanup-garpa-recovery
+
+on:
+  push:
+    branches:
+      - "feature/garpa-recover-build-manifest-5f887"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close the temporary recovery PR and remove the branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: BigBirdReturns/axm-capability-claim-test
+          RECOVERY_BRANCH: feature/garpa-recover-build-manifest-5f887
+        run: |
+          set -euo pipefail
+          number="$(gh pr list --repo "${REPOSITORY}" --head "${RECOVERY_BRANCH}" --state open --json number --jq '.[0].number // empty')"
+          if [ -n "${number}" ]; then
+            gh pr close "${number}" --repo "${REPOSITORY}" \
+              --comment "Recovery completed. The qualified implementation now lives on PR #24 and its build-receipt successor."
+          fi
+          git init cleanup
+          cd cleanup
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${REPOSITORY}.git"
+          git push origin --delete "${RECOVERY_BRANCH}" || true
