@@ -1,0 +1,151 @@
+name: garpa-pr29-repair-publish
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout mission-evaluation branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/garpa-commons-seeded-mission-evaluation-v1
+          fetch-depth: 0
+      - name: Configure repository writer
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Restore qualified predecessor contracts
+        run: |
+          git fetch origin feature/garpa-commons-seeded-test-run-v1
+          git fetch origin feature/garpa-admission-spine-v1
+          ORD=origin/feature/garpa-admission-spine-v1
+          PRED=origin/feature/garpa-commons-seeded-test-run-v1
+          files=(
+            app/src/types/garpaExecution.ts
+            app/src/types/garpaPublication.ts
+            app/src/types/garpaRelease.ts
+            app/src/types/garpaParity.ts
+            app/src/types/garpaPreflight.ts
+            app/src/lib/garpa/compilePublicationClaims.ts
+            app/src/lib/garpa/evaluateMissionAdequacy.ts
+            app/src/lib/garpa/evaluateMissionAdequacyStrict.ts
+            app/src/lib/garpa/evaluateMissionAdequacyWithCustody.ts
+            app/src/lib/garpa/evaluationTypes.ts
+            app/src/lib/garpa/renderMissionEvaluation.ts
+            app/src/lib/garpa/renderPublicDossier.ts
+            app/src/lib/garpa/runMissionEvaluation.ts
+            app/src/lib/garpa/runReceiptCustodyGate.ts
+            app/src/lib/garpa/validateExecutionAuthority.ts
+            app/src/lib/garpa/validateExecutionReceipts.ts
+            app/src/lib/garpa/validatePreflightReceipt.ts
+            app/src/lib/garpa/validatePreflightRequest.ts
+            app/src/lib/garpa/validatePublicationCompilationInput.ts
+            app/src/lib/garpa/validateReleaseManifest.ts
+            app/src/lib/garpa/verifyReleaseBundle.ts
+            app/src/lib/garpa/verifyReleaseManifest.ts
+            tests/lib/garpaExecution.test.ts
+            tsconfig.json
+          )
+          for f in "${files[@]}"; do git show "$ORD:$f" > "$f"; done
+          git show "$ORD:mcp/garpaArtifactAdapters.ts" > mcp/garpaArtifactAdapters.ts
+          git show "$PRED:app/src/lib/garpa/runCommonsSeededTestRunGate.ts" > app/src/lib/garpa/runCommonsSeededTestRunGate.ts
+      - name: Apply Commons-specific receipt custody
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p=Path('mcp/garpaArtifactAdapters.ts'); s=p.read_text()
+          s=s.replace('let safetyState: ArtifactEnvelope["safetyState"] = "passive_content";', 'let safetyState: ArtifactEnvelope["safetyState"] = "not_inspected";')
+          needle='''    const text = await readFile(sourcePath, "utf8");
+              textBlocks = paragraphBlocks(text);
+              extractionState = "complete";'''.replace('          ','')
+          repl='''    const text = await readFile(sourcePath, "utf8");
+              textBlocks = paragraphBlocks(text);
+              safetyState = "passive_content";
+              extractionState = "complete";'''.replace('          ','')
+          if needle in s: s=s.replace(needle,repl)
+          p.write_text(s)
+
+          p=Path('app/src/types/garpaExecution.ts'); s=p.read_text()
+          old='''export interface TestAbort {
+            id: string;
+            occurredAt: string;
+            authority: string;
+            reason: string;
+          }'''.replace('          ','')
+          new='''export interface TestAbort {
+            id: string;
+            occurredAt: string;
+            authority: string;
+            reason: string;
+            evidenceArtifactIds?: string[];
+          }'''.replace('          ','')
+          assert old in s
+          p.write_text(s.replace(old,new))
+
+          p=Path('app/src/lib/garpa/validateExecutionReceipts.ts'); s=p.read_text()
+          pos=s.index('const AbortSchema')
+          pre,post=s[:pos],s[pos:]
+          old='''    reason: z.string().min(1),
+            })
+            .strict();'''.replace('          ','')
+          new='''    reason: z.string().min(1),
+              evidenceArtifactIds: z.array(z.string().min(1)).optional(),
+            })
+            .strict();'''.replace('          ','')
+          assert old in post
+          p.write_text(pre+post.replace(old,new,1))
+
+          p=Path('app/src/lib/garpa/validateCommonsSeededTestRun.ts'); s=p.read_text()
+          s=s.replace('import { validateTestRunReceipt } from "./validateExecutionReceipts";', 'import { validateCommonsSeededTestRunReceipt } from "./validateCommonsSeededTestRunReceipt";')
+          s=s.replace('const receipt = validateTestRunReceipt(value.testRunReceipt);', 'const receipt = validateCommonsSeededTestRunReceipt(value.testRunReceipt);')
+          p.write_text(s)
+
+          p=Path('app/src/lib/garpa/runCommonsSeededTestRunGate.ts'); s=p.read_text()
+          s=s.replace('import { canonicalStringify } from "./canonicalJson";\n','')
+          old='''    ...receipt.metricResults.flatMap((item) => item.rawSampleArtifactIds),
+            ]);'''.replace('          ','')
+          new='''    ...receipt.metricResults.flatMap((item) => item.rawSampleArtifactIds),
+              ...receipt.aborts.flatMap((item) => item.evidenceArtifactIds ?? []),
+            ]);'''.replace('          ','')
+          assert old in s
+          p.write_text(s.replace(old,new,1))
+
+          p=Path('tests/lib/garpaExecution.test.ts'); s=p.read_text()
+          s=s.replace('const raw = structuredClone(buildReceiptRaw) as BuildReceipt;', 'const raw = structuredClone(buildReceiptRaw) as unknown as BuildReceipt;')
+          s=s.replace('const raw = structuredClone(testRunReceiptRaw) as TestRunReceipt;', 'const raw = structuredClone(testRunReceiptRaw) as unknown as TestRunReceipt;')
+          p.write_text(s)
+          PY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: Qualify complete workbench
+        run: |
+          npm ci
+          npx tsx scripts/generateCommonsSeededMissionEvaluationExample.ts
+          npx vitest run \
+            tests/lib/garpaCommonsSeededMissionEvaluation.test.ts \
+            tests/lib/garpaCommonsSeededTestRun.test.ts \
+            tests/lib/garpaCommonsSeededPreflight.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-mission-evaluation.json
+          npm run check
+          npm run build
+      - name: Qualify MCP surfaces
+        working-directory: mcp
+        run: |
+          npm ci
+          npx tsc --noEmit -p tsconfig.commons-seeded-mission-evaluation.json
+          npx tsc --noEmit -p tsconfig.json
+      - name: Commit qualified source and remove publisher
+        run: |
+          rm .github/workflows/garpa-pr29-repair-publish.yml
+          git add -A
+          git commit -m "Reconcile mission evaluation with qualified execution contracts"
+          git push origin HEAD:feature/garpa-commons-seeded-mission-evaluation-v1
