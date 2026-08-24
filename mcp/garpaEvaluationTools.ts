@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { validateTestRunReceipt } from "../app/src/lib/garpa/validateExecutionReceipts.ts";
 import { evaluateMissionAdequacy } from "../app/src/lib/garpa/evaluateMissionAdequacy.ts";
+import type { TestRunReceipt } from "../app/src/types/garpaExecution.ts";
 
 const JSON_INPUT = z.union([z.string(), z.record(z.any())]);
 
@@ -31,12 +32,16 @@ export function registerGarpaEvaluationTools(server: McpServer): void {
       },
     },
     async ({ scope, testRunReceipts }) => {
-      const receipts = [];
+      const receipts: TestRunReceipt[] = [];
       const errors: string[] = [];
       testRunReceipts.forEach((receipt, index) => {
         const result = validateTestRunReceipt(receipt);
         if (!result.ok || !result.value) {
-          errors.push(...result.errors.map((error) => `testRunReceipts.${index}: ${error}`));
+          errors.push(
+            ...result.errors.map(
+              (error) => `testRunReceipts.${index}: ${error}`,
+            ),
+          );
           return;
         }
         receipts.push(result.value);
@@ -54,7 +59,10 @@ export function registerGarpaEvaluationTools(server: McpServer): void {
           ),
         );
       }
-      const evaluation = evaluateMissionAdequacy({ scope, testRunReceipts: receipts });
+      const evaluation = evaluateMissionAdequacy({
+        scope,
+        testRunReceipts: receipts,
+      });
       return text(
         JSON.stringify(
           {
