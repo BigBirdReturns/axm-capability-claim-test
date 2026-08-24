@@ -9,4 +9,6 @@ Tools:
 - `validate_garpa_commons_seeded_mission_evaluation`
 - `run_garpa_commons_seeded_mission_evaluation`
 
-The server admits the bounded target mission-evaluation record only after every submitted run is recomputed, bound to the exact target chain, and present unchanged in the delegated custodied evaluation. It does not establish vendor parity, deployment authority, or publication authority.
+The server validates and evaluates one typed target campaign. Every submitted test-run request is recomputed and bound to the complete reservation ledger from the governing campaign preflight. The gate preserves failed, aborted, invalidated, incomplete, and excluded executions, verifies frozen valid-run and per-run sample requirements, derives the ordinary mission scope from the exact target chain, and delegates the substantive classification to `evaluateMissionAdequacyWithCustody`.
+
+The MCP layer does not discover evaluator arguments, transfer source qualification, establish vendor parity, authorize deployment, or authorize publication.
