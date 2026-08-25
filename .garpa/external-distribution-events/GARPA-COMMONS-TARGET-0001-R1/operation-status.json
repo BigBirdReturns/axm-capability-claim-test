@@ -1,6 +1,6 @@
 {
-  "passed": false,
-  "state": "pending_operational_requalification",
+  "passed": true,
+  "state": "observed_external_distribution_operation_qualified",
   "methodVersion": "1.7.0-commons-seeded-external-distribution",
   "highestStage": "commons_seeded_external_distribution",
   "methodReceiptHead": "2e4b6e5f786b5a03736f060cac6f6db64d482bed",
@@ -8,11 +8,22 @@
   "publishCommit": "1a90612ecf9d000207ff269be61fe3880b2a050f",
   "evidenceCoordinateCommit": "ae5eabfc91c85d00c5634df7e690262256b1fdd4",
   "eventSealHead": "da22dbb6cccea47b64d602ea0cf4f624871c5721",
+  "qualifiedOperationHead": "1d7cb5ccf5cbfb381dd2f5eb02ffb450585d244d",
   "eventResultDigest": "c58398bab4818f2068e4f06d022b33b1a08becbaa04ef317596758604400e7f4",
   "eventObserved": true,
   "publicReleaseOccurred": true,
   "publicRegistryPublished": false,
   "deploymentAuthorityClaimed": false,
   "unrestrictedEquivalenceClaimed": false,
-  "qualificationReceiptRequired": true
+  "qualificationReceiptRequired": false,
+  "workflowRuns": {
+    "completeOperationCheck": 32812078137
+  },
+  "results": {
+    "repositoryTests": "455/455",
+    "completeRepositoryCheck": "pass",
+    "productionBuild": "pass",
+    "completeMcpTypeScript": "pass"
+  },
+  "recordedAt": "2026-08-25T05:17:06Z"
 }
