@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/axm-capability-claim-test/garpa/commons-seeded-external-distribution-result.schema.json",
+  "title": "GARPA Commons-Seeded External Distribution Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "passed",
+    "state",
+    "receiptAdmitted",
+    "eventObserved",
+    "publicRegistryPublished",
+    "publicReleaseOccurred",
+    "seededPublicRegistryResultDigest",
+    "distributionObservationDigest",
+    "distributionEnvelopeDigest",
+    "observedFileSetDigest",
+    "evidenceArtifactSetDigest",
+    "expectedFiles",
+    "observedFiles",
+    "evidenceArtifacts",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": {
+      "type": "boolean"
+    },
+    "state": {
+      "enum": [
+        "seeded_external_distribution_blocked",
+        "seeded_external_distribution_fixture_admitted",
+        "seeded_external_distribution_observed"
+      ]
+    },
+    "receiptAdmitted": {
+      "type": "boolean"
+    },
+    "eventObserved": {
+      "type": "boolean"
+    },
+    "publicRegistryPublished": {
+      "type": "boolean"
+    },
+    "publicReleaseOccurred": {
+      "type": "boolean"
+    },
+    "mode": {
+      "enum": [
+        "qualification_fixture",
+        "observed_external_event"
+      ]
+    },
+    "eventKind": {
+      "enum": [
+        "release_distribution",
+        "registry_publication",
+        "release_and_registry_publication"
+      ]
+    },
+    "seededPublicRegistryResult": {
+      "type": "object"
+    },
+    "seededPublicRegistryResultDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "distributionObservationDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "distributionEnvelopeDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "observedFileSetDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "evidenceArtifactSetDigest": {
+      "$ref": "#/$defs/digestOrEmpty"
+    },
+    "expectedFiles": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "observedFiles": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidenceArtifacts": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "validationErrors": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "pullList": {
+      "$ref": "#/$defs/stringArray"
+    },
+    "prohibitedTransitions": {
+      "$ref": "#/$defs/stringArray"
+    }
+  },
+  "$defs": {
+    "digestOrEmpty": {
+      "type": "string",
+      "pattern": "^$|^[A-Fa-f0-9]{64}$"
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

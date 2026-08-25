@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaCommonsSeededExternalDistribution.ts",
+    "app/src/lib/garpa/commonsSeededExternalDistributionDigest.ts",
+    "app/src/lib/garpa/deriveCommonsSeededExternalDistribution.ts",
+    "app/src/lib/garpa/validateCommonsSeededExternalDistribution.ts",
+    "app/src/lib/garpa/runCommonsSeededExternalDistributionGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededExternalDistribution.ts",
+    "tests/fixtures/garpaCommonsSeededExternalDistributionFixture.ts",
+    "tests/lib/garpaCommonsSeededExternalDistribution.test.ts"
+  ]
+}

@@ -1,0 +1,74 @@
+name: garpa-commons-seeded-external-distribution-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaCommonsSeededExternalDistribution.ts"
+      - "app/src/lib/garpa/commonsSeededExternalDistribution*.ts"
+      - "app/src/lib/garpa/deriveCommonsSeededExternalDistribution.ts"
+      - "app/src/lib/garpa/validateCommonsSeededExternalDistribution.ts"
+      - "app/src/lib/garpa/runCommonsSeededExternalDistributionGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededExternalDistribution.ts"
+      - "app/src/lib/garpa/garpaVersion.ts"
+      - "app/src/lib/garpa/implementedStages.ts"
+      - "tests/fixtures/garpaCommonsSeededExternalDistributionFixture.ts"
+      - "tests/lib/garpaCommonsSeededExternalDistribution.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-external-distribution-*.schema.json"
+      - "docs/garpa-commons-seeded-external-distribution.md"
+      - "docs/garpa-method-version.md"
+      - "docs/garpa-current-surface.md"
+      - "mcp/garpaCommonsSeededExternalDistributionTools.ts"
+      - "mcp/garpa-commons-seeded-external-distribution-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-external-distribution.json"
+      - "tsconfig.commons-seeded-external-distribution.json"
+      - ".garpa/external-distribution-qualification/status.json"
+      - ".github/workflows/garpa-commons-seeded-external-distribution-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-external-distribution-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  external-distribution:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Generate non-public qualification fixture
+        run: npx tsx scripts/generateCommonsSeededExternalDistributionExample.ts
+      - name: Run focused external-distribution campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededExternalDistribution.test.ts \
+            tests/lib/garpaCommonsSeededPublicRegistry.test.ts \
+            tests/lib/garpaCommonsSeededRelease.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+      - name: Typecheck Commons-seeded external-distribution surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-external-distribution.json
+      - name: Run complete repository check
+        run: npm run check
+      - name: Build static workbench
+        run: npm run build
+      - run: npm ci
+        working-directory: mcp
+      - name: Typecheck dedicated external-distribution MCP
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-external-distribution.json
+        working-directory: mcp
+      - name: Typecheck complete GARPA MCP
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+      - name: Upload generated qualification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-commons-seeded-external-distribution-evidence
+          path: examples/garpa-commons-seeded-external-distribution
+          retention-days: 3
