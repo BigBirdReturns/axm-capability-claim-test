@@ -10,5 +10,6 @@
   "platformReceiptPath": "evidence/platform-receipt.json",
   "retrievalCapturePath": "evidence/retrieval-capture.json",
   "releaseManifestPath": "release-manifest.json",
-  "releaseManifestObservedSha256": "43a25e729ab48aeab0a24421f69fbfdea4cdf50f237a88c6400c9e4b82446ad1"
+  "releaseManifestObservedSha256": "43a25e729ab48aeab0a24421f69fbfdea4cdf50f237a88c6400c9e4b82446ad1",
+  "evidenceCommit": "6d443f32e17a73286f9a925701301565801a2908"
 }
