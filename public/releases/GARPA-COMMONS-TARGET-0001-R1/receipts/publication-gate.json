@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "state": "publication_ready",
+  "admittedClaimIds": [
+    "pub-mission-1",
+    "pub-parity-1",
+    "pub-residual-1"
+  ],
+  "blockedClaimIds": [],
+  "narrowedClaimIds": [],
+  "findings": [],
+  "requiredActions": []
+}

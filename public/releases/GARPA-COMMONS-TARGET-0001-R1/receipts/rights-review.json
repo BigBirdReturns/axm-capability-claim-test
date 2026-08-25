@@ -1,0 +1,19 @@
+{
+  "state": "clear",
+  "artifactDecisions": [
+    {
+      "artifactId": "artifact:vendor:q-target-detection:001",
+      "rightsClass": "citation_only",
+      "includedInRelease": false,
+      "note": "The vendor evidence remains digest-bound and cited but is not redistributed by this publication candidate."
+    },
+    {
+      "artifactId": "artifact:vendor:q-target-latency:002",
+      "rightsClass": "citation_only",
+      "includedInRelease": false,
+      "note": "The vendor evidence remains digest-bound and cited but is not redistributed by this publication candidate."
+    }
+  ],
+  "reviewedAt": "2026-08-23T21:39:30.000Z",
+  "reviewer": "GARPA publication rights reviewer"
+}

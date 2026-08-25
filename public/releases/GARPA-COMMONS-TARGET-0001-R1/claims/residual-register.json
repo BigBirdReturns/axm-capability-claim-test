@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "caseId": "GARPA-COMMONS-TARGET-0001",
+  "residualClaims": [
+    {
+      "claimId": "pub-residual-1",
+      "text": "Evaluation covers a bounded mission slice: Controlled indoor single-object target fixture with the frozen target class, isolated network, one trained operator, and no active response or operational deployment.",
+      "scope": {
+        "buildDigest": "50570f5f4fafe15453d103a8024a3ad12b92308fe799357ccdffe093bae3a01b",
+        "scenarioIds": [
+          "scenario-target-nominal"
+        ],
+        "metricIds": [
+          "q-target-detection",
+          "q-target-latency"
+        ],
+        "environment": "Controlled indoor single-object target fixture with the frozen target class, isolated network, one trained operator, and no active response or operational deployment."
+      },
+      "limitations": [],
+      "prohibitedGeneralizations": [
+        "Do not omit this residual from any release that carries the associated mission claim."
+      ]
+    }
+  ]
+}

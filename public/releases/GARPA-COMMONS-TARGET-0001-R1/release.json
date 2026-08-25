@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "GARPA-COMMONS-TARGET-0001-R1",
+  "caseId": "GARPA-COMMONS-TARGET-0001",
+  "releaseNumber": 1,
+  "state": "current",
+  "createdAt": "2026-08-23T21:43:00.000Z",
+  "caseIndexDigest": "dbc3037f908de185dc56eab0ae3a7f4ac3d04ba79a695b252a4cd19f39b0b796",
+  "seededPublicationResultDigest": "7c7a4022c7a8551b589635aa5f67dff0d7c152217e15a6a308977b60bc32ab1d",
+  "publicationPackageDigest": "bfa568ad0a8d6e12f1405ef6ba6369a1f7f0d99a31b0ab2197888207705c9eca",
+  "publicationGateResultDigest": "360db0968487582d53dadc056c7a9d40b08ecf3506851a38106cae1421d13c4b",
+  "publicationState": "publication_ready"
+}

@@ -1,0 +1,154 @@
+[
+  {
+    "id": "pub-mission-1",
+    "caseId": "GARPA-COMMONS-TARGET-0001",
+    "text": "Under the frozen bounded scenarios and metrics, GARPA build 50570f5f4fafe15453d103a8024a3ad12b92308fe799357ccdffe093bae3a01b satisfied the evaluated mission slice.",
+    "claimClass": "mission_evaluation",
+    "subject": "GARPA Commons-seeded target observation system",
+    "scope": {
+      "buildDigest": "50570f5f4fafe15453d103a8024a3ad12b92308fe799357ccdffe093bae3a01b",
+      "scenarioIds": [
+        "scenario-target-nominal"
+      ],
+      "metricIds": [
+        "q-target-detection",
+        "q-target-latency"
+      ],
+      "environment": "Controlled indoor single-object target fixture with the frozen target class, isolated network, one trained operator, and no active response or operational deployment."
+    },
+    "supportRefs": [
+      {
+        "relation": "evaluated_by",
+        "evaluationDigest": "67676c16e38984f1c022c8e5f8cf39a925a60bf6bb37407fe0d9a4ba179196cf",
+        "note": "Frozen GARPA mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-001",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-002",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-003",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-004",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-005",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-006",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-007",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-008",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-009",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      },
+      {
+        "relation": "measured_by",
+        "runReceiptId": "GARPA-COMMONS-EVAL-RUN-010",
+        "note": "Admitted test-run receipt used by the mission evaluation."
+      }
+    ],
+    "limitations": [
+      "Evaluation covers a bounded mission slice: Controlled indoor single-object target fixture with the frozen target class, isolated network, one trained operator, and no active response or operational deployment."
+    ],
+    "prohibitedGeneralizations": [
+      "Do not generalize beyond the frozen scenarios, metrics, environment, build, or qualification contract.",
+      "Do not convert a bounded mission result into unrestricted product-level or operational equivalence."
+    ],
+    "state": "supported"
+  },
+  {
+    "id": "pub-parity-1",
+    "caseId": "GARPA-COMMONS-TARGET-0001",
+    "text": "Against Synthetic Vendor Reference System version reference-1.0.0, GARPA matched the required metrics q-target-detection, q-target-latency under the same frozen fixture and measurement method.",
+    "claimClass": "vendor_parity",
+    "subject": "Synthetic Vendor Reference System",
+    "scope": {
+      "offeringVersion": "reference-1.0.0",
+      "buildDigest": "50570f5f4fafe15453d103a8024a3ad12b92308fe799357ccdffe093bae3a01b",
+      "scenarioIds": [
+        "scenario-target-nominal"
+      ],
+      "metricIds": [
+        "q-target-detection",
+        "q-target-latency"
+      ],
+      "environment": "Parity, when supported, is confined to the frozen bounded mission evaluation, exact vendor version, same fixture, same method, required metrics, and aligned accounting boundary where cost is compared."
+    },
+    "supportRefs": [
+      {
+        "relation": "evaluated_by",
+        "evaluationDigest": "f5c6c9f8bd7e6531ba54bf871a79723a6d30e2c967900baa166375d82c72baf2",
+        "note": "Exact-version vendor parity evaluation."
+      }
+    ],
+    "limitations": [
+      "Parity, when supported, is confined to the frozen bounded mission evaluation, exact vendor version, same fixture, same method, required metrics, and aligned accounting boundary where cost is compared."
+    ],
+    "prohibitedGeneralizations": [
+      "Do not claim unrestricted full-system, field, operational, or lifecycle equivalence.",
+      "Do not extend parity to unmeasured metrics or other vendor versions."
+    ],
+    "state": "supported"
+  },
+  {
+    "id": "pub-residual-1",
+    "caseId": "GARPA-COMMONS-TARGET-0001",
+    "text": "Evaluation covers a bounded mission slice: Controlled indoor single-object target fixture with the frozen target class, isolated network, one trained operator, and no active response or operational deployment.",
+    "claimClass": "residual",
+    "subject": "GARPA Commons-seeded target observation system",
+    "scope": {
+      "buildDigest": "50570f5f4fafe15453d103a8024a3ad12b92308fe799357ccdffe093bae3a01b",
+      "scenarioIds": [
+        "scenario-target-nominal"
+      ],
+      "metricIds": [
+        "q-target-detection",
+        "q-target-latency"
+      ],
+      "environment": "Controlled indoor single-object target fixture with the frozen target class, isolated network, one trained operator, and no active response or operational deployment."
+    },
+    "supportRefs": [
+      {
+        "relation": "limited_by",
+        "evaluationDigest": "67676c16e38984f1c022c8e5f8cf39a925a60bf6bb37407fe0d9a4ba179196cf",
+        "note": "Residual carried from the mission evaluation."
+      },
+      {
+        "relation": "evaluated_by",
+        "evaluationDigest": "67676c16e38984f1c022c8e5f8cf39a925a60bf6bb37407fe0d9a4ba179196cf",
+        "note": "The admitted evaluation established this mandatory residual."
+      }
+    ],
+    "limitations": [],
+    "prohibitedGeneralizations": [
+      "Do not omit this residual from any release that carries the associated mission claim."
+    ],
+    "state": "supported"
+  }
+]
