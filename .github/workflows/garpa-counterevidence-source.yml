@@ -14,6 +14,17 @@ on:
       - "scripts/**"
       - "examples/**"
       - "tsconfig*.json"
+  pull_request:
+    paths:
+      - ".github/workflows/garpa-counterevidence-source.yml"
+      - "app/**"
+      - "tests/**"
+      - "mcp/**"
+      - "schemas/**"
+      - "docs/**"
+      - "scripts/**"
+      - "examples/**"
+      - "tsconfig*.json"
 
 permissions:
   contents: read
