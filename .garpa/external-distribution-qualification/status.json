@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "state": "pending_repository_qualification",
+  "methodVersion": "1.7.0-commons-seeded-external-distribution",
+  "highestStage": "commons_seeded_external_distribution",
+  "predecessorReceiptHead": "06d3733025ba8bcd8b0592496cc0f0e96ec64483",
+  "qualificationReceiptRequired": true
+}

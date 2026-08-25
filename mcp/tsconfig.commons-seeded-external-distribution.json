@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "garpaCommonsSeededExternalDistributionTools.ts",
+    "garpa-commons-seeded-external-distribution-server.ts"
+  ]
+}
