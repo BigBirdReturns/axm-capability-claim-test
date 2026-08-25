@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garpa.example/schemas/commons-seeded-external-publication-request.schema.json",
+  "title": "GARPA Commons-Seeded External Publication Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "seededPublicRegistryRequest",
+    "expectedSeededPublicRegistryResultDigest",
+    "externalPublicationRequest",
+    "publicationEnvelope",
+    "admittedAt"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "seededPublicRegistryRequest": { "type": "object" },
+    "expectedSeededPublicRegistryResultDigest": { "$ref": "#/$defs/sha256" },
+    "externalPublicationRequest": { "$ref": "#/$defs/externalRequest" },
+    "publicationEnvelope": { "$ref": "#/$defs/envelope" },
+    "admittedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactId",
+        "sha256",
+        "byteLength",
+        "mediaType",
+        "capturePath",
+        "sourceLocator",
+        "contentEncoding",
+        "content",
+        "capturedAt"
+      ],
+      "properties": {
+        "artifactId": { "type": "string", "minLength": 1 },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "byteLength": { "type": "integer", "minimum": 0 },
+        "mediaType": { "type": "string", "minLength": 1 },
+        "capturePath": { "type": "string", "minLength": 1 },
+        "sourceLocator": { "type": "string", "minLength": 1 },
+        "contentEncoding": { "const": "utf-8" },
+        "content": { "type": "string" },
+        "capturedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "receiptId",
+        "caseId",
+        "releaseId",
+        "releaseManifestDigest",
+        "releaseBundleDigest",
+        "registryEntryDigest",
+        "eventKind",
+        "evidenceClass",
+        "channel",
+        "publisher",
+        "sourceLocator",
+        "targetContentDigest",
+        "publishedAt",
+        "observedAt",
+        "artifactIds",
+        "syntheticQualificationOnly",
+        "publicRegistryPublished",
+        "publicReleaseOccurred",
+        "receiptDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "receiptId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "releaseId": { "type": "string", "minLength": 1 },
+        "releaseManifestDigest": { "$ref": "#/$defs/sha256" },
+        "releaseBundleDigest": { "$ref": "#/$defs/sha256" },
+        "registryEntryDigest": { "$ref": "#/$defs/sha256" },
+        "eventKind": {
+          "enum": ["registry_entry_published", "release_bundle_distributed"]
+        },
+        "evidenceClass": {
+          "enum": ["synthetic_qualification", "observed_external"]
+        },
+        "channel": {
+          "enum": ["web", "source_repository_release", "artifact_repository", "other"]
+        },
+        "publisher": { "type": "string", "minLength": 1 },
+        "sourceLocator": { "type": "string", "minLength": 1 },
+        "targetContentDigest": { "$ref": "#/$defs/sha256" },
+        "publishedAt": { "type": "string", "format": "date-time" },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "artifactIds": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "syntheticQualificationOnly": { "type": "boolean" },
+        "publicRegistryPublished": { "type": "boolean" },
+        "publicReleaseOccurred": { "type": "boolean" },
+        "receiptDigest": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "externalRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "receipt", "artifacts", "admittedAt"],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "receipt": { "$ref": "#/$defs/receipt" },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/artifact" }
+        },
+        "admittedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "envelope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "externalPublicationReceiptId",
+        "caseId",
+        "releaseId",
+        "releaseNumber",
+        "releaseManifestDigest",
+        "releaseBundleDigest",
+        "seededPublicRegistryResultDigest",
+        "registryEntryDigest",
+        "externalPublicationRequestDigest",
+        "externalPublicationReceiptDigest",
+        "externalArtifactSetDigest",
+        "ordinaryReceiptResultDigest",
+        "evidenceClass",
+        "eventKind",
+        "observedAt",
+        "syntheticQualificationOnly",
+        "externalEventObserved",
+        "publicRegistryPublished",
+        "publicReleaseOccurred",
+        "deploymentAuthorityClaimed",
+        "unrestrictedEquivalenceClaimed",
+        "envelopeDigest"
+      ],
+      "properties": {
+        "schemaVersion": { "const": 1 },
+        "externalPublicationReceiptId": { "type": "string", "minLength": 1 },
+        "caseId": { "type": "string", "minLength": 1 },
+        "releaseId": { "type": "string", "minLength": 1 },
+        "releaseNumber": { "const": 1 },
+        "releaseManifestDigest": { "$ref": "#/$defs/sha256" },
+        "releaseBundleDigest": { "$ref": "#/$defs/sha256" },
+        "seededPublicRegistryResultDigest": { "$ref": "#/$defs/sha256" },
+        "registryEntryDigest": { "$ref": "#/$defs/sha256" },
+        "externalPublicationRequestDigest": { "$ref": "#/$defs/sha256" },
+        "externalPublicationReceiptDigest": { "$ref": "#/$defs/sha256" },
+        "externalArtifactSetDigest": { "$ref": "#/$defs/sha256" },
+        "ordinaryReceiptResultDigest": { "$ref": "#/$defs/sha256" },
+        "evidenceClass": {
+          "enum": ["synthetic_qualification", "observed_external"]
+        },
+        "eventKind": {
+          "enum": ["registry_entry_published", "release_bundle_distributed"]
+        },
+        "observedAt": { "type": "string", "format": "date-time" },
+        "syntheticQualificationOnly": { "type": "boolean" },
+        "externalEventObserved": { "type": "boolean" },
+        "publicRegistryPublished": { "type": "boolean" },
+        "publicReleaseOccurred": { "type": "boolean" },
+        "deploymentAuthorityClaimed": { "const": false },
+        "unrestrictedEquivalenceClaimed": { "const": false },
+        "envelopeDigest": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

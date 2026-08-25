@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "state": "pending_repository_qualification",
+  "methodVersion": "1.7.0-commons-seeded-external-publication-receipt",
+  "highestStage": "commons_seeded_external_publication_receipt",
+  "predecessorReceiptHead": "06d3733025ba8bcd8b0592496cc0f0e96ec64483",
+  "qualificationEvidenceClass": "synthetic_qualification",
+  "realExternalEventClaimed": false,
+  "qualificationReceiptRequired": true
+}

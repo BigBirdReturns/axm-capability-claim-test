@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "app/src/types/garpaExternalPublication.ts",
+    "app/src/types/garpaCommonsSeededExternalPublication.ts",
+    "app/src/lib/garpa/externalPublicationDigest.ts",
+    "app/src/lib/garpa/validateExternalPublicationReceipt.ts",
+    "app/src/lib/garpa/runExternalPublicationReceiptGate.ts",
+    "app/src/lib/garpa/commonsSeededExternalPublicationDigest.ts",
+    "app/src/lib/garpa/validateCommonsSeededExternalPublication.ts",
+    "app/src/lib/garpa/runCommonsSeededExternalPublicationGate.ts",
+    "app/src/lib/garpa/renderCommonsSeededExternalPublication.ts",
+    "tests/fixtures/garpaCommonsSeededExternalPublicationFixture.ts",
+    "tests/lib/garpaExternalPublication.test.ts",
+    "tests/lib/garpaCommonsSeededExternalPublication.test.ts"
+  ]
+}

@@ -1,6 +1,6 @@
 # GARPA implemented surface
 
-This branch contains executable contracts and gates through governed case-registry admission.
+This branch contains executable contracts and gates through external-publication receipt custody.
 
 ```text
 claim packet
@@ -18,6 +18,7 @@ claim packet
   -> publication custody
   -> release verification
   -> public registry admission
+  -> external publication receipt
 ```
 
 The Vectus fixture remains blocked before architecture. The synthetic observation fixture exercises the downstream chain and reaches `bounded_match` for controlled observation and simulated response only.
@@ -46,4 +47,8 @@ The `commons_seeded_release_verification` stage generates and verifies the exact
 
 ## Commons-seeded public registry
 
-The highest governed stage is `commons_seeded_public_registry`. It admits the exact verified current R1 as the sole governing release inside a deterministic initial case entry, preserves the existing registry gate's concurrency, sequence, lineage, identity, and case-transition rules, and keeps external publication and distribution structurally false.
+The `commons_seeded_public_registry` stage admits the exact verified current R1 as the sole governing release inside a deterministic initial case entry and preserves the existing registry gate's concurrency, sequence, lineage, identity, and case-transition rules.
+
+## Commons-seeded external-publication receipt
+
+The highest governed stage is `commons_seeded_external_publication_receipt`. It distinguishes visibly synthetic qualification evidence from observed external evidence, binds the exact current registry entry and release, verifies captured bytes and event chronology, and preserves the ordinary receipt gate's event disposition without promotion or suppression.

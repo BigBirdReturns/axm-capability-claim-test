@@ -1,0 +1,78 @@
+name: garpa-commons-seeded-external-publication-check
+
+on:
+  pull_request:
+    paths:
+      - "app/src/types/garpaExternalPublication.ts"
+      - "app/src/types/garpaCommonsSeededExternalPublication.ts"
+      - "app/src/lib/garpa/externalPublication*.ts"
+      - "app/src/lib/garpa/commonsSeededExternalPublication*.ts"
+      - "app/src/lib/garpa/validateExternalPublicationReceipt.ts"
+      - "app/src/lib/garpa/runExternalPublicationReceiptGate.ts"
+      - "app/src/lib/garpa/validateCommonsSeededExternalPublication.ts"
+      - "app/src/lib/garpa/runCommonsSeededExternalPublicationGate.ts"
+      - "app/src/lib/garpa/renderCommonsSeededExternalPublication.ts"
+      - "app/src/lib/garpa/garpaVersion.ts"
+      - "app/src/lib/garpa/implementedStages.ts"
+      - "tests/fixtures/garpaCommonsSeededExternalPublicationFixture.ts"
+      - "tests/lib/garpaExternalPublication.test.ts"
+      - "tests/lib/garpaCommonsSeededExternalPublication.test.ts"
+      - "tests/lib/garpaMethodVersion.test.ts"
+      - "schemas/garpa/commons-seeded-external-publication-*.schema.json"
+      - "docs/garpa-commons-seeded-external-publication.md"
+      - "docs/garpa-method-version.md"
+      - "docs/garpa-current-surface.md"
+      - "mcp/garpaCommonsSeededExternalPublicationTools.ts"
+      - "mcp/garpa-commons-seeded-external-publication-server.ts"
+      - "mcp/garpaCompleteServer.ts"
+      - "mcp/tsconfig.commons-seeded-external-publication.json"
+      - "tsconfig.commons-seeded-external-publication.json"
+      - ".github/workflows/garpa-commons-seeded-external-publication-check.yml"
+  push:
+    branches:
+      - "feature/garpa-commons-seeded-external-publication-v1"
+
+permissions:
+  contents: read
+
+jobs:
+  external-publication:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Generate executable external-publication evidence
+        run: npx tsx scripts/generateCommonsSeededExternalPublicationExample.ts
+      - name: Run focused external-publication campaign
+        run: |
+          npx vitest run \
+            tests/lib/garpaCommonsSeededExternalPublication.test.ts \
+            tests/lib/garpaExternalPublication.test.ts \
+            tests/lib/garpaCommonsSeededPublicRegistry.test.ts \
+            tests/lib/garpaRegistry.test.ts \
+            tests/lib/garpaMethodVersion.test.ts \
+            tests/lib/garpaCaseWorkspace.test.ts
+      - name: Typecheck Commons-seeded external-publication surface
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-external-publication.json
+      - name: Run complete repository check
+        run: npm run check
+      - name: Build static workbench
+        run: npm run build
+      - run: npm ci
+        working-directory: mcp
+      - name: Typecheck dedicated external-publication MCP
+        run: npx tsc --noEmit -p tsconfig.commons-seeded-external-publication.json
+        working-directory: mcp
+      - name: Typecheck complete GARPA MCP
+        run: npx tsc --noEmit -p tsconfig.json
+        working-directory: mcp
+      - name: Upload generated external-publication evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-commons-seeded-external-publication-evidence
+          path: examples/garpa-commons-seeded-external-publication
+          retention-days: 3

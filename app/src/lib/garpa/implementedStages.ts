@@ -33,6 +33,7 @@ export const IMPLEMENTED_GARPA_STAGES = [
   "commons_seeded_publication",
   "commons_seeded_release_verification",
   "commons_seeded_public_registry",
+  "commons_seeded_external_publication_receipt",
 ] as const;
 
 export type ImplementedGarpaStage = (typeof IMPLEMENTED_GARPA_STAGES)[number];

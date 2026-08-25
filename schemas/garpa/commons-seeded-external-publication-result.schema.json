@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://garpa.example/schemas/commons-seeded-external-publication-result.schema.json",
+  "title": "GARPA Commons-Seeded External Publication Result",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "passed",
+    "state",
+    "receiptAdmitted",
+    "externalEventObserved",
+    "syntheticQualificationOnly",
+    "publicRegistryPublished",
+    "publicReleaseOccurred",
+    "seededPublicRegistryResultDigest",
+    "registryEntryDigest",
+    "externalPublicationRequestDigest",
+    "externalPublicationReceiptDigest",
+    "externalArtifactSetDigest",
+    "publicationEnvelopeDigest",
+    "ordinaryReceiptResultDigest",
+    "findings",
+    "validationErrors",
+    "pullList",
+    "prohibitedTransitions"
+  ],
+  "properties": {
+    "passed": { "type": "boolean" },
+    "state": {
+      "enum": [
+        "seeded_external_publication_blocked",
+        "seeded_external_publication_incomplete",
+        "seeded_external_publication_admitted"
+      ]
+    },
+    "receiptAdmitted": { "type": "boolean" },
+    "externalEventObserved": { "type": "boolean" },
+    "evidenceClass": {
+      "enum": ["synthetic_qualification", "observed_external"]
+    },
+    "eventKind": {
+      "enum": ["registry_entry_published", "release_bundle_distributed"]
+    },
+    "syntheticQualificationOnly": { "type": "boolean" },
+    "publicRegistryPublished": { "type": "boolean" },
+    "publicReleaseOccurred": { "type": "boolean" },
+    "seededPublicRegistryResultDigest": { "type": "string" },
+    "registryEntryDigest": { "type": "string" },
+    "externalPublicationRequestDigest": { "type": "string" },
+    "externalPublicationReceiptDigest": { "type": "string" },
+    "externalArtifactSetDigest": { "type": "string" },
+    "publicationEnvelopeDigest": { "type": "string" },
+    "ordinaryReceiptResultDigest": { "type": "string" },
+    "findings": { "type": "array" },
+    "validationErrors": { "type": "array", "items": { "type": "string" } },
+    "pullList": { "type": "array", "items": { "type": "string" } },
+    "prohibitedTransitions": { "type": "array", "items": { "type": "string" } }
+  }
+}
