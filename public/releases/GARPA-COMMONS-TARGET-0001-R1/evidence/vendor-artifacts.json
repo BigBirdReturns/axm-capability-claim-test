@@ -1,0 +1,16 @@
+[
+  {
+    "artifactId": "artifact:vendor:q-target-detection:001",
+    "sha256": "14ee8f8d0a48d3735d7d121faddf1855234f781937d09220e02d7a64b8a6b92c",
+    "mediaType": "application/json",
+    "path": "vendor/reference-1.0.0/artifact-vendor-q-target-detection-001.json",
+    "capturedAt": "2026-08-23T21:37:30.000Z"
+  },
+  {
+    "artifactId": "artifact:vendor:q-target-latency:002",
+    "sha256": "103082db670b6523a333d65e57a9840585c498ee1f230a66072d283ece6e750c",
+    "mediaType": "application/json",
+    "path": "vendor/reference-1.0.0/artifact-vendor-q-target-latency-002.json",
+    "capturedAt": "2026-08-23T21:37:30.000Z"
+  }
+]

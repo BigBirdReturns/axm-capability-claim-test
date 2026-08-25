@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "releaseId": "GARPA-COMMONS-TARGET-0001-R1",
+  "caseId": "GARPA-COMMONS-TARGET-0001",
+  "releaseNumber": 1,
+  "releaseManifestDigest": "aa23db73fcfa333d822fae938ad9b5d888138f640d833c69753ceca03f2eb0c1",
+  "releaseBundleDigest": "0d3b67fb7fe42a8a98b6f9060c236069dd2b2c8c5e48a07e8f3683ebd03928e6",
+  "releaseFileSetDigest": "334ace0b3064b8f1108e31ad707c29336497a60b4f95537a18667f5e60097439",
+  "archivePath": "GARPA-COMMONS-TARGET-0001-R1.zip",
+  "archiveSha256": "b22ca21ee043a8dcbd85eb42134353da7b8051a9e5034ea114e4ea3f1fc2bb35",
+  "archiveByteLength": 586723,
+  "fileCount": 16,
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "a6f9d812ba889c39f374ded0ba212354339f5f73732327a2f6615dee1185c8cb",
+      "byteLength": 487,
+      "mediaType": "text/markdown",
+      "role": "other",
+      "required": true
+    },
+    {
+      "path": "claims/failure-register.json",
+      "sha256": "3d0d3dedbbb449c946bf73ad888e8fed23e1b38d1354227d36476dfd081123b8",
+      "byteLength": 158,
+      "mediaType": "application/json",
+      "role": "failure_register",
+      "required": true
+    },
+    {
+      "path": "claims/publication-claims.json",
+      "sha256": "d86cb98624e11565b5ae548db4256834324a61db9c5a658a6749cdaa827765d9",
+      "byteLength": 6518,
+      "mediaType": "application/json",
+      "role": "publication_claims",
+      "required": true
+    },
+    {
+      "path": "claims/residual-register.json",
+      "sha256": "e80a8596f8b855a4fbe053664f8c1bf54a646502d89cd2e6f011cc2cfa956d9d",
+      "byteLength": 1009,
+      "mediaType": "application/json",
+      "role": "residual_register",
+      "required": true
+    },
+    {
+      "path": "claims/support-graph.json",
+      "sha256": "bd4ba20f655b0b7ccfb960d4dfff664ac9be06f8792985566b7a9b129b886f4d",
+      "byteLength": 5893,
+      "mediaType": "application/json",
+      "role": "support_graph",
+      "required": true
+    },
+    {
+      "path": "evidence/vendor-artifacts.json",
+      "sha256": "597b8854dec676acb1569b7c74aea19979fdc049480e63922bc80806a2d78940",
+      "byteLength": 629,
+      "mediaType": "application/json",
+      "role": "source_ledger",
+      "required": true
+    },
+    {
+      "path": "public-dossier.md",
+      "sha256": "9302d9e43134a91eade9c5e6e8612eb0fd661d98b65146a8c5f4d7316c1b27ee",
+      "byteLength": 5666,
+      "mediaType": "text/markdown",
+      "role": "public_dossier",
+      "required": true
+    },
+    {
+      "path": "reality-brief.md",
+      "sha256": "e1aac04fc8e6e523da090461e198cdbcdddce2c56ae37e98813038f5942e73a4",
+      "byteLength": 1903,
+      "mediaType": "text/markdown",
+      "role": "reality_brief",
+      "required": true
+    },
+    {
+      "path": "receipts/commons-publication.json",
+      "sha256": "5022bc692275e7cf6d4ea6004439a23950a880ae8026a9c1423f14b68067dace",
+      "byteLength": 1578068,
+      "mediaType": "application/json",
+      "role": "gate_receipt",
+      "required": true
+    },
+    {
+      "path": "receipts/mission-evaluation.json",
+      "sha256": "fe1d83eddd1df14c6263bf17ec269210e7391292bb4137105cfd6102ffb6fc3d",
+      "byteLength": 1429834,
+      "mediaType": "application/json",
+      "role": "mission_evaluation",
+      "required": true
+    },
+    {
+      "path": "receipts/publication-gate.json",
+      "sha256": "d5d75f08ef1bfe7271cd418a82f77460bfc7eb61d20237f5a5af070d09f05f72",
+      "byteLength": 238,
+      "mediaType": "application/json",
+      "role": "gate_receipt",
+      "required": true
+    },
+    {
+      "path": "receipts/redactions.json",
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "byteLength": 3,
+      "mediaType": "application/json",
+      "role": "redaction_receipt",
+      "required": true
+    },
+    {
+      "path": "receipts/rights-review.json",
+      "sha256": "923d453c08e700ca4725aab1b15aa2a405835f253ea5607d055cfc7ba21c71c5",
+      "byteLength": 685,
+      "mediaType": "application/json",
+      "role": "rights_receipt",
+      "required": true
+    },
+    {
+      "path": "receipts/safety-review.json",
+      "sha256": "76e93d4595b5b96f8f313a8e4c742e67fa5cc3f16518ac9ad7ff0bb910e4020e",
+      "byteLength": 136,
+      "mediaType": "application/json",
+      "role": "safety_receipt",
+      "required": true
+    },
+    {
+      "path": "receipts/vendor-parity.json",
+      "sha256": "b906cbc06dad05eb3f902ede51ae7e737c13c2940cad3ee394490324a822324e",
+      "byteLength": 1498992,
+      "mediaType": "application/json",
+      "role": "vendor_parity",
+      "required": true
+    },
+    {
+      "path": "release.json",
+      "sha256": "52284c3bac9b224269012ac4ff4147c11d1764c6328c778c6400b5091bc3883f",
+      "byteLength": 634,
+      "mediaType": "application/json",
+      "role": "release_metadata",
+      "required": true
+    }
+  ],
+  "publicReleaseOccurred": false,
+  "publicRegistryPublished": false
+}

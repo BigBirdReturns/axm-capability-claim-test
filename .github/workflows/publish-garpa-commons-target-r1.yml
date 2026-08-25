@@ -1,0 +1,172 @@
+name: publish-garpa-commons-target-r1
+
+on:
+  push:
+    branches:
+      - "publication/garpa-commons-target-0001-r1"
+    paths:
+      - ".github/workflows/publish-garpa-commons-target-r1.yml"
+      - "scripts/prepareGarpaCommonsTargetR1Publication.py"
+      - "scripts/captureGarpaCommonsTargetR1Distribution.py"
+      - "scripts/generateObservedCommonsSeededExternalDistributionEvent.ts"
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: publish-garpa-commons-target-0001-r1
+  cancel-in-progress: false
+
+jobs:
+  publish-and-receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout publication branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Stop when the observed receipt is already sealed
+        id: guard
+        shell: bash
+        run: |
+          status=".garpa/external-distribution-events/GARPA-COMMONS-TARGET-0001-R1/status.json"
+          if [[ -f "$status" ]] && jq -e '.eventObserved == true and .publicReleaseOccurred == true' "$status" >/dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install qualified gate dependencies
+        if: steps.guard.outputs.skip != 'true'
+        run: npm ci
+
+      - name: Recheck the qualified external-distribution gate
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          npx vitest run tests/lib/garpaCommonsSeededExternalDistribution.test.ts
+          npx tsc --noEmit -p tsconfig.commons-seeded-external-distribution.json
+
+      - name: Download the qualified gate evidence
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: "9544885545"
+          ARTIFACT_SHA256: "6e51b7259160215efab40354ca95762be22f4a3a14913d4c82d027a1ebe54aca"
+        shell: bash
+        run: |
+          gh api "/repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/external-distribution-evidence.zip
+          echo "${ARTIFACT_SHA256}  /tmp/external-distribution-evidence.zip" | sha256sum -c -
+
+      - name: Materialize exact governed release bytes
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          python scripts/prepareGarpaCommonsTargetR1Publication.py \
+            --evidence-zip /tmp/external-distribution-evidence.zip \
+            --output public/releases/GARPA-COMMONS-TARGET-0001-R1
+
+      - name: Commit the immutable public release payload
+        if: steps.guard.outputs.skip != 'true'
+        id: publish
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/releases/GARPA-COMMONS-TARGET-0001-R1
+          if git diff --cached --quiet; then
+            publish_sha=$(git log -1 --format=%H -- public/releases/GARPA-COMMONS-TARGET-0001-R1/distribution-index.json)
+          else
+            git commit -m "Publish verified GARPA Commons target R1"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+            publish_sha=$(git rev-parse HEAD)
+          fi
+          test -n "$publish_sha"
+          echo "sha=${publish_sha}" >> "$GITHUB_OUTPUT"
+
+      - name: Capture platform and immutable retrieval evidence
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/captureGarpaCommonsTargetR1Distribution.py \
+            --repository "$GITHUB_REPOSITORY" \
+            --branch "$GITHUB_REF_NAME" \
+            --publish-sha "${{ steps.publish.outputs.sha }}" \
+            --release-dir public/releases/GARPA-COMMONS-TARGET-0001-R1 \
+            --evidence-dir public/releases/GARPA-COMMONS-TARGET-0001-R1/evidence
+
+      - name: Commit external event evidence
+        if: steps.guard.outputs.skip != 'true'
+        id: evidence
+        shell: bash
+        run: |
+          git add public/releases/GARPA-COMMONS-TARGET-0001-R1/evidence
+          git commit -m "Capture GARPA R1 platform and retrieval evidence"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          evidence_sha=$(git rev-parse HEAD)
+          echo "sha=${evidence_sha}" >> "$GITHUB_OUTPUT"
+
+      - name: Correct evidence commit coordinate
+        if: steps.guard.outputs.skip != 'true'
+        id: coordinate
+        shell: bash
+        run: |
+          python - <<PY
+          import json
+          from pathlib import Path
+          path = Path("public/releases/GARPA-COMMONS-TARGET-0001-R1/evidence/event-metadata.json")
+          value = json.loads(path.read_text())
+          value["evidenceCommit"] = "${{ steps.evidence.outputs.sha }}"
+          path.write_text(json.dumps(value, indent=2) + "\n")
+          PY
+          git add public/releases/GARPA-COMMONS-TARGET-0001-R1/evidence/event-metadata.json
+          git commit -m "Bind GARPA R1 evidence commit coordinate"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate and run the observed-event receipt
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          python - <<PY
+          import json
+          from pathlib import Path
+          path = Path("public/releases/GARPA-COMMONS-TARGET-0001-R1/evidence/event-metadata.json")
+          value = json.loads(path.read_text())
+          value["evidenceCommit"] = "${{ steps.coordinate.outputs.sha }}"
+          path.write_text(json.dumps(value, indent=2) + "\n")
+          PY
+          npx tsx scripts/generateObservedCommonsSeededExternalDistributionEvent.ts \
+            public/releases/GARPA-COMMONS-TARGET-0001-R1/evidence/event-metadata.json \
+            .garpa/external-distribution-events/GARPA-COMMONS-TARGET-0001-R1
+          gzip -n -9 .garpa/external-distribution-events/GARPA-COMMONS-TARGET-0001-R1/request.json
+          gzip -n -9 .garpa/external-distribution-events/GARPA-COMMONS-TARGET-0001-R1/result.json
+
+      - name: Seal the observed external-distribution event
+        if: steps.guard.outputs.skip != 'true'
+        id: seal
+        shell: bash
+        run: |
+          git add \
+            public/releases/GARPA-COMMONS-TARGET-0001-R1/evidence/event-metadata.json \
+            .garpa/external-distribution-events/GARPA-COMMONS-TARGET-0001-R1
+          git commit -m "Seal observed GARPA R1 external distribution receipt"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload observed event evidence
+        if: steps.guard.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: garpa-commons-target-r1-observed-distribution
+          path: |
+            public/releases/GARPA-COMMONS-TARGET-0001-R1
+            .garpa/external-distribution-events/GARPA-COMMONS-TARGET-0001-R1
+          retention-days: 90

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "repository": "BigBirdReturns/axm-capability-claim-test",
+  "branch": "publication/garpa-commons-target-0001-r1",
+  "publishCommit": "1a90612ecf9d000207ff269be61fe3880b2a050f",
+  "releaseId": "GARPA-COMMONS-TARGET-0001-R1",
+  "destinationUri": "https://github.com/BigBirdReturns/axm-capability-claim-test/tree/1a90612ecf9d000207ff269be61fe3880b2a050f/public/releases/GARPA-COMMONS-TARGET-0001-R1",
+  "publishedAt": "2026-08-25T05:10:57Z",
+  "observedAt": "2026-08-25T05:10:59Z",
+  "platformReceiptPath": "evidence/platform-receipt.json",
+  "retrievalCapturePath": "evidence/retrieval-capture.json",
+  "releaseManifestPath": "release-manifest.json",
+  "releaseManifestObservedSha256": "43a25e729ab48aeab0a24421f69fbfdea4cdf50f237a88c6400c9e4b82446ad1",
+  "evidenceCommit": "ae5eabfc91c85d00c5634df7e690262256b1fdd4"
+}
